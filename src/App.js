@@ -8,7 +8,8 @@ import { Layout } from "antd";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Content } from "antd/es/layout/layout.js";
 import Err from "./page/error/Err.jsx";
-// Tạo component App
+import Booking from "./page/booking/Booking.jsx";
+
 function App() {
   return (
     <BrowserRouter>
@@ -17,6 +18,7 @@ function App() {
         <Content>
           <Routes>
             <Route path="/home" element={<Home />}></Route>
+            <Route path="/booking" element={<Booking />}></Route>
             <Route path="*" element={<Err/>}></Route>
           </Routes>
         </Content>
