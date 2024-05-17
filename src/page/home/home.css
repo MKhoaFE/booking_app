@@ -1,0 +1,302 @@
+.main {
+  position: relative;
+}
+.main .booking-wrap {
+  z-index: 999;
+  position: absolute;
+  width: auto;
+  padding: 0 3rem;
+  height: 80px;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  background-color: rgba(255, 255, 255, 0.7);
+}
+@media (max-width: 768px) {
+  .main .booking-wrap {
+    display: block;
+    position: relative;
+    height: auto;
+  }
+}
+.main .booking-wrap .booking-wrap-form {
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+@media (max-width: 768px) {
+  .main .booking-wrap .booking-wrap-form {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+.main .booking-wrap .booking-wrap-form .divider {
+  position: relative;
+  width: 50px;
+  height: 50px;
+}
+@media (max-width: 768px) {
+  .main .booking-wrap .booking-wrap-form .divider {
+    display: none;
+  }
+}
+.main .booking-wrap .booking-wrap-form .divider .line {
+  border-left: 1px solid grey;
+  height: 50px;
+  position: absolute;
+  left: 50%;
+  margin-left: -3px;
+  top: 0;
+  transform: rotate(40deg); /* Equal to rotateZ(45deg) */
+}
+.main .booking-wrap .booking-wrap-form button {
+  padding: 0.6rem 3rem;
+  border: none;
+  background-color: #266b49;
+  color: white;
+  min-width: 150px;
+}
+.main img {
+  -o-object-fit: cover;
+     object-fit: cover;
+  max-height: 600px;
+  width: 100%;
+}
+.main .content-fixed {
+  position: fixed;
+  width: 100%;
+  background-color: rgb(255, 255, 255);
+}
+@media (max-width: 768px) {
+  .main .content-fixed {
+    position: relative;
+  }
+}
+
+.policy .welcome-graph {
+  width: 100%;
+  text-align: center;
+  padding-top: 3rem;
+}
+.policy .welcome-graph .welcome-text {
+  margin: 0;
+  font-size: 2rem;
+}
+.policy .welcome-graph .safe-time-text {
+  font-size: 3rem;
+  font-weight: 600;
+  color: #00552b;
+}
+.policy .welcome-graph .welcome-wrap {
+  text-align: center;
+  margin: 0 auto;
+  max-width: 900px;
+  margin-bottom: 2rem;
+}
+.policy .schedule-slider {
+  display: flex;
+  margin: 0 10%;
+  gap: 2rem;
+  position: relative;
+}
+@media (max-width: 768px) {
+  .policy .schedule-slider {
+    display: block;
+    margin: 0;
+  }
+}
+.policy .schedule-slider .slideshow-left {
+  transition: ease 1000ms;
+  width: 50%;
+  overflow: hidden;
+  position: relative;
+}
+@media (max-width: 768px) {
+  .policy .schedule-slider .slideshow-left {
+    width: 100%;
+  }
+}
+.policy .schedule-slider .slideshow-left .wrapper-slide {
+  display: flex;
+  width: 100%;
+  transition: transform 0.5s ease-in-out;
+}
+.policy .schedule-slider .slideshow-left .wrapper-slide .slide {
+  min-width: 100%;
+}
+.policy .schedule-slider .slideshow-left .wrapper-slide .slide .title {
+  font-weight: 500;
+  font-size: 15px;
+}
+.policy .schedule-slider .slideshow-left .wrapper-slide .slide .title span {
+  color: green;
+}
+.policy .schedule-slider .slideshow-left .wrapper-slide .slide .information {
+  line-height: 3rem;
+}
+.policy .schedule-slider .slideshow-left .wrapper-slide .slide .information .col-md-12 {
+  display: flex;
+}
+.policy .schedule-slider .slideshow-left .action-slide {
+  display: flex;
+  justify-content: space-between;
+  z-index: 999;
+}
+.policy .schedule-slider .slideshow-left .action-slide .left {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  z-index: 999;
+}
+.policy .schedule-slider .slideshow-left .action-slide .right {
+  cursor: pointer;
+  position: absolute;
+  z-index: 999;
+  top: 50%;
+  right: 0;
+}
+.policy .schedule-slider .slideshow-left .action-slide button {
+  border: none;
+  background: none;
+}
+.policy .schedule-slider .slideshow-right {
+  transition: ease 1000ms;
+  width: 50%;
+  overflow: hidden;
+  position: relative;
+}
+@media (max-width: 768px) {
+  .policy .schedule-slider .slideshow-right {
+    width: 100%;
+  }
+}
+.policy .schedule-slider .slideshow-right .wrapper-slide {
+  display: flex;
+  width: 100%;
+  transition: transform 0.5s ease-in-out;
+}
+.policy .schedule-slider .slideshow-right .wrapper-slide .slide {
+  min-width: 100%;
+}
+.policy .schedule-slider .slideshow-right .wrapper-slide .slide .title {
+  font-weight: 500;
+  font-size: 15px;
+}
+.policy .schedule-slider .slideshow-right .wrapper-slide .slide .title span {
+  color: green;
+}
+.policy .schedule-slider .slideshow-right .wrapper-slide .slide .information {
+  line-height: 3rem;
+}
+.policy .schedule-slider .slideshow-right .wrapper-slide .slide .information .col-md-12 {
+  display: flex;
+}
+.policy .schedule-slider .slideshow-right .action-slide {
+  display: flex;
+  justify-content: space-between;
+  z-index: 999;
+}
+.policy .schedule-slider .slideshow-right .action-slide .left {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  z-index: 999;
+}
+.policy .schedule-slider .slideshow-right .action-slide .right {
+  cursor: pointer;
+  position: absolute;
+  z-index: 999;
+  top: 50%;
+  right: 0;
+}
+.policy .schedule-slider .slideshow-right .action-slide button {
+  border: none;
+  background: none;
+}
+.policy .divider {
+  border-bottom: 2px solid green;
+  width: 10%;
+  margin: 0 auto;
+  padding-top: 3rem;
+  margin-bottom: 2rem;
+}
+.policy .my-policy {
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+  width: 100%;
+}
+@media (max-width: 768px) {
+  .policy .my-policy {
+    text-align: center;
+  }
+}
+.policy .my-policy h2 {
+  font-size: 3rem;
+}
+.policy .tabs {
+  display: flex;
+  gap: 1rem;
+}
+.policy .tabs .active {
+  background-color: #7de6b6;
+}
+.policy .tabs button {
+  background-color: rgb(170, 169, 169);
+  padding: 1rem 3rem;
+  border: none;
+  border-radius: 2px;
+}
+.policy .tab-content {
+  text-align: center;
+  box-shadow: -1px 1px 1px rgba(0, 0, 0, 0.15);
+  margin-top: 1.5rem;
+  margin-bottom: 3rem;
+  padding: 5px;
+}
+.policy .tab-content .title {
+  font-size: 2rem;
+  margin-top: 15px;
+  margin-bottom: 0;
+}
+.policy .tab-content .price {
+  color: green;
+  font-size: 24px;
+  font-weight: bold;
+}
+.policy .tab-content p {
+  margin: 0;
+  padding: 0;
+}
+.policy .free-discount {
+  padding-bottom: 2rem;
+  -moz-text-align-last: left;
+       text-align-last: left;
+}
+.policy .free-discount .title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: bold;
+}
+.policy .discount .title {
+  font-weight: bold;
+}
+.policy .price-policy {
+  width: 100%;
+  text-align: center;
+}
+.policy .price-policy .divider {
+  border-bottom: 2px solid green;
+  width: 10%;
+  margin: 0 auto;
+  padding-top: 3rem;
+  margin-bottom: 2rem;
+}
+.policy .price-policy .title {
+  margin-bottom: 2rem;
+}/*# sourceMappingURL=home.css.map */

@@ -1,24 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
-
+import React from "react"; 
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./GlobalStyles/glbStyles.css";
+import HeaderComponent from "./components/Header/HeaderComponent.jsx";
+import Home from "../src/page/home/Home.jsx";
+import FooterComponent from "./components/Footer/FooterComponent.jsx";
+import { Layout } from "antd";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Content } from "antd/es/layout/layout.js";
+import Err from "./page/error/Err.jsx";
+// Tạo component App
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Layout>
+        <HeaderComponent></HeaderComponent>
+        <Content>
+          <Routes>
+            <Route path="/home" element={<Home />}></Route>
+            <Route path="*" element={<Err/>}></Route>
+          </Routes>
+        </Content>
+
+        <FooterComponent></FooterComponent>
+      </Layout>
+    </BrowserRouter>
   );
 }
 

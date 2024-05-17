@@ -1,0 +1,80 @@
+.footer {
+  width: 100%;
+  background-color: #353535;
+  height: auto;
+  margin-top: 5rem;
+}
+.footer .top-footer {
+  background-image: url("https://greenlines-dp.com/images/footer-top-bg.png");
+  height: 200px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.3rem;
+}
+.footer .top-footer .btn-1 {
+  font-size: 2rem;
+  min-width: 300px;
+}
+@media (max-width: 768px) {
+  .footer .top-footer .btn-1 {
+    min-width: 150px;
+  }
+}
+.footer .top-footer button {
+  height: 6rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background-color: white;
+}
+@media (max-width: 768px) {
+  .footer .top-footer {
+    height: 120px;
+  }
+}
+.footer .content {
+  display: flex;
+  justify-content: space-between;
+  padding: 3rem;
+  font-size: 12px;
+  color: white;
+}
+@media (max-width: 768px) {
+  .footer .content {
+    display: block;
+    gap: 2rem;
+  }
+}
+@media (max-width: 768px) {
+  .footer .content .content-item {
+    padding: 1rem 0;
+  }
+}
+.footer .footer-bottom {
+  background-color: #212121;
+  color: white;
+}
+.footer .footer-bottom .wrap {
+  display: flex;
+}
+@media (max-width: 768px) {
+  .footer .footer-bottom .wrap {
+    display: block;
+  }
+}
+.footer .footer-bottom .wrap .right {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+@media (max-width: 768px) {
+  .footer .footer-bottom .wrap .right {
+    justify-content: center;
+  }
+}
+.footer .footer-bottom .wrap .right img {
+  width: 120px;
+}/*# sourceMappingURL=footer.css.map */
