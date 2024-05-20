@@ -17,7 +17,7 @@ function App() {
         <HeaderComponent></HeaderComponent>
         <Content>
           <Routes>
-            <Route path="/home" element={<Home />}></Route>
+            <Route path="/" element={<Home />}></Route>
             <Route path="/booking" element={<Booking />}></Route>
             <Route path="*" element={<Err/>}></Route>
           </Routes>

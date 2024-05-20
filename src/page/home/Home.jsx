@@ -119,18 +119,19 @@ export default function Home() {
               <FormControl
                 sx={{
                   // m: 1,
-                  width: "250px",
+                  minWidth: "100%",
                   backgroundColor: "#D7D7D7",
                   border: "none",
                 }}
               >
                 <select
+                  className="roboto-medium"
                   id="cars"
                   style={{
                     fontSize: "14px",
                     border: "none",
                     backgroundColor: "#D7D7D7",
-                    padding: "1.5rem",
+                    padding: "1rem",
                   }}
                 >
                   <option style={{ backgroundColor: "white" }} value="1">
@@ -171,7 +172,12 @@ export default function Home() {
               padding="1.5rem"
             >
               <FormControl variant="standard">
-                <InputLabel style={{ fontSize: "20px" }}>NGÀY ĐI</InputLabel>
+                <InputLabel
+                  className="roboto-medium"
+                  style={{ fontSize: "20px", fontWeight: "500" }}
+                >
+                  NGÀY ĐI
+                </InputLabel>
                 <Input
                   id="input-with-icon-adornment"
                   type="date"
@@ -193,7 +199,9 @@ export default function Home() {
               padding="1.5rem"
             >
               <FormControl variant="standard ">
-                <InputLabel style={{ fontSize: "20px" }}>GIỜ</InputLabel>
+                <InputLabel style={{ fontSize: "20px", fontWeight: "600" }}>
+                  GIỜ
+                </InputLabel>
                 <Input
                   id="input-with-icon-adornment"
                   type="time"
@@ -205,11 +213,11 @@ export default function Home() {
                 />
               </FormControl>
             </Box>
-            <Box sx={{ width: "50px" }}>
-              <div className="divider">
-                <div className="line"></div>
-              </div>
-            </Box>
+
+            <div className="divider-header">
+              <div className="line"></div>
+            </div>
+
             <Box
               component="form"
               sx={{
@@ -221,7 +229,9 @@ export default function Home() {
               padding="1.5rem"
             >
               <FormControl variant="standard">
-                <InputLabel style={{ fontSize: "20px" }}>NGÀY VỀ</InputLabel>
+                <InputLabel style={{ fontSize: "20px", fontWeight: "600" }}>
+                  NGÀY VỀ
+                </InputLabel>
                 <Input
                   id="input-with-icon-adornment"
                   type="date"
@@ -243,7 +253,9 @@ export default function Home() {
               padding="1.5rem"
             >
               <FormControl variant="standard ">
-                <InputLabel style={{ fontSize: "20px" }}>GIỜ</InputLabel>
+                <InputLabel style={{ fontSize: "20px", fontWeight: "600" }}>
+                  GIỜ
+                </InputLabel>
                 <Input
                   id="input-with-icon-adornment"
                   type="time"
@@ -343,7 +355,6 @@ export default function Home() {
           </div>
           <div className="divider"></div>
           <div className="my-policy">
-          
             <h2>Chính sách giá vé của chúng tôi</h2>
           </div>
           <div className="tabs roboto-regular">
@@ -397,7 +408,7 @@ export default function Home() {
             <div className="title">
               <h1>NỘI QUY ĐI TÀU</h1>
             </div>
-            <div className="content" style={{ textAlign: "left"}}>
+            <div className="content" style={{ textAlign: "left" }}>
               <span>
                 1. Cung cấp họ tên, địa chỉ, số điện thoại để tiện liên lạc khi
                 cần thiết.
@@ -405,7 +416,9 @@ export default function Home() {
               <br />
               <span>2. Lên tàu trước giờ khởi hành 15 phút.</span>
               <br />
-              <span>3. Tuân theo hướng dẫn của tiếp viên và thủy thủ đoàn.</span>
+              <span>
+                3. Tuân theo hướng dẫn của tiếp viên và thủy thủ đoàn.
+              </span>
               <br />
               <span>4. Xin Quý khách vui lòng:</span>
               <br />
