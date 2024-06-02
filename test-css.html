@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ship Seat Layout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .ship {
+            min-width: 846px;
+            min-height: 400px;
+            background-image: url('./src/assets/ship_layout.png');
+            background-repeat: no-repeat;
+            background-size: contain;
+
+
+            padding: 20px;
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1px;
+            
+        }
+        .seat {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #000;
+            border-radius: 5px;
+            display: flex;
+            justify-content: left;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            text-align: left;
+            background-image: url('https://greenlines-dp.com/images/icons/empty-seat.png');
+            position: relative;
+        }
+        .seat::before {
+            text-align: left;
+            content: "";
+            width: 90%;
+            height: 90%;
+
+            position: absolute;
+            top: 5%;
+            left: 5%;
+            border-radius: 3px;
+        }
+
+        .section {
+            grid-column: span 2;
+            height: 100px;
+            background-color: #ccc;
+            border: 2px solid #000;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+        .bar {
+            grid-column: span 3;
+        }
+        .sofa {
+            grid-column: span 3;
+        }
+        .legend {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+            width: 50%;
+        }
+        .legend div {
+            display: flex;
+            align-items: center;
+        }
+        .legend span {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+        .legend .available {
+            background-color: #0f0;
+        }
+        .legend .booked {
+            background-color: #f00;
+        }
+        .legend .promo {
+            background-color: #ffa500;
+        }
+    </style>
+</head>
+<body>
+    <div class="ship">
+        
+        <!-- Example seat rows -->
+        <div class="seat booked"><span>A1</span></div>
+        <div class="seat available">A2</div>
+        <div class="seat booked">A3</div>
+        <div class="seat promo">A4</div>
+        <div class="seat available">A5</div>
+        <div class="seat booked">A6</div>
+        <div class="seat available">A7</div>
+        <div class="seat booked">A8</div>
+        <div class="seat available">A9</div>
+        <div class="seat promo">A10</div>
+        <div class="seat available">A11</div>
+        <div class="seat booked">A12</div>
+
+        <!-- Add more rows as necessary -->
+
+    </div>
+    
+    <div class="legend">
+        <div><span class="available"></span> Available</div>
+        <div><span class="booked"></span> Booked</div>
+        <div><span class="promo"></span> Promo</div>
+    </div>
+</body>
+</html>

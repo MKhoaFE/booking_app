@@ -8,11 +8,28 @@ import SlideComponent from "../../components/Slide/SlideComponent.jsx";
 import Input from "@mui/material/Input";
 import InputAdornment from "@mui/material/InputAdornment";
 
+
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [slideIndex, setSlideIndex] = useState(0);
   const [slideRightIndex, setRightSlideIndex] = useState(0);
 
+  const times = [
+    '9:00',
+    '12:00',
+    '18:00',
+
+  ];
+  const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
@@ -181,6 +198,7 @@ export default function Home() {
                 <Input
                   id="input-with-icon-adornment"
                   type="date"
+                  format="YYYY/MM/DD"
                   style={{ fontSize: "15px", fontWeight: 300 }}
                   startAdornment={
                     <InputAdornment position="start"></InputAdornment>
@@ -217,7 +235,6 @@ export default function Home() {
             <div className="divider-header">
               <div className="line"></div>
             </div>
-
             <Box
               component="form"
               sx={{
