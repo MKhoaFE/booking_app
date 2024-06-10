@@ -1,3 +1,7 @@
+.container {
+  max-width: 1170px;
+}
+
 .background-header {
   background-image: url("../../assets/bot-header.jpg");
   background-repeat: no-repeat;
@@ -22,8 +26,19 @@
   color: black;
   display: inline-block;
   position: relative;
+  height: 38px;
   padding: 10px;
   font-size: 13px;
+}
+@media (max-width: 768px) {
+  .booking-container .step-bar .item {
+    font-size: 1rem;
+    padding: 0 0 0 20px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 .booking-container .step-bar .item:first-child:before {
   border: 0;
@@ -60,4 +75,167 @@
 }
 .booking-container .step-bar .active:after {
   border-left-color: #24bcd3;
+}
+
+.segment-container .segment-info {
+  margin-top: 2.5rem;
+  font-size: 20px;
+  font-weight: 500;
+}
+.segment-container .segment-info .detail-wrap .select-time {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.segment-container .segment-info .detail-wrap .select-time .active {
+  color: white;
+  background-color: #004618;
+}
+.segment-container .segment-info .detail-wrap .select-time button {
+  width: 15rem;
+  padding: 0 4rem;
+  border: solid black 2px;
+}
+@media (max-width: 768px) {
+  .segment-container .segment-info .detail-wrap .select-time button {
+    width: 5rem;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+  }
+}
+.segment-container .segment-info .detail-wrap .select-time a {
+  text-decoration: none;
+}
+.segment-container .line {
+  width: 100%;
+  border-top: 1px dotted rgb(153, 152, 152);
+  margin-top: 3rem;
+}
+@media (max-width: 768px) {
+  .segment-container .line {
+    display: none;
+  }
+}
+.segment-container .select-seat-container {
+  margin-top: 0.5rem;
+}
+.segment-container .select-seat-container .top {
+  margin: 0 auto;
+  width: 70%;
+}
+@media (max-width: 768px) {
+  .segment-container .select-seat-container .top {
+    margin-top: 2rem;
+    display: flex;
+    width: auto;
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 768px) {
+  .segment-container .select-seat-container .top .seat-info-item {
+    width: 50%;
+  }
+}
+.segment-container .select-seat-container .top img {
+  width: 25px;
+}
+.segment-container .select-seat-container .wrap {
+  overflow: hidden;
+}
+@media (max-width: 768px) {
+  .segment-container .select-seat-container .wrap {
+    overflow-x: auto;
+  }
+}
+.segment-container .select-seat-container .wrap .bottom {
+  overflow: auto;
+}
+.segment-container .select-seat-container .wrap .bottom .ship-container {
+  max-width: 846px;
+  min-height: 400px;
+  background-image: url("../../assets/ship_layout.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  gap: 1px;
+  text-align: left;
+}
+@media (max-width: 768px) {
+  .segment-container .select-seat-container .wrap .bottom .ship-container {
+    min-width: 846px;
+  }
+}
+.segment-container .select-seat-container .wrap .bottom .ship-container .seat {
+  width: 33px;
+  height: 33px;
+  padding-top: 0px;
+  padding-right: 0px;
+  margin-bottom: 0px;
+  padding-left: 0px;
+  line-height: 33px;
+  background-image: url("../../assets//empty-seat.png");
+  background-size: contain;
+  font-size: 13px;
+}
+.segment-container .select-seat-container .wrap .bottom .ship-container table {
+  float: left;
+}
+.segment-container .select-seat-container .wrap .bottom .ship-container td {
+  padding: 0;
+}
+.segment-container .book-sidebar {
+  margin-top: 2.5rem;
+}
+.segment-container .book-sidebar .price-info {
+  display: block;
+}
+.segment-container .book-sidebar .price-info .title {
+  padding: 8px 5px 5px 5px;
+  background-color: #24bcd3;
+  color: #fff;
+}
+.segment-container .book-sidebar .price-info .content {
+  border: 1px solid black;
+  padding: 5px 10px;
+}
+.segment-container .book-sidebar .price-info .content .nav-tab {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: solid 1px #24bdc3;
+}
+.segment-container .book-sidebar .price-info .content .nav-tab a {
+  border-bottom: 2px solid #1890ff;
+  text-decoration: none;
+  color: black;
+  padding: 0px 0 10px 0;
+  position: relative;
+}
+.segment-container .book-sidebar .price-info .content ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.segment-container .book-sidebar .price-info .content .tab-content {
+  padding: 0;
+}
+.segment-container .book-sidebar .price-info .content .tab-content .prices {
+  margin-top: 5px;
+  padding-top: 5px;
+}
+.segment-container .book-sidebar .price-info .content .tab-content .prices h4 {
+  text-align: center;
+}
+.segment-container .book-sidebar .price-info .content .tab-content .prices .item {
+  display: flex;
+  flex-direction: row;
+  line-height: 25px;
+}
+.segment-container .book-sidebar .price-info .content .tab-content .prices .item .name {
+  flex: 1;
+  font-weight: 300;
+}
+.segment-container .book-sidebar .price-info .content .tab-content .prices .item .price {
+  flex: 1;
+  font-weight: bold;
 }/*# sourceMappingURL=booking.css.map */
