@@ -140,18 +140,15 @@
 .segment-container .select-seat-container .top img {
   width: 25px;
 }
-.segment-container .select-seat-container .wrap {
-  overflow: hidden;
+.segment-container .select-seat-container .bottom {
+  overflow: auto;
 }
 @media (max-width: 768px) {
-  .segment-container .select-seat-container .wrap {
+  .segment-container .select-seat-container .bottom {
     overflow-x: auto;
   }
 }
-.segment-container .select-seat-container .wrap .bottom {
-  overflow: auto;
-}
-.segment-container .select-seat-container .wrap .bottom .ship-container {
+.segment-container .select-seat-container .bottom .ship-container {
   max-width: 846px;
   min-height: 400px;
   background-image: url("../../assets/ship_layout.png");
@@ -162,11 +159,11 @@
   text-align: left;
 }
 @media (max-width: 768px) {
-  .segment-container .select-seat-container .wrap .bottom .ship-container {
+  .segment-container .select-seat-container .bottom .ship-container {
     min-width: 846px;
   }
 }
-.segment-container .select-seat-container .wrap .bottom .ship-container .seat {
+.segment-container .select-seat-container .bottom .ship-container .seat {
   width: 33px;
   height: 33px;
   padding-top: 0px;
@@ -177,11 +174,56 @@
   background-image: url("../../assets//empty-seat.png");
   background-size: contain;
   font-size: 13px;
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
 }
-.segment-container .select-seat-container .wrap .bottom .ship-container table {
+.segment-container .select-seat-container .bottom .ship-container .seat .popuptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -80px;
+  opacity: 0;
+  transition: opacity 1s;
+}
+.segment-container .select-seat-container .bottom .ship-container .seat .popuptext:after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+.segment-container .select-seat-container .bottom .ship-container .seat .show {
+  visibility: visible;
+  opacity: 1;
+}
+.segment-container .select-seat-container .bottom .ship-container .reserved {
+  background-image: url("../../assets/reserved-seat.png");
+  color: red;
+}
+.segment-container .select-seat-container .bottom .ship-container .selecting {
+  color: green;
+  background-image: url("../../assets/selecting-seat.png");
+}
+.segment-container .select-seat-container .bottom .ship-container .saleoff {
+  color: red;
+  background-image: url("../../assets/saleoff-seat.png");
+}
+.segment-container .select-seat-container .bottom .ship-container table {
   float: left;
 }
-.segment-container .select-seat-container .wrap .bottom .ship-container td {
+.segment-container .select-seat-container .bottom .ship-container td {
   padding: 0;
 }
 .segment-container .book-sidebar {
@@ -238,4 +280,56 @@
 .segment-container .book-sidebar .price-info .content .tab-content .prices .item .price {
   flex: 1;
   font-weight: bold;
+}
+.segment-container .btn-btm button {
+  margin-top: 2rem;
+  padding: 10px 60px 10px 10px;
+  overflow: hidden;
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  background: none;
+  cursor: pointer;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 400;
+  outline: none;
+  position: relative;
+  transition: all 0.3s;
+  background: #00552b;
+  color: #fff;
+}
+.segment-container .btn-btm button:before {
+  font-family: "FontAwesome";
+  content: "\f178";
+  right: 0;
+  z-index: 2;
+  position: absolute;
+  height: 100%;
+  left: auto;
+  top: 0;
+  line-height: 40px;
+  font-size: 110%;
+  width: 35px;
+}
+.segment-container .btn-btm button:after {
+  content: "";
+  width: 30%;
+  height: 200%;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 1;
+  right: 0;
+  top: 0;
+  margin: -5px 0 0 -5px;
+  -webkit-transform-origin: 0 0;
+  -webkit-transform: rotate(-20deg);
+  -moz-transform-origin: 0 0;
+  -moz-transform: rotate(-20deg);
+  -ms-transform-origin: 0 0;
+  -ms-transform: rotate(-20deg);
+  transform-origin: 0 0;
+  transform: rotate(-20deg);
+  position: absolute;
+  transition: all 0.3s;
 }/*# sourceMappingURL=booking.css.map */

@@ -135,45 +135,87 @@
         width: 25px;
       }
     }
-    .wrap {
-      overflow: hidden;
+
+    .bottom {
+      overflow: auto;
       @media (max-width: 768px) {
         overflow-x: auto;
       }
-
-      .bottom {
-        overflow: auto;
-
-        .ship-container {
-          max-width: 846px;
-          min-height: 400px;
-          background-image: url("../../assets/ship_layout.png");
+      .ship-container {
+        max-width: 846px;
+        min-height: 400px;
+        background-image: url("../../assets/ship_layout.png");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: 0 0;
+        gap: 1px;
+        text-align: left;
+        @media (max-width: 768px) {
+          min-width: 846px;
+        }
+        .seat {
+          width: 33px;
+          height: 33px;
+          padding-top: 0px;
+          padding-right: 0px;
+          margin-bottom: 0px;
+          padding-left: 0px;
+          line-height: 33px;
+          background-image: url("../../assets//empty-seat.png");
           background-size: contain;
-          background-repeat: no-repeat;
-          background-position: 0 0;
-          gap: 1px;
-          text-align: left;
-          @media (max-width:768px) {
-            min-width: 846px;
+          font-size: 13px;
+          cursor: pointer;
+          position: relative;
+          display: inline-block;
+          .popuptext {
+            visibility: hidden;
+            width: 160px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px 0;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -80px;
+            opacity: 0;
+            transition: opacity 1s;
           }
-          .seat {
-            width: 33px;
-            height: 33px;
-            padding-top: 0px;
-            padding-right: 0px;
-            margin-bottom: 0px;
-            padding-left: 0px;
-            line-height: 33px;
-            background-image: url("../../assets//empty-seat.png");
-            background-size: contain;
-            font-size: 13px;
+          .popuptext:after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
           }
-          table {
-            float: left;
+          .show {
+            visibility: visible;
+            opacity: 1;
           }
-          td {
-            padding: 0;
-          }
+        }
+        .reserved {
+          background-image: url("../../assets/reserved-seat.png");
+          color: red;
+        }
+        .selecting {
+          color: green;
+          background-image: url("../../assets/selecting-seat.png");
+        }
+        .saleoff {
+          color: red;
+          background-image: url("../../assets/saleoff-seat.png");
+        }
+
+        table {
+          float: left;
+        }
+        td {
+          padding: 0;
         }
       }
     }
@@ -210,23 +252,23 @@
           margin: 0;
           padding: 0;
         }
-        .tab-content{
+        .tab-content {
           padding: 0;
-          .prices{
+          .prices {
             margin-top: 5px;
             padding-top: 5px;
-            h4{
+            h4 {
               text-align: center;
             }
-            .item{
+            .item {
               display: flex;
               flex-direction: row;
               line-height: 25px;
-              .name{
+              .name {
                 flex: 1;
                 font-weight: 300;
               }
-              .price{
+              .price {
                 flex: 1;
                 font-weight: bold;
               }
@@ -234,6 +276,64 @@
           }
         }
       }
+    }
+  }
+  .btn-btm {
+    button {
+      margin-top: 2rem;
+      padding: 10px 60px 10px 10px;
+      overflow: hidden;
+      border: none;
+      font-family: inherit;
+      font-size: inherit;
+      background: none;
+      cursor: pointer;
+      display: inline-block;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 400;
+      outline: none;
+      position: relative;
+      -webkit-transition: all 0.3s;
+      -moz-transition: all 0.3s;
+      transition: all 0.3s;
+      background: #00552b;
+      color: #fff;
+    }
+    button:before {
+      font-family: "FontAwesome";
+      content: "\f178";
+      right: 0;
+      z-index: 2;
+      position: absolute;
+      height: 100%;
+      left: auto;
+      top: 0;
+      line-height: 40px;
+      font-size: 110%;
+      width: 35px;
+    }
+    button:after {
+      content: "";
+      width: 30%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.1);
+      z-index: 1;
+      right: 0;
+      top: 0;
+      margin: -5px 0 0 -5px;
+      -webkit-transform-origin: 0 0;
+      -webkit-transform: rotate(-20deg);
+      -moz-transform-origin: 0 0;
+      -moz-transform: rotate(-20deg);
+      -ms-transform-origin: 0 0;
+      -ms-transform: rotate(-20deg);
+      transform-origin: 0 0;
+      transform: rotate(-20deg);
+      position: absolute;
+      -webkit-transition: all 0.3s;
+      -moz-transition: all 0.3s;
+      transition: all 0.3s;
     }
   }
 }

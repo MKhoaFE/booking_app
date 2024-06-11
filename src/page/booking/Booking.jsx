@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "../booking/booking.css";
 import "../../GlobalStyles/glbStyles.css";
 import { Link } from "react-router-dom";
@@ -6,9 +6,33 @@ import selecting_seat from "../../assets/selecting-seat.png";
 import saleoff_seat from "../../assets/saleoff-seat.png";
 import reserved_seat from "../../assets/reserved-seat.png";
 import empty_seat from "../../assets/empty-seat.png";
-
+import { Checkbox } from "antd";
 
 function Booking() {
+  const [activeSeat, setActiveSeat] = useState(null);
+
+  const togglePopup = (seat) => {
+    if (activeSeat === seat) {
+      setActiveSeat(null); // Deselect nếu click vào cùng ghế
+    } else {
+      setActiveSeat(seat); // Chọn ghế mới
+    }
+  };
+
+  const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+
+
+  const seats = [
+    ["A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8", "J8", "K8", "L8"],
+    ["A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7", "J7", "K7", "L7"],
+    ["A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6", "J6", "K6", "L6"],
+    ["A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5", "J5", "K5", "L5"],
+    [],
+    ["A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4", "J4", "K4", "L4"],
+    ["A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3", "J3", "K3", "L3"],
+    ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2", "J2", "K2", "L2"],
+    ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "J1", "K1", "L1"],
+  ];
   return (
     <>
       <div className="background-header"></div>
@@ -64,544 +88,49 @@ function Booking() {
                     <img src={saleoff_seat} alt="" /> Vé khuyến mãi
                   </div>
                 </div>
-                <div className="wrap">
+             
                   <div className="bottom row">
                     <div className="ship-container roboto-medium">
                       <table style={{ marginTop: "48px", marginLeft: "80px" }}>
                         <tbody>
-                          <tr>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>A8</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>B8</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>C8</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>D8</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>E8</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>F8</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>G8</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>H8</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>J8</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>K8</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>L8</span>
-                              </div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>A7</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>B7</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>C7</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>D7</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>E7</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>F7</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>G7</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>H7</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>J7</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>K7</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>L7</span>
-                              </div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>A6</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>B6</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>C6</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>D6</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>E6</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>F6</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>G6</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>H6</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>J6</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>K6</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>L6</span>
-                              </div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>A5</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>B5</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>C5</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>D5</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>E5</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>F5</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>G5</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>H5</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>J5</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>K5</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>L5</span>
-                              </div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                          </tr>
-                          <tr>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>A4</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>B4</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>C4</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>D4</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>E4</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>F4</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>G4</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>H4</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>J4</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>K4</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>L4</span>
-                              </div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>A3</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>B3</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>C3</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>D3</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>E3</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>F3</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>G3</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>H3</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>J3</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>K3</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>L3</span>
-                              </div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>A2</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>B2</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>C2</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>D2</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>E2</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>F2</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>G2</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>H2</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>J2</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>K2</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>L2</span>
-                              </div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px"></td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>A1</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>B1</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>C1</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>D1</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>E1</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>F1</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>G1</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>H1</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>J1</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>K1</span>
-                              </div>
-                            </td>
-                            <td width="37px" height="33px">
-                              <div className="seat">
-                                <span>L1</span>
-                              </div>
-                            </td>
-                          </tr>
+                          {seats.map((row, rowIndex) => (
+                            <tr key={rowIndex}>
+                              {Array(7)
+                                .fill(null)
+                                .map((_, idx) => (
+                                  <td
+                                    width="37px"
+                                    height="33px"
+                                    key={`empty-${rowIndex}-${idx}`}
+                                  ></td>
+                                ))}
+                              {row.map((seat, seatIndex) => (
+                                <td key={seatIndex} width="37px" height="33px">
+                                  <div
+                                    className={`seat ${
+                                      activeSeat === seat ? "selecting" : ""
+                                    }`}
+                                    onClick={() => togglePopup(seat)}
+                                  >
+                                    <span>{seat}</span>
+                                    <span
+                                      className={`popuptext ${
+                                        activeSeat === seat ? "show" : "" 
+                                      }`}
+                                    >
+                                                <span>Xin vui lòng chọn lớp vé (Thường)</span>
+                                                <Checkbox {...label} defaultChecked></Checkbox>
+                                    </span>
+                                  </div>
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
                         </tbody>
                       </table>
                     </div>
                   </div>
-                </div>
+           
               </div>
             </div>
           </div>
@@ -612,8 +141,9 @@ function Booking() {
                 <div className="title">CHIỀU ĐI</div>
                 <div className="content">
                   <ul className="nav-tab">
-                    <li className="nav-item"><a href="#">Thường</a></li>
-                   
+                    <li className="nav-item">
+                      <a href="#">Thường</a>
+                    </li>
                   </ul>
 
                   <div className="tab-content">
@@ -663,8 +193,8 @@ function Booking() {
             </div>
           </div>
         </div>
-        <div className="text-center mbot-50 mtop-20">
-          <button type="submit" className="continue-btn">
+        <div className="btn-btm text-center mbot-50 mtop-20">
+          <button type="submit" className="bi bi-arrow-right">
             <span>Tiếp tục</span>
           </button>
         </div>
