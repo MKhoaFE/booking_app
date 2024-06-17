@@ -1,3 +1,4 @@
+@charset "UTF-8";
 .container {
   max-width: 1170px;
 }
@@ -74,7 +75,7 @@
   color: white;
 }
 .booking-container .step-bar .active:after {
-  border-left-color: #24bcd3;
+  border-left: 15px solid #24bcd3;
 }
 
 .segment-container .segment-info {
@@ -140,12 +141,10 @@
 .segment-container .select-seat-container .top img {
   width: 25px;
 }
-.segment-container .select-seat-container .bottom {
-  overflow: auto;
-}
 @media (max-width: 768px) {
   .segment-container .select-seat-container .bottom {
     overflow-x: auto;
+    position: relative;
   }
 }
 .segment-container .select-seat-container .bottom .ship-container {
@@ -180,19 +179,64 @@
 }
 .segment-container .select-seat-container .bottom .ship-container .seat .popuptext {
   visibility: hidden;
-  width: 160px;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
+  padding: 225px;
+  width: 420px;
+  background-color: white;
+  color: black;
+  text-align: left;
   border-radius: 6px;
   padding: 8px 0;
   position: absolute;
   z-index: 1;
   bottom: 125%;
-  left: 50%;
-  margin-left: -80px;
+  left: 100%;
+  margin-left: -230px;
   opacity: 0;
   transition: opacity 1s;
+  box-shadow: 5px 5px 5px 5px rgb(121, 120, 120);
+}
+@media (max-width: 768px) {
+  .segment-container .select-seat-container .bottom .ship-container .seat .popuptext {
+    position: fixed;
+    bottom: 50%; /* Cố định popup ở dưới cùng của màn hình */
+    transform: translateX(-52%);
+    width: 100%; /* Đảm bảo popup không vượt quá chiều rộng của màn hình */
+    z-index: 1000;
+    margin-left: -180px;
+  }
+}
+.segment-container .select-seat-container .bottom .ship-container .seat .popuptext .infor {
+  padding: 3px 15px;
+  line-height: auto;
+}
+.segment-container .select-seat-container .bottom .ship-container .seat .popuptext .infor h4 {
+  text-align: center;
+}
+.segment-container .select-seat-container .bottom .ship-container .seat .popuptext label {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: start;
+  align-items: start;
+  cursor: pointer;
+}
+.segment-container .select-seat-container .bottom .ship-container .seat .popuptext label .text {
+  font-size: 13px;
+  line-height: 2rem;
+  padding-left: 0.3rem;
+}
+.segment-container .select-seat-container .bottom .ship-container .seat .popuptext label .text span {
+  font-weight: normal;
+}
+.segment-container .select-seat-container .bottom .ship-container .seat .popuptext label .text p {
+  color: red;
+}
+.segment-container .select-seat-container .bottom .ship-container .seat .popuptext label:hover {
+  background-color: #D6EFEF;
+}
+.segment-container .select-seat-container .bottom .ship-container .seat .popuptext p {
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
 }
 .segment-container .select-seat-container .bottom .ship-container .seat .popuptext:after {
   content: "";
@@ -202,7 +246,12 @@
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: #555 transparent transparent transparent;
+  border-color: white transparent transparent transparent;
+}
+@media (max-width: 768px) {
+  .segment-container .select-seat-container .bottom .ship-container .seat .popuptext:after {
+    display: none;
+  }
 }
 .segment-container .select-seat-container .bottom .ship-container .seat .show {
   visibility: visible;

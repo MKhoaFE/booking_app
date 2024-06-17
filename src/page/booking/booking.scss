@@ -69,7 +69,7 @@
       color: white;
     }
     .active:after {
-      border-left-color: #24bcd3;
+      border-left:15px solid #24bcd3;
     }
   }
 }
@@ -137,9 +137,10 @@
     }
 
     .bottom {
-      overflow: auto;
+      // overflow: auto;
       @media (max-width: 768px) {
         overflow-x: auto;
+        position: relative;
       }
       .ship-container {
         max-width: 846px;
@@ -169,29 +170,78 @@
           display: inline-block;
           .popuptext {
             visibility: hidden;
-            width: 160px;
-            background-color: #555;
-            color: #fff;
-            text-align: center;
+            padding: 225px;
+            width: 420px;
+            background-color: white;
+            color: black;
+            text-align: left;
             border-radius: 6px;
             padding: 8px 0;
             position: absolute;
             z-index: 1;
             bottom: 125%;
-            left: 50%;
-            margin-left: -80px;
+            // top: 100%;
+            left:100%;
+            margin-left: -230px;
             opacity: 0;
             transition: opacity 1s;
+            box-shadow: 5px 5px 5px 5px rgb(121, 120, 120);
+            @media (max-width:768px) {
+              position: fixed;
+              bottom: 50%; /* Cố định popup ở dưới cùng của màn hình */
+              transform: translateX(-52%);
+              width: 100%; /* Đảm bảo popup không vượt quá chiều rộng của màn hình */
+              z-index: 1000;
+              margin-left: -180px;
+            }
+            .infor{
+              padding: 3px 15px;
+              line-height: auto;
+              h4{
+                text-align: center;
+              }
+            }
+            label{
+              margin-top: 1rem;
+              display: flex;
+              justify-content: start;
+              align-items: start;
+              cursor: pointer;
+              .text{
+                font-size: 13px;
+                line-height: 2rem;
+                padding-left: 0.3rem;
+                span{
+                  font-weight: normal;
+                }
+                p{
+                  color: red;
+                }
+              }
+            }
+            label:hover{
+              background-color: #D6EFEF;
+              
+            }
+            p{
+              padding: 0;
+              margin: 0;
+              font-size: 13px;
+            }
           }
           .popuptext:after {
             content: "";
             position: absolute;
+            
             top: 100%;
             left: 50%;
             margin-left: -5px;
             border-width: 5px;
             border-style: solid;
-            border-color: #555 transparent transparent transparent;
+            border-color: white transparent transparent transparent;
+            @media (max-width:768px) {
+              display: none;
+            }
           }
           .show {
             visibility: visible;

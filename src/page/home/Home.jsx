@@ -7,29 +7,24 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import SlideComponent from "../../components/Slide/SlideComponent.jsx";
 import Input from "@mui/material/Input";
 import InputAdornment from "@mui/material/InputAdornment";
-
+import { Link } from "react-router-dom";
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [slideIndex, setSlideIndex] = useState(0);
   const [slideRightIndex, setRightSlideIndex] = useState(0);
 
-  const times = [
-    '9:00',
-    '12:00',
-    '18:00',
-
-  ];
+  const times = ["9:00", "12:00", "18:00"];
   const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250,
+      },
     },
-  },
-};
+  };
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
@@ -284,7 +279,9 @@ const MenuProps = {
                 />
               </FormControl>
             </Box>
-            <button>ĐẶT VÉ</button>
+            <Link to="/booking">
+              <button>ĐẶT VÉ</button>
+            </Link>
           </div>
         </div>
       </div>
