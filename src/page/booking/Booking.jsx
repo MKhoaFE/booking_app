@@ -7,6 +7,8 @@ import saleoff_seat from "../../assets/saleoff-seat.png";
 import reserved_seat from "../../assets/reserved-seat.png";
 import empty_seat from "../../assets/empty-seat.png";
 import "font-awesome/css/font-awesome.min.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function Booking() {
   const [activeSeat, setActiveSeat] = useState(null);
@@ -39,7 +41,7 @@ function Booking() {
     clearInterval(intervalIds[seat]);
     setTimer((prev) => ({
       ...prev,
-      [seat]: 2,
+      [seat]: 1000,
     }));
     const id = setInterval(() => {
       setTimer((prev) => {
@@ -85,6 +87,18 @@ function Booking() {
     ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2", "J2", "K2", "L2"],
     ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "J1", "K1", "L1"],
   ];
+
+  const countSlots = (seat) => {
+    let totalSlots = 0;
+    for (let row of seats) {
+      totalSlots += row.length;
+    }
+    return totalSlots;
+  };
+
+  const getTotalSelectedSeats = () => {
+    return Object.keys(selectedSeats).length;
+  };
 
   return (
     <>
@@ -257,29 +271,36 @@ function Booking() {
             </div>
           </div>
           <div className="col-md-3">
-            <div className="book-sidebar roboto-thin">
+            <div className="book-sidebar ">
               <div className="price-info">
                 <div className="direction"></div>
                 <div className="title">CHIỀU ĐI</div>
                 <div className="content">
                   <ul className="nav-tab">
-                    {Object.keys(selectedSeats).map((seat) => (
-                      <div key={seat}>
-                        <div>
-                          Ghế: {seat} -{" "}
-                          {selectedSeats[seat] === "special"
-                            ? "Vé đặc biệt"
-                            : "Vé thường"}
-                        </div>
-                        <div>Thời gian giữ ghế: {timer[seat]}s</div>
-                      </div>
-                    ))}
+                    {Object.keys(selectedSeats).length > 0 && (
+                      <>
+                        <h4>Ghế đang giữ</h4>
+                        {Object.keys(selectedSeats).map((seat) => (
+                          <div className="item" key={seat}>
+                            <div className="seat-item">
+                              Ghế {seat} {" "}
+
+                            </div>
+                            <div className="time-item"> {timer[seat]}</div>
+                            <div><i class="bi bi-trash"></i></div>
+                            
+                          </div>
+                        ))}
+                
+                      </>
+                    )}
+
                     <li className="nav-item">
                       <Link to="/">Thường</Link>
                     </li>
                   </ul>
 
-                  <div className="tab-content">
+                  <div className="tab-content roboto-regular">
                     <div className="prices">
                       <h4>
                         Vé đặc biệt đặt trước 1 ngày (Áp dụng vé người lớn)
@@ -305,11 +326,13 @@ function Booking() {
                       <h4>Vé Thường</h4>
                       <div className="item">
                         <div className="name">Số lượng: </div>
-                        <div className="price">10</div>
+                        <div className="price">{countSlots(seats) - 10}</div>
                       </div>
                       <div className="item">
                         <div className="name">Còn lại: </div>
-                        <div className="price">10</div>
+                        <div className="price">
+                          {countSlots(seats) - 10 - getTotalSelectedSeats()}
+                        </div>
                       </div>
                       <div className="item">
                         <div className="name">Người lớn: </div>
