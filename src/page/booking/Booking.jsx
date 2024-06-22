@@ -36,16 +36,19 @@ function Booking() {
   };
 
   const startTimer = (seat) => {
-    if (intervalIds[seat]) {
-      clearInterval(intervalIds[seat]);
-    }
+    clearInterval(intervalIds[seat]);
     setTimer((prev) => ({
       ...prev,
-      [seat]: 1,
+      [seat]: 2,
     }));
     const id = setInterval(() => {
       setTimer((prev) => {
-        const newTime = prev[seat] > 1 ? prev[seat] - 1 : 0;
+        const newTime = prev[seat] - 1;
+        if (newTime <= 0) {
+          clearInterval(id);
+          unselectedSeat(seat);
+          return { ...prev, [seat]: 0 };
+        }
         return { ...prev, [seat]: newTime };
       });
     }, 1000);
