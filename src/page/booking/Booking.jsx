@@ -7,8 +7,8 @@ import saleoff_seat from "../../assets/saleoff-seat.png";
 import reserved_seat from "../../assets/reserved-seat.png";
 import empty_seat from "../../assets/empty-seat.png";
 import "font-awesome/css/font-awesome.min.css";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 function Booking() {
   const [activeSeat, setActiveSeat] = useState(null);
@@ -176,7 +176,7 @@ function Booking() {
                               <td key={seatIndex} width="37px" height="33px">
                                 <div
                                   className={`seat ${
-                                    selectedSeats[seat] ? "selecting" : ""
+                                    selectedSeats[seat] ? selectedSeats[seat] === "special" ? "saleoff" : "selecting" :""
                                   }`}
                                   onClick={() =>
                                     selectedSeats[seat]
@@ -279,19 +279,18 @@ function Booking() {
                   <ul className="nav-tab">
                     {Object.keys(selectedSeats).length > 0 && (
                       <>
-                        <h4>Ghế đang giữ</h4>
-                        {Object.keys(selectedSeats).map((seat) => (
-                          <div className="item" key={seat}>
-                            <div className="seat-item">
-                              Ghế {seat} {" "}
-
+                        <div className="wrap-nav-tab">
+                          <h4>Ghế đang giữ</h4>
+                          {Object.keys(selectedSeats).map((seat) => (
+                            <div className="item" key={seat}>
+                              <div className="seat-item">Ghế {seat} </div>
+                              <div className="time-item"> {timer[seat]}</div>
+                              <div>
+                                <i class="bi bi-trash"></i>
+                              </div>
                             </div>
-                            <div className="time-item"> {timer[seat]}</div>
-                            <div><i class="bi bi-trash"></i></div>
-                            
-                          </div>
-                        ))}
-                
+                          ))}
+                        </div>
                       </>
                     )}
 

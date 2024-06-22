@@ -286,13 +286,16 @@
           padding-top: 1rem;
           padding-bottom: 1rem;
           border-bottom: solid 1px #24bdc3;
+          .wrap-nav-tab {
+            border-bottom: solid 1px #24bdc3;
+          }
           h4 {
             text-align: center;
           }
           .item {
             display: flex;
             justify-content: space-between;
-            border-bottom: 1px solid #24bcd3;
+
             .seat-item {
               flex: 1;
               float: left;
@@ -301,7 +304,7 @@
             .time-item {
               flex: 1;
               float: left;
-              font-weight: 400!important;
+              font-weight: 400 !important;
             }
             i {
               font-size: 16px;

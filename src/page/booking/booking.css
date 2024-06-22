@@ -295,13 +295,15 @@
   padding-bottom: 1rem;
   border-bottom: solid 1px #24bdc3;
 }
+.segment-container .book-sidebar .price-info .content .nav-tab .wrap-nav-tab {
+  border-bottom: solid 1px #24bdc3;
+}
 .segment-container .book-sidebar .price-info .content .nav-tab h4 {
   text-align: center;
 }
 .segment-container .book-sidebar .price-info .content .nav-tab .item {
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid #24bcd3;
 }
 .segment-container .book-sidebar .price-info .content .nav-tab .item .seat-item {
   flex: 1;
