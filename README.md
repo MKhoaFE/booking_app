@@ -1,8 +1,9 @@
 A web app Travel with reactjs and basic Nodejs
-Frontend:
+*Frontend:
   - Framework: MUI, Bootstrap
   - SCSS
-Backend:
+    
+*Backend:
   - MongoDB
   - Nodejs
     
