@@ -6,10 +6,13 @@ import selecting_seat from "../../assets/selecting-seat.png";
 import saleoff_seat from "../../assets/saleoff-seat.png";
 import reserved_seat from "../../assets/reserved-seat.png";
 import empty_seat from "../../assets/empty-seat.png";
+import "font-awesome/css/font-awesome.min.css";
 
 function Booking() {
   const [activeSeat, setActiveSeat] = useState(null);
-  const [selectedTickets, setSelectedTickets] = useState({});
+  const [selectedSeats, setSelectedSeats] = useState({});
+  const [timer, setTimer] = useState({});
+  const [intervalIds, setIntervalIds] = useState({});
 
   const togglePopup = (seat) => {
     if (activeSeat === seat) {
@@ -20,14 +23,52 @@ function Booking() {
   };
 
   const handlePopupClick = (event) => {
-    event.stopPropagation();
+    event.stopPropagation(); //ngăn chặn lan truyền event khi click vào trong popup
   };
 
   const handleRadioChange = (seat, ticketType) => {
-    setSelectedTickets((prev) => ({
+    setSelectedSeats((prev) => ({
       ...prev,
       [seat]: ticketType,
     }));
+    setActiveSeat(null);
+    startTimer(seat);
+  };
+
+  const startTimer = (seat) => {
+    if (intervalIds[seat]) {
+      clearInterval(intervalIds[seat]);
+    }
+    setTimer((prev) => ({
+      ...prev,
+      [seat]: 1,
+    }));
+    const id = setInterval(() => {
+      setTimer((prev) => {
+        const newTime = prev[seat] > 1 ? prev[seat] - 1 : 0;
+        return { ...prev, [seat]: newTime };
+      });
+    }, 1000);
+    setIntervalIds((prev) => ({
+      ...prev,
+      [seat]: id,
+    }));
+  };
+
+  const unselectedSeat = (seat) => {
+    setSelectedSeats((prev) => {
+      const { [seat]: _, ...rest } = prev;
+      return rest;
+    });
+    clearInterval(intervalIds[seat]);
+    setTimer((prev) => {
+      const { [seat]: _, ...rest } = prev;
+      return rest;
+    });
+    setIntervalIds((prev) => {
+      const { [seat]: _, ...rest } = prev;
+      return rest;
+    });
   };
 
   const seats = [
@@ -66,7 +107,7 @@ function Booking() {
           <div className="col-md-9">
             <div className="container">
               <div className="segment-info">
-                Đặt vé từ <span className="place-name">TP. HỒ CHÍ MINH</span>{" "}
+                Đặt vé từ <span className="place-name">TP. HỒ CHÍ MINH</span>
                 đến <span className="place-name">VŨNG TÀU</span> ngày 04/06/2024
                 <div className="detail-wrap">
                   <div className="select-time">
@@ -118,9 +159,13 @@ function Booking() {
                               <td key={seatIndex} width="37px" height="33px">
                                 <div
                                   className={`seat ${
-                                    activeSeat === seat ? "selecting" : ""
+                                    selectedSeats[seat] ? "selecting" : ""
                                   }`}
-                                  onClick={() => togglePopup(seat)}
+                                  onClick={() =>
+                                    selectedSeats[seat]
+                                      ? unselectedSeat(seat)
+                                      : togglePopup(seat)
+                                  }
                                 >
                                   <span>{seat}</span>
                                   {activeSeat === seat && (
@@ -134,13 +179,21 @@ function Booking() {
                                         </h4>
                                         <label>
                                           <div>
-                                          <input
-                                            type="radio"
-                                            name="ticket"
-                                            value="special"
-                                            checked={selectedTickets[seat] === "special"}
-                                            onChange={() => handleRadioChange(seat, "special")}
-                                          ></input>
+                                            <input
+                                              type="radio"
+                                              name={`ticket-${seat}`}
+                                              value="special"
+                                              checked={
+                                                selectedSeats[seat] ===
+                                                "special"
+                                              }
+                                              onChange={() =>
+                                                handleRadioChange(
+                                                  seat,
+                                                  "special"
+                                                )
+                                              }
+                                            ></input>
                                           </div>
 
                                           <div className="text">
@@ -161,13 +214,21 @@ function Booking() {
                                         </label>
                                         <label>
                                           <div>
-                                          <input
-                                            type="radio"
-                                            name="ticket"
-                                            value="regular"
-                                            checked={selectedTickets[seat] === "regular"}
-                                            onChange={() => handleRadioChange(seat, "regular")}
-                                          ></input>
+                                            <input
+                                              type="radio"
+                                              name={`ticket-${seat}`}
+                                              value="regular"
+                                              checked={
+                                                selectedSeats[seat] ===
+                                                "regular"
+                                              }
+                                              onChange={() =>
+                                                handleRadioChange(
+                                                  seat,
+                                                  "regular"
+                                                )
+                                              }
+                                            ></input>
                                           </div>
                                           <div className="text">
                                             <span>Vé thường</span>
@@ -199,8 +260,19 @@ function Booking() {
                 <div className="title">CHIỀU ĐI</div>
                 <div className="content">
                   <ul className="nav-tab">
+                    {Object.keys(selectedSeats).map((seat) => (
+                      <div key={seat}>
+                        <div>
+                          Ghế: {seat} -{" "}
+                          {selectedSeats[seat] === "special"
+                            ? "Vé đặc biệt"
+                            : "Vé thường"}
+                        </div>
+                        <div>Thời gian giữ ghế: {timer[seat]}s</div>
+                      </div>
+                    ))}
                     <li className="nav-item">
-                      <a href="#">Thường</a>
+                      <Link to="/">Thường</Link>
                     </li>
                   </ul>
 
