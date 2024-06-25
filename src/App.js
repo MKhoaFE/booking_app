@@ -9,6 +9,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Content } from "antd/es/layout/layout.js";
 import Err from "./page/error/Err.jsx";
 import Booking from "./page/booking/Booking.jsx";
+import Passengers from "./page/passengers/passengers.jsx";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="/" element={<Home />}></Route>
             <Route path="/booking" element={<Booking />}></Route>
             <Route path="*" element={<Err/>}></Route>
+            <Route path="/passengers" element={<Passengers/>}></Route>
           </Routes>
         </Content>
 

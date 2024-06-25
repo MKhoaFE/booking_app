@@ -9,6 +9,8 @@ import empty_seat from "../../assets/empty-seat.png";
 import "font-awesome/css/font-awesome.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import Stepbar from "../../components/StepBar/stepbar";
+import BookingHeader from "../../components/Booking-header/bookingHeader";
 
 function Booking() {
   const [activeSeat, setActiveSeat] = useState(null);
@@ -102,29 +104,15 @@ function Booking() {
 
   return (
     <>
-      <div className="background-header"></div>
-      <div className="booking-container">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12">
-              <div className="step-bar roboto-medium">
-                <div className="item">Tìm kiếm</div>
-                <div className="item active">Chọn chỗ ngồi</div>
-                <div className="item">Thông tin hành khách</div>
-                <div className="item">Thanh toán</div>
-                <div className="item">Kết thúc</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <BookingHeader/>
+      <Stepbar></Stepbar>
 
       <div className="segment-container container">
         <div className="row">
           <div className="col-md-9">
             <div className="container">
               <div className="segment-info">
-                Đặt vé từ <span className="place-name">TP. HỒ CHÍ MINH</span>
+                Đặt vé từ <span className="place-name">TP. HỒ CHÍ MINH</span>{" "}
                 đến <span className="place-name">VŨNG TÀU</span> ngày 04/06/2024
                 <div className="detail-wrap">
                   <div className="select-time">
@@ -176,7 +164,11 @@ function Booking() {
                               <td key={seatIndex} width="37px" height="33px">
                                 <div
                                   className={`seat ${
-                                    selectedSeats[seat] ? selectedSeats[seat] === "special" ? "saleoff" : "selecting" :""
+                                    selectedSeats[seat]
+                                      ? selectedSeats[seat] === "special"
+                                        ? "saleoff"
+                                        : "selecting"
+                                      : ""
                                   }`}
                                   onClick={() =>
                                     selectedSeats[seat]
@@ -349,8 +341,10 @@ function Booking() {
           </div>
         </div>
         <div className="btn-btm text-center mbot-50 mtop-20">
-          <button type="submit" className="bi bi-arrow-right">
-            <span>Tiếp tục</span>
+          <button type="submit">
+            <Link to="/passengers">
+              <span>Tiếp tục</span>
+            </Link>
           </button>
         </div>
       </div>
