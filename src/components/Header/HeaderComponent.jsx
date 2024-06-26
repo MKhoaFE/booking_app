@@ -56,7 +56,7 @@ function HeaderComponent() {
           <Navbar expand="lg">
             <Navbar.Toggle aria-controls="navbarScroll" />
             <Navbar.Brand href="#" style={{ padding: "1rem 0", margin: "0" }}>
-              <Link to="/home"><img src={logo_header} alt="" /></Link>
+              <Link to="/"><img src={logo_header} alt="" /></Link>
             </Navbar.Brand>
 
             <Navbar.Collapse id="navbarScroll">
