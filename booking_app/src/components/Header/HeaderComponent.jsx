@@ -9,7 +9,6 @@ import logo1 from "../../assets/google-play.png";
 import logo2 from "../../assets/app-store.png";
 import { Button } from "antd";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
@@ -42,11 +41,14 @@ function HeaderComponent() {
               </span>
               <img src={logo1} alt="" />
               <img src={logo2} alt="" />
-              <Button
-                style={{ background: "none", color: "white", border: "none" }}
-              >
-                Đăng nhập
-              </Button>
+              <Link to="/login" style={{textDecoration:"none"}}>
+                
+                <Button
+                  style={{ background: "none", color: "white", border: "none" }}
+                >
+                  Đăng nhập
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -56,7 +58,9 @@ function HeaderComponent() {
           <Navbar expand="lg">
             <Navbar.Toggle aria-controls="navbarScroll" />
             <Navbar.Brand href="#" style={{ padding: "1rem 0", margin: "0" }}>
-              <Link to="/"><img src={logo_header} alt="" /></Link>
+              <Link to="/">
+                <img src={logo_header} alt="" />
+              </Link>
             </Navbar.Brand>
 
             <Navbar.Collapse id="navbarScroll">

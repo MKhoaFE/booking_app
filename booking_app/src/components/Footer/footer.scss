@@ -2,7 +2,6 @@
   width: 100%;
   background-color: #353535;
   height: auto;
-  margin-top: 5rem;
   .top-footer {
     background-image: url("https://greenlines-dp.com/images/footer-top-bg.png");
     height: 200px;
@@ -70,4 +69,7 @@
       }
     }
   }
+}
+.hide{
+  display: none!important;
 }

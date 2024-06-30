@@ -286,6 +286,9 @@
   flex: 1;
   font-weight: bold;
 }
+.segment-container .btn-btm {
+  margin-bottom: 5rem;
+}
 .segment-container .btn-btm button {
   margin-top: 2rem;
   padding: 10px 60px 10px 10px;

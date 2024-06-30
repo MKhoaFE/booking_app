@@ -2,7 +2,6 @@
   width: 100%;
   background-color: #353535;
   height: auto;
-  margin-top: 5rem;
 }
 .footer .top-footer {
   background-image: url("https://greenlines-dp.com/images/footer-top-bg.png");
@@ -79,4 +78,8 @@
 }
 .footer .footer-bottom .wrap .right img {
   width: 120px;
+}
+
+.hide {
+  display: none !important;
 }/*# sourceMappingURL=footer.css.map */

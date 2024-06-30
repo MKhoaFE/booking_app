@@ -278,7 +278,7 @@ function Booking() {
                               <div className="seat-item">Ghế {seat} </div>
                               <div className="time-item"> {timer[seat]}</div>
                               <div>
-                                <i class="bi bi-trash"></i>
+                                <i className="bi bi-trash"></i>
                               </div>
                             </div>
                           ))}
