@@ -6,8 +6,8 @@ import "../../GlobalStyles/glbStyles.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 function Login() {
-  const [email, setEmail] = useState("initial data");
-  const [password, setPassword] = useState("initial data");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
@@ -99,12 +99,15 @@ function Login() {
                       <span className="error-message">{passwordError}</span>
                     )}
                   </div>
-                  <div className="form-group">
-                    <input type="checkbox" id="remember" />
-                    <label htmlFor="remember">Ghi nhớ</label>
-                    <a href="#" className="forgot-password">
-                      QUÊN MẬT KHẨU?
-                    </a>
+                  <div className="form-group mid">
+                    <div className="remember">
+                      <input type="checkbox" id="remember" />
+                      Ghi nhớ
+                    </div>
+
+                    <Link to="/forgot-password">
+                      <button>Quên mật khẩu?</button>
+                    </Link>
                   </div>
                   <div className="form-actions">
                     <button type="submit" className="login-btn">
@@ -113,6 +116,10 @@ function Login() {
                     <button type="button" className="cancel-btn">
                       HỦY
                     </button>
+                  </div>
+
+                  <div className="sign-up">
+                    <span>Chưa có tài khoản</span> <Link to="/signup"><button>Đăng ký</button></Link>
                   </div>
                 </form>
               </div>
