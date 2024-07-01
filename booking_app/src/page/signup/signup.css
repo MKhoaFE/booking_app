@@ -1,0 +1,204 @@
+.login-wrapper {
+  height: 600px;
+  position: relative;
+}
+.login-wrapper .bg {
+  background-image: url("../../assets/bg-login.jpg");
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.login-wrapper .login-form {
+  top: 0;
+  left: 0;
+  width: 100%;
+  position: absolute;
+}
+.login-wrapper .login-form .content {
+  width: 770px;
+  margin: 50px auto;
+  background: white;
+  padding: 20px;
+  display: block;
+}
+@media (max-width: 768px) {
+  .login-wrapper .login-form .content {
+    width: 330px;
+  }
+}
+.login-wrapper .login-form .content .title h2 {
+  text-align: center;
+}
+.login-wrapper .login-form .content .wrap {
+  display: flex;
+}
+@media (max-width: 768px) {
+  .login-wrapper .login-form .content .wrap {
+    display: block;
+  }
+}
+.login-wrapper .login-form .content .wrap .social-block {
+  line-height: 1rem;
+  border-right: 1px solid black;
+  height: 400px;
+  margin-top: 20px;
+}
+@media (max-width: 768px) {
+  .login-wrapper .login-form .content .wrap .social-block {
+    border: none;
+    height: 130px;
+  }
+}
+.login-wrapper .login-form .content .wrap .social-block span {
+  font-size: 11px;
+}
+.login-wrapper .login-form .content .wrap .social-block a {
+  text-decoration: none;
+}
+.login-wrapper .login-form .content .wrap .social-block .fb {
+  display: flex;
+  padding-top: 1.5rem;
+}
+.login-wrapper .login-form .content .wrap .social-block .fb button {
+  background-color: #2954b1;
+  text-transform: uppercase;
+  color: white;
+  font-size: 11px;
+  padding-top: 10px;
+  padding-bottom: 8px;
+  font-weight: 500;
+  border: none;
+  text-align: left;
+}
+.login-wrapper .login-form .content .wrap .social-block .fb .left {
+  width: 36px;
+  font-size: 1.6rem;
+  text-align: center;
+  border-right: 1px solid black;
+}
+.login-wrapper .login-form .content .wrap .social-block .fb .right {
+  width: 100%;
+}
+.login-wrapper .login-form .content .wrap .social-block .fb .fa {
+  color: white;
+}
+.login-wrapper .login-form .content .wrap .social-block .gg {
+  display: flex;
+  padding-top: 1rem;
+}
+.login-wrapper .login-form .content .wrap .social-block .gg button {
+  background-color: #d15b4c;
+  text-transform: uppercase;
+  color: white;
+  font-size: 11px;
+  padding-top: 10px;
+  padding-bottom: 8px;
+  font-weight: 500;
+  border: none;
+  text-align: left;
+}
+.login-wrapper .login-form .content .wrap .social-block .gg .left {
+  width: 36px;
+  border-right: 1px black solid;
+  font-size: 1.6rem;
+  text-align: center;
+}
+.login-wrapper .login-form .content .wrap .social-block .gg .right {
+  width: 100%;
+}
+.login-wrapper .login-form .content .wrap .social-block .gg .fa {
+  color: white;
+}
+.login-wrapper .login-form .content .wrap .form-login {
+  margin-top: 10px;
+}
+.login-wrapper .login-form .content .wrap .form-login input {
+  padding: 0.375rem 0.75rem;
+}
+.login-wrapper .login-form .content .wrap .form-login .form-group {
+  margin-bottom: 15px;
+}
+.login-wrapper .login-form .content .wrap .form-login .form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+.login-wrapper .login-form .content .wrap .form-login .form-group input[type=repassword],
+.login-wrapper .login-form .content .wrap .form-login .form-group input[type=fullname],
+.login-wrapper .login-form .content .wrap .form-login .form-group input[type=email],
+.login-wrapper .login-form .content .wrap .form-login .form-group input[type=password] {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.login-wrapper .login-form .content .wrap .form-login .form-group input[type=repassword].error,
+.login-wrapper .login-form .content .wrap .form-login .form-group input[type=fullname].error,
+.login-wrapper .login-form .content .wrap .form-login .form-group input[type=email].error,
+.login-wrapper .login-form .content .wrap .form-login .form-group input[type=password].error {
+  border-color: red;
+}
+.login-wrapper .login-form .content .wrap .form-login .form-group input[type=checkbox] {
+  margin-right: 10px;
+}
+.login-wrapper .login-form .content .wrap .form-login .form-group .error-message {
+  color: red;
+  font-size: 0.875em;
+}
+.login-wrapper .login-form .content .wrap .form-login .mid {
+  display: flex;
+  justify-content: space-between;
+}
+.login-wrapper .login-form .content .wrap .form-login .remember {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login-wrapper .login-form .content .wrap .form-login a {
+  text-decoration: none;
+}
+.login-wrapper .login-form .content .wrap .form-login a button {
+  text-transform: uppercase;
+  background: none;
+  color: #337ab7;
+  font-size: 11px;
+  padding-top: 10px;
+  padding-bottom: 8px;
+  font-weight: 500;
+  border: none;
+}
+.login-wrapper .login-form .content .wrap .form-login .form-actions {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 1rem;
+}
+.login-wrapper .login-form .content .wrap .form-login .form-actions .login-btn,
+.login-wrapper .login-form .content .wrap .form-login .form-actions .cancel-btn {
+  width: 48%;
+  padding: 10px;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+.login-wrapper .login-form .content .wrap .form-login .form-actions .login-btn {
+  background-color: #337ab7;
+}
+.login-wrapper .login-form .content .wrap .form-login .form-actions .login-btn:hover {
+  background-color: #235d8f;
+}
+.login-wrapper .login-form .content .wrap .form-login .form-actions .cancel-btn {
+  background-color: #d9534f;
+}
+.login-wrapper .login-form .content .wrap .form-login .form-actions .cancel-btn:hover {
+  background-color: #b43e3a;
+}
+.login-wrapper .login-form .content .wrap .form-login .sign-up {
+  display: flex;
+  text-align: left;
+  align-items: center;
+  padding-top: 1rem;
+}
+.login-wrapper .login-form .content .wrap .form-login .sign-up button {
+  padding-left: 1rem;
+}/*# sourceMappingURL=signup.css.map */
