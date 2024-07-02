@@ -129,7 +129,6 @@
   padding: 8px;
   box-sizing: border-box;
   border: 1px solid #ccc;
-  border-radius: 4px;
 }
 .login-wrapper .login-form .content .wrap .form-login .form-group input[type=email].error,
 .login-wrapper .login-form .content .wrap .form-login .form-group input[type=password].error {

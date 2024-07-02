@@ -9,10 +9,12 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullname, setFullname] = useState("");
+  const [repassword, setRepassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [repassworderror, setRepassworderror] = useState("");
-  const [fullnameerror, setFullnameerror] = useState("");
+  const [repasswordError, setRepassworderror] = useState("");
+  const [fullnameError, setFullnameerror] = useState("");
   const handleEmailBlur = () => {
     if (email === "") {
       setEmailError("Vui lòng nhập dữ liệu");
@@ -21,14 +23,14 @@ function Signup() {
     }
   };
   const handleRepasswordBlur = () => {
-    if (repassworderror === "") {
+    if (repassword === "") {
       setRepassworderror("Vui lòng nhập dữ liệu");
     } else {
       setRepassworderror("");
     }
   };
   const handleFullnameBlur = () => {
-    if (fullnameerror === "") {
+    if (fullname === "") {
       setFullnameerror("Vui lòng nhập dữ liệu");
     } else {
       setFullnameerror("");
@@ -47,6 +49,8 @@ function Signup() {
     // Handle login logic here
     console.log("Email:", email);
     console.log("Password:", password);
+    console.log("fullname: ", fullname);
+    console.log("repassword: ", repassword);
   };
 
   return (
@@ -90,13 +94,15 @@ function Signup() {
                     <label>Họ và tên (*)</label>
                     <input
                       type="fullname"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      value={fullname}
+                      onChange={(e) => setFullname(e.target.value)}
                       onBlur={handleFullnameBlur}
-                      className={email === "" && fullnameerror ? "error" : ""}
+                      className={
+                        fullname === "" && fullnameError ? "error" : ""
+                      }
                     />
-                    {email === "" && fullnameerror && (
-                      <span className="error-message">{fullnameerror}</span>
+                    {fullname === "" && fullnameError && (
+                      <span className="error-message">{fullnameError}</span>
                     )}
                   </div>
                   <div className="form-group">
@@ -130,16 +136,16 @@ function Signup() {
                   <div className="form-group">
                     <label>Xác nhận mật khẩu (*)</label>
                     <input
-                      type="repassword"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      type="password"
+                      value={repassword}
+                      onChange={(e) => setRepassword(e.target.value)}
                       onBlur={handleRepasswordBlur}
                       className={
-                        password === "" && passwordError ? "error" : ""
+                        repassword === "" && repasswordError ? "error" : ""
                       }
                     />
-                    {password === "" && passwordError && (
-                      <span className="error-message">{passwordError}</span>
+                    {repassword === "" && repasswordError && (
+                      <span className="error-message">{repasswordError}</span>
                     )}
                   </div>
 
@@ -154,7 +160,7 @@ function Signup() {
 
                   <div className="sign-up">
                     <span>Đã có tài khoản</span>{" "}
-                    <Link to="/signup">
+                    <Link to="/login">
                       <button>Đăng nhập</button>
                     </Link>
                   </div>

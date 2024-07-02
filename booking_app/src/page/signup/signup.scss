@@ -1,6 +1,9 @@
 .login-wrapper {
     height: 600px;
     position: relative;
+    @media (max-width:768px) {
+      height: 785px;
+    }
     .bg {
       background-image: url("../../assets/bg-login.jpg");
       width: 100%;
@@ -115,11 +118,9 @@
             }
   
             .form-group {
-              margin-bottom: 15px;
   
               label {
                 display: block;
-                margin-bottom: 5px;
               }
               input[type="repassword"],
               input[type="fullname"],
@@ -129,7 +130,6 @@
                 padding: 8px;
                 box-sizing: border-box;
                 border: 1px solid #ccc;
-                border-radius: 4px;
   
                 &.error {
                   border-color: red;
