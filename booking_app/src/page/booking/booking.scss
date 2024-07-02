@@ -31,6 +31,25 @@
           text-decoration: none;
         }
       }
+      .special {
+        gap: 1rem;
+        button {
+          width: 15rem;
+          padding: 0 4rem;
+          background: white;
+          color: black;
+          border: black 1px solid;
+          border-radius: 0px;
+          text-decoration: none;
+        }
+        button:hover {
+        }
+
+        .active{
+          background:#004618 ;
+          color: white;
+        }
+      }
     }
   }
   .line {

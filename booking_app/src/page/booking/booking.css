@@ -33,6 +33,22 @@
 .segment-container .segment-info .detail-wrap .select-time a {
   text-decoration: none;
 }
+.segment-container .segment-info .detail-wrap .special {
+  gap: 1rem;
+}
+.segment-container .segment-info .detail-wrap .special button {
+  width: 15rem;
+  padding: 0 4rem;
+  background: white;
+  color: black;
+  border: black 1px solid;
+  border-radius: 0px;
+  text-decoration: none;
+}
+.segment-container .segment-info .detail-wrap .special .active {
+  background: #004618;
+  color: white;
+}
 .segment-container .line {
   width: 100%;
   border-top: 1px dotted rgb(153, 152, 152);

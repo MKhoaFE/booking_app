@@ -11,6 +11,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Stepbar from "../../components/StepBar/stepbar";
 import BookingHeader from "../../components/Booking-header/bookingHeader";
+import Tab from "react-bootstrap/Tab";
+import Tabs from "react-bootstrap/Tabs";
+import Trip8AM from "../../components/trip8am/trip8AM";
+import Trip12AM from "../../components/trip12am/trip12AM";
 
 function Booking() {
   const [activeSeat, setActiveSeat] = useState(null);
@@ -101,10 +105,10 @@ function Booking() {
   const getTotalSelectedSeats = () => {
     return Object.keys(selectedSeats).length;
   };
-
+  const [key, setKey] = useState("8:00");
   return (
     <>
-      <BookingHeader/>
+      <BookingHeader />
       <Stepbar></Stepbar>
 
       <div className="segment-container container">
@@ -115,154 +119,35 @@ function Booking() {
                 Đặt vé từ <span className="place-name">TP. HỒ CHÍ MINH</span>{" "}
                 đến <span className="place-name">VŨNG TÀU</span> ngày 04/06/2024
                 <div className="detail-wrap">
-                  <div className="select-time">
+                  {/* <div className="select-time">
                     <Link to="/">
                       <button className="active">8:00</button>
-                    </Link>
-                    <Link to="/booking">
-                      <button>10:00</button>
                     </Link>
                     <Link to="/">
                       <button>12:00</button>
                     </Link>
-                  </div>
-                </div>
-              </div>
-              <div className="line"></div>
-              <div className="select-seat-container">
-                <div className="top row">
-                  <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
-                    <img src={empty_seat} alt="" /> Ghế trống
-                  </div>
-                  <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
-                    <img src={reserved_seat} alt="" /> Ghế đã đặt
-                  </div>
-                  <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
-                    <img src={selecting_seat} alt="" /> Ghế đang chọn
-                  </div>
-                  <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
-                    <img src={saleoff_seat} alt="" /> Vé khuyến mãi
-                  </div>
-                </div>
+                  </div> */}
 
-                <div className="bottom row">
-                  <div className="ship-container roboto-medium">
-                    <table style={{ marginTop: "48px", marginLeft: "80px" }}>
-                      <tbody>
-                        {seats.map((row, rowIndex) => (
-                          <tr key={rowIndex}>
-                            {Array(7)
-                              .fill(null)
-                              .map((_, idx) => (
-                                <td
-                                  width="37px"
-                                  height="33px"
-                                  key={`empty-${rowIndex}-${idx}`}
-                                ></td>
-                              ))}
-                            {row.map((seat, seatIndex) => (
-                              <td key={seatIndex} width="37px" height="33px">
-                                <div
-                                  className={`seat ${
-                                    selectedSeats[seat]
-                                      ? selectedSeats[seat] === "special"
-                                        ? "saleoff"
-                                        : "selecting"
-                                      : ""
-                                  }`}
-                                  onClick={() =>
-                                    selectedSeats[seat]
-                                      ? unselectedSeat(seat)
-                                      : togglePopup(seat)
-                                  }
-                                >
-                                  <span>{seat}</span>
-                                  {activeSeat === seat && (
-                                    <div
-                                      className="popuptext show"
-                                      onClick={handlePopupClick}
-                                    >
-                                      <div className="infor">
-                                        <h4>
-                                          Xin vui lòng chọn lớp vé (Thường)
-                                        </h4>
-                                        <label>
-                                          <div>
-                                            <input
-                                              type="radio"
-                                              name={`ticket-${seat}`}
-                                              value="special"
-                                              checked={
-                                                selectedSeats[seat] ===
-                                                "special"
-                                              }
-                                              onChange={() =>
-                                                handleRadioChange(
-                                                  seat,
-                                                  "special"
-                                                )
-                                              }
-                                            ></input>
-                                          </div>
-
-                                          <div className="text">
-                                            <span>
-                                              Vé đặc biệt đặt trước 1 ngày (Áp
-                                              dụng vé người lớn)
-                                            </span>
-
-                                            <p>
-                                              Giá vé (người lớn): 260.000 VND
-                                            </p>
-
-                                            <p className="note">
-                                              Không được hoàn, đổi vé, không áp
-                                              dụng thanh toán tại quầy.
-                                            </p>
-                                          </div>
-                                        </label>
-                                        <label>
-                                          <div>
-                                            <input
-                                              type="radio"
-                                              name={`ticket-${seat}`}
-                                              value="regular"
-                                              checked={
-                                                selectedSeats[seat] ===
-                                                "regular"
-                                              }
-                                              onChange={() =>
-                                                handleRadioChange(
-                                                  seat,
-                                                  "regular"
-                                                )
-                                              }
-                                            ></input>
-                                          </div>
-                                          <div className="text">
-                                            <span>Vé thường</span>
-
-                                            <p>
-                                              Giá vé (người lớn): 320.000 VND
-                                            </p>
-                                          </div>
-                                        </label>
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-                              </td>
-                            ))}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                  <Tabs
+                    defaultActiveKey="profile"
+                    id="uncontrolled-tab-example"
+                    className="mb-3 special"
+                    activeKey={key}
+                    onSelect={(k) => setKey(k)}
+                  >
+                    
+                    <Tab className={key === '8:00' ?"active": ""} eventKey="8:00" title="8:00">
+                      <Trip8AM />
+                    </Tab>
+                    <Tab className={key === "12:00" ? "active" : ""} eventKey="12:00" title="12:00">
+                      <Trip12AM />
+                    </Tab>
+                  </Tabs>
                 </div>
               </div>
             </div>
           </div>
-          <div className="col-md-3">
+          {/* <div className="col-md-3">
             <div className="book-sidebar ">
               <div className="price-info">
                 <div className="direction"></div>
@@ -338,7 +223,7 @@ function Booking() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="btn-btm text-center mbot-50 mtop-20">
           <button type="submit">
