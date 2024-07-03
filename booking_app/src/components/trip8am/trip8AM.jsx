@@ -4,12 +4,9 @@ import selecting_seat from "../../assets/selecting-seat.png";
 import saleoff_seat from "../../assets/saleoff-seat.png";
 import reserved_seat from "../../assets/reserved-seat.png";
 import empty_seat from "../../assets/empty-seat.png";
-function Trip8AM() {
+function Trip8AM({selectedSeats, handleSeatSelection, unselectSeat, timer}) {
     const [activeSeat, setActiveSeat] = useState(null);
-    const [selectedSeats, setSelectedSeats] = useState({});
-    const [timer, setTimer] = useState({});
-    const [intervalIds, setIntervalIds] = useState({});
-  
+
     const togglePopup = (seat) => {
       if (activeSeat === seat) {
         setActiveSeat(null); // Deselect if clicking on the same seat
@@ -23,51 +20,19 @@ function Trip8AM() {
     };
   
     const handleRadioChange = (seat, ticketType) => {
-      setSelectedSeats((prev) => ({
-        ...prev,
-        [seat]: ticketType,
-      }));
+      handleSeatSelection(seat, ticketType);
       setActiveSeat(null);
-      startTimer(seat);
+    };
+    const countSlots = (seat) => {
+      let totalSlots = 0;
+      for (let row of seats) {
+        totalSlots += row.length;
+      }
+      return totalSlots;
     };
   
-    const startTimer = (seat) => {
-      clearInterval(intervalIds[seat]);
-      setTimer((prev) => ({
-        ...prev,
-        [seat]: 1000,
-      }));
-      const id = setInterval(() => {
-        setTimer((prev) => {
-          const newTime = prev[seat] - 1;
-          if (newTime <= 0) {
-            clearInterval(id);
-            unselectedSeat(seat);
-            return { ...prev, [seat]: 0 };
-          }
-          return { ...prev, [seat]: newTime };
-        });
-      }, 1000);
-      setIntervalIds((prev) => ({
-        ...prev,
-        [seat]: id,
-      }));
-    };
-  
-    const unselectedSeat = (seat) => {
-      setSelectedSeats((prev) => {
-        const { [seat]: _, ...rest } = prev;
-        return rest;
-      });
-      clearInterval(intervalIds[seat]);
-      setTimer((prev) => {
-        const { [seat]: _, ...rest } = prev;
-        return rest;
-      });
-      setIntervalIds((prev) => {
-        const { [seat]: _, ...rest } = prev;
-        return rest;
-      });
+    const getTotalSelectedSeats = () => {
+      return Object.keys(selectedSeats).length;
     };
   
     const seats = [
@@ -128,7 +93,7 @@ function Trip8AM() {
                           }`}
                           onClick={() =>
                             selectedSeats[seat]
-                              ? unselectedSeat(seat)
+                              ? unselectSeat(seat)
                               : togglePopup(seat)
                           }
                         >

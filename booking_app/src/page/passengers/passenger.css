@@ -1,1 +1,14 @@
-/*# sourceMappingURL=passenger.css.map */
+.passenger-infor .line {
+  width: 100%;
+  border-top: 1px dotted rgb(153, 152, 152);
+  margin-top: 3rem;
+}
+@media (max-width: 768px) {
+  .passenger-infor .line {
+    display: none;
+  }
+}
+.passenger-infor .wrapper {
+  margin-top: 1rem;
+  margin-bottom: 5rem;
+}/*# sourceMappingURL=passenger.css.map */

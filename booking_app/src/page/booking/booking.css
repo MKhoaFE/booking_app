@@ -8,6 +8,9 @@
   font-size: 20px;
   font-weight: 500;
 }
+.segment-container .segment-info .detail-wrap .nav-tabs {
+  border-bottom: none;
+}
 .segment-container .segment-info .detail-wrap .select-time {
   display: flex;
   gap: 1rem;

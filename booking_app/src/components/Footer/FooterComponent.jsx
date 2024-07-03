@@ -11,7 +11,7 @@ function FooterComponent() {
   const { pathname } = location;
   return (
     <div className="footer">
-      <div className={`top-footer roboto-regular ${pathname === '/login' || "/signup" ? 'hide' :''}`}>
+      <div className={`top-footer roboto-regular ${(pathname === '/login'|| pathname === '/signup') ? 'hide' :''}`}>
         <button className="btn-1">LIÊN HỆ</button>
         <button className="btn-2" style={{ padding: "0 1rem" }}>
           <ArrowForwardIcon style={{ fontSize: "35px" }} />

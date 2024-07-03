@@ -1,0 +1,14 @@
+.passenger-infor{
+    .line {
+        width: 100%;
+        border-top: 1px dotted rgb(153, 152, 152);
+        margin-top: 3rem;
+        @media (max-width: 768px) {
+          display: none;
+        }
+      }
+    .wrapper{
+        margin-top: 1rem;
+        margin-bottom: 5rem;
+    }
+}

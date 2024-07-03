@@ -8,6 +8,9 @@
     font-size: 20px;
     font-weight: 500;
     .detail-wrap {
+      .nav-tabs{
+        border-bottom: none;
+      }
       .select-time {
         display: flex;
         gap: 1rem;
