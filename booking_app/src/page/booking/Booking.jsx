@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../booking/booking.css";
 import "../../GlobalStyles/glbStyles.css";
 import { Link } from "react-router-dom";
@@ -12,18 +12,58 @@ import Tabs from "react-bootstrap/Tabs";
 import Trip8AM from "../../components/trip8am/trip8AM";
 import Trip12AM from "../../components/trip12am/trip12AM";
 
-function Booking() {
+const Booking = () => {
   const [key, setKey] = useState("8:00");
   const [selectedSeats, setSelectedSeats] = useState({});
   const [timer, setTimer] = useState({});
   const [intervalIds, setIntervalIds] = useState({});
-  const [tab, setTab] = useState({});
+  const [priceInfor, setPriceInfor] = useState({
+    "8:00": {
+      special: {
+        quantity: 10,
+        remaining: 10,
+        adultPrice: 260000,
+        childPrice: 190000,
+      },
+      regular: {
+        quantity: 78,
+        remaining: 78,
+        adultPrice: 320000,
+        childPrice: 270000,
+      },
+    },
+    "12:00": {
+      special: {
+        quantity: 10,
+        remaining: 10,
+        adultPrice: 260000,
+        childPrice: 190000,
+      },
+      regular: {
+        quantity: 78,
+        remaining: 78,
+        adultPrice: 320000,
+        childPrice: 270000,
+      },
+    },
+  });
+  const currentPriceInfor = priceInfor[key];
+
   const handleSeatSelection = (seat, ticketType) => {
     setSelectedSeats((prev) => ({
       ...prev,
       [seat]: ticketType,
     }));
     startTimer(seat);
+    updateRemainingSeats(ticketType, -0.5);
+  };
+
+  const updateRemainingSeats = (ticketType, change) => {
+    setPriceInfor((prevPriceInfor) => {
+      const updatedInfor = { ...prevPriceInfor };
+      updatedInfor[key][ticketType].remaining += change;
+      return updatedInfor;
+    });
   };
 
   const startTimer = (seat) => {
@@ -50,6 +90,7 @@ function Booking() {
   };
 
   const unselectSeat = (seat) => {
+    const ticketType = selectedSeats[seat];
     setSelectedSeats((prev) => {
       const { [seat]: _, ...rest } = prev;
       return rest;
@@ -63,26 +104,9 @@ function Booking() {
       const { [seat]: _, ...rest } = prev;
       return rest;
     });
+    updateRemainingSeats(ticketType, 0.5);
   };
 
-  const countSlots = (seats) => {
-    return seats.reduce((total, row) => total + row.length, 0);
-  };
-
-  const getTotalSelectedSeats = () => {
-    return Object.keys(selectedSeats).length;
-  };
-
-  const seats = [
-    ["A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8", "J8", "K8", "L8"],
-    ["A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7", "J7", "K7", "L7"],
-    ["A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6", "J6", "K6", "L6"],
-    ["A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5", "J5", "K5", "L5"],
-    ["A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4", "J4", "K4", "L4"],
-    ["A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3", "J3", "K3", "L3"],
-    ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2", "J2", "K2", "L2"],
-    ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "J1", "K1", "L1"],
-  ];
 
   return (
     <>
@@ -171,40 +195,46 @@ function Booking() {
                       </h4>
                       <div className="item">
                         <div className="name">Số lượng:</div>
-                        <div className="price">10</div>
+                        <div className="price">{currentPriceInfor.special.quantity}</div>
                       </div>
                       <div className="item">
                         <div className="name">Còn lại:</div>
-                        <div className="price">10</div>
+                        <div className="price">{currentPriceInfor.special.remaining}</div>
                       </div>
                       <div className="item">
                         <div className="name">Người lớn:</div>
-                        <div className="price">260.000 VND</div>
+                        <div className="price">{currentPriceInfor.special.adultPrice}</div>
                       </div>
                       <div className="item">
                         <div className="name">Trẻ em:</div>
-                        <div className="price">190.000 VND</div>
+                        <div className="price">{currentPriceInfor.special.childPrice}</div>
                       </div>
                     </div>
                     <div className="prices">
                       <h4>Vé Thường</h4>
                       <div className="item">
                         <div className="name">Số lượng:</div>
-                        <div className="price">{countSlots(seats) - 10}</div>
+                        <div className="price">
+                          {currentPriceInfor.regular.quantity}
+                        </div>
                       </div>
                       <div className="item">
                         <div className="name">Còn lại:</div>
                         <div className="price">
-                          {countSlots(seats) - 10 - getTotalSelectedSeats()}
+                          {currentPriceInfor.regular.remaining}
                         </div>
                       </div>
                       <div className="item">
                         <div className="name">Người lớn:</div>
-                        <div className="price">320.000 VND</div>
+                        <div className="price">
+                          {currentPriceInfor.regular.adultPrice}
+                        </div>
                       </div>
                       <div className="item">
                         <div className="name">Trẻ em:</div>
-                        <div className="price">270.000 VND</div>
+                        <div className="price">
+                          {currentPriceInfor.regular.childPrice}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -214,15 +244,15 @@ function Booking() {
           </div>
         </div>
         <div className="btn-btm text-center mbot-50 mtop-20">
-          <button type="submit">
-            <Link to="/passengers">
+          <Link to="/passengers">
+            <button type="submit">
               <span>Tiếp tục</span>
-            </Link>
-          </button>
+            </button>
+          </Link>
         </div>
       </div>
     </>
   );
-}
+};
 
 export default Booking;

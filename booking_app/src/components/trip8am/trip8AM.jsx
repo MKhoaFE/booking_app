@@ -4,52 +4,42 @@ import selecting_seat from "../../assets/selecting-seat.png";
 import saleoff_seat from "../../assets/saleoff-seat.png";
 import reserved_seat from "../../assets/reserved-seat.png";
 import empty_seat from "../../assets/empty-seat.png";
-function Trip8AM({selectedSeats, handleSeatSelection, unselectSeat, timer}) {
-    const [activeSeat, setActiveSeat] = useState(null);
 
-    const togglePopup = (seat) => {
-      if (activeSeat === seat) {
-        setActiveSeat(null); // Deselect if clicking on the same seat
-      } else {
-        setActiveSeat(seat); // Select a new seat
-      }
-    };
-  
-    const handlePopupClick = (event) => {
-      event.stopPropagation(); //ngăn chặn lan truyền event khi click vào trong popup
-    };
-  
-    const handleRadioChange = (seat, ticketType) => {
-      handleSeatSelection(seat, ticketType);
-      setActiveSeat(null);
-    };
-    const countSlots = (seat) => {
-      let totalSlots = 0;
-      for (let row of seats) {
-        totalSlots += row.length;
-      }
-      return totalSlots;
-    };
-  
-    const getTotalSelectedSeats = () => {
-      return Object.keys(selectedSeats).length;
-    };
-  
-    const seats = [
-      ["A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8", "J8", "K8", "L8"],
-      ["A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7", "J7", "K7", "L7"],
-      ["A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6", "J6", "K6", "L6"],
-      ["A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5", "J5", "K5", "L5"],
-      [],
-      ["A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4", "J4", "K4", "L4"],
-      ["A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3", "J3", "K3", "L3"],
-      ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2", "J2", "K2", "L2"],
-      ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "J1", "K1", "L1"],
-    ];
+function Trip8AM({ selectedSeats, handleSeatSelection, unselectSeat, timer }) {
+  const [activeSeat, setActiveSeat] = useState(null);
+
+  const togglePopup = (seat) => {
+    if (activeSeat === seat) {
+      setActiveSeat(null); // Deselect if clicking on the same seat
+    } else {
+      setActiveSeat(seat); // Select a new seat
+    }
+  };
+
+  const handlePopupClick = (event) => {
+    event.stopPropagation(); //ngăn chặn lan truyền event khi click vào trong popup
+  };
+
+  const handleRadioChange = (seat, ticketType) => {
+    handleSeatSelection(seat, ticketType);
+    setActiveSeat(null);
+  };
+
+  const seats = [
+    ["A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8", "J8", "K8", "L8"],
+    ["A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7", "J7", "K7", "L7"],
+    ["A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6", "J6", "K6", "L6"],
+    ["A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5", "J5", "K5", "L5"],
+    [],
+    ["A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4", "J4", "K4", "L4"],
+    ["A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3", "J3", "K3", "L3"],
+    ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2", "J2", "K2", "L2"],
+    ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "J1", "K1", "L1"],
+  ];
 
   return (
     <>
-    <div className="line"></div>
+      <div className="line"></div>
       <div className="select-seat-container">
         <div className="top row">
           <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
