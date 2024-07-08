@@ -1,25 +1,24 @@
 @charset "UTF-8";
-.line {
+.trip8AM .line {
   width: 100%;
   border-top: 1px dotted rgb(153, 152, 152);
   margin-top: 3rem;
 }
 @media (max-width: 768px) {
-  .line {
+  .trip8AM .line {
     display: none;
   }
 }
-
-.select-seat-container {
+.trip8AM .select-seat-container {
   margin-top: 0.5rem;
   font-size: 14px;
 }
-.select-seat-container .top {
+.trip8AM .select-seat-container .top {
   margin: 0 auto;
   width: 70%;
 }
 @media (max-width: 768px) {
-  .select-seat-container .top {
+  .trip8AM .select-seat-container .top {
     margin-top: 2rem;
     display: flex;
     width: auto;
@@ -27,20 +26,20 @@
   }
 }
 @media (max-width: 768px) {
-  .select-seat-container .top .seat-info-item {
+  .trip8AM .select-seat-container .top .seat-info-item {
     width: 50%;
   }
 }
-.select-seat-container .top img {
+.trip8AM .select-seat-container .top img {
   width: 25px;
 }
 @media (max-width: 768px) {
-  .select-seat-container .bottom {
+  .trip8AM .select-seat-container .bottom {
     overflow-x: auto;
     position: relative;
   }
 }
-.select-seat-container .bottom .ship-container {
+.trip8AM .select-seat-container .bottom .ship-container {
   max-width: 846px;
   min-height: 400px;
   background-image: url("../../assets/ship_layout.png");
@@ -51,11 +50,11 @@
   text-align: left;
 }
 @media (max-width: 768px) {
-  .select-seat-container .bottom .ship-container {
+  .trip8AM .select-seat-container .bottom .ship-container {
     min-width: 846px;
   }
 }
-.select-seat-container .bottom .ship-container .seat {
+.trip8AM .select-seat-container .bottom .ship-container .seat {
   width: 33px;
   height: 33px;
   padding-top: 0px;
@@ -70,7 +69,7 @@
   position: relative;
   display: inline-block;
 }
-.select-seat-container .bottom .ship-container .seat .popuptext {
+.trip8AM .select-seat-container .bottom .ship-container .seat .popuptext {
   visibility: hidden;
   padding: 225px;
   width: 420px;
@@ -89,7 +88,7 @@
   box-shadow: 5px 5px 5px 5px rgb(121, 120, 120);
 }
 @media (max-width: 768px) {
-  .select-seat-container .bottom .ship-container .seat .popuptext {
+  .trip8AM .select-seat-container .bottom .ship-container .seat .popuptext {
     position: fixed;
     bottom: 50%; /* Cố định popup ở dưới cùng của màn hình */
     transform: translateX(-52%);
@@ -98,40 +97,40 @@
     margin-left: -180px;
   }
 }
-.select-seat-container .bottom .ship-container .seat .popuptext .infor {
+.trip8AM .select-seat-container .bottom .ship-container .seat .popuptext .infor {
   padding: 3px 15px;
   line-height: auto;
 }
-.select-seat-container .bottom .ship-container .seat .popuptext .infor h4 {
+.trip8AM .select-seat-container .bottom .ship-container .seat .popuptext .infor h4 {
   text-align: center;
 }
-.select-seat-container .bottom .ship-container .seat .popuptext label {
+.trip8AM .select-seat-container .bottom .ship-container .seat .popuptext label {
   margin-top: 1rem;
   display: flex;
   justify-content: start;
   align-items: start;
   cursor: pointer;
 }
-.select-seat-container .bottom .ship-container .seat .popuptext label .text {
+.trip8AM .select-seat-container .bottom .ship-container .seat .popuptext label .text {
   font-size: 13px;
   line-height: 2rem;
   padding-left: 0.3rem;
 }
-.select-seat-container .bottom .ship-container .seat .popuptext label .text span {
+.trip8AM .select-seat-container .bottom .ship-container .seat .popuptext label .text span {
   font-weight: normal;
 }
-.select-seat-container .bottom .ship-container .seat .popuptext label .text p {
+.trip8AM .select-seat-container .bottom .ship-container .seat .popuptext label .text p {
   color: red;
 }
-.select-seat-container .bottom .ship-container .seat .popuptext label:hover {
+.trip8AM .select-seat-container .bottom .ship-container .seat .popuptext label:hover {
   background-color: #d6efef;
 }
-.select-seat-container .bottom .ship-container .seat .popuptext p {
+.trip8AM .select-seat-container .bottom .ship-container .seat .popuptext p {
   padding: 0;
   margin: 0;
   font-size: 13px;
 }
-.select-seat-container .bottom .ship-container .seat .popuptext:after {
+.trip8AM .select-seat-container .bottom .ship-container .seat .popuptext:after {
   content: "";
   position: absolute;
   top: 100%;
@@ -142,29 +141,29 @@
   border-color: white transparent transparent transparent;
 }
 @media (max-width: 768px) {
-  .select-seat-container .bottom .ship-container .seat .popuptext:after {
+  .trip8AM .select-seat-container .bottom .ship-container .seat .popuptext:after {
     display: none;
   }
 }
-.select-seat-container .bottom .ship-container .seat .show {
+.trip8AM .select-seat-container .bottom .ship-container .seat .show {
   visibility: visible;
   opacity: 1;
 }
-.select-seat-container .bottom .ship-container .reserved {
+.trip8AM .select-seat-container .bottom .ship-container .reserved {
   background-image: url("../../assets/reserved-seat.png");
   color: red;
 }
-.select-seat-container .bottom .ship-container .selecting {
+.trip8AM .select-seat-container .bottom .ship-container .selecting {
   color: green;
   background-image: url("../../assets/selecting-seat.png");
 }
-.select-seat-container .bottom .ship-container .saleoff {
+.trip8AM .select-seat-container .bottom .ship-container .saleoff {
   color: red;
   background-image: url("../../assets/saleoff-seat.png");
 }
-.select-seat-container .bottom .ship-container table {
+.trip8AM .select-seat-container .bottom .ship-container table {
   float: left;
 }
-.select-seat-container .bottom .ship-container td {
+.trip8AM .select-seat-container .bottom .ship-container td {
   padding: 0;
 }/*# sourceMappingURL=trip8AM.css.map */

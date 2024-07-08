@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import home_image from "../../assets/home_image.png";
-import "./home.css";
+import "../home/home.css";
 import { Box, FormControl, InputLabel } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";

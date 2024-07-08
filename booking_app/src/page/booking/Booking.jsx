@@ -12,11 +12,14 @@ import Tabs from "react-bootstrap/Tabs";
 import Trip8AM from "../../components/trip8am/trip8AM";
 import Trip12AM from "../../components/trip12am/trip12AM";
 
-const Booking = () => {
+const Booking = ({ calculate_S }) => {
   const [key, setKey] = useState("8:00");
-  const [selectedSeats, setSelectedSeats] = useState({});
-  const [timer, setTimer] = useState({});
-  const [intervalIds, setIntervalIds] = useState({});
+  const [selectedSeats8AM, setSelectedSeats8AM] = useState({});
+  const [selectedSeats12AM, setSelectedSeats12AM] = useState({});
+  const [timer8AM, setTimer8AM] = useState({});
+  const [timer12AM, setTimer12AM] = useState({});
+  const [intervalIds8AM, setIntervalIds8AM] = useState({});
+  const [intervalIds12AM, setIntervalIds12AM] = useState({});
   const [priceInfor, setPriceInfor] = useState({
     "8:00": {
       special: {
@@ -48,13 +51,20 @@ const Booking = () => {
     },
   });
   const currentPriceInfor = priceInfor[key];
+  
 
-  const handleSeatSelection = (seat, ticketType) => {
+  const handleSeatSelection = (
+    seat,
+    ticketType,
+    setSelectedSeats,
+    setTimer,
+    setIntervalIds
+  ) => {
     setSelectedSeats((prev) => ({
       ...prev,
       [seat]: ticketType,
     }));
-    startTimer(seat);
+    startTimer(seat, setTimer, setIntervalIds);
     updateRemainingSeats(ticketType, -0.5);
   };
 
@@ -66,8 +76,8 @@ const Booking = () => {
     });
   };
 
-  const startTimer = (seat) => {
-    clearInterval(intervalIds[seat]);
+  const startTimer = (seat, setTimer, setIntervalIds) => {
+    clearInterval(intervalIds8AM[seat]);
     setTimer((prev) => ({
       ...prev,
       [seat]: 1000,
@@ -77,7 +87,13 @@ const Booking = () => {
         const newTime = prev[seat] - 1;
         if (newTime <= 0) {
           clearInterval(id);
-          unselectSeat(seat);
+          unselectSeat(
+            seat,
+            setSelectedSeats8AM,
+            setTimer8AM,
+            setIntervalIds8AM,
+            selectedSeats8AM
+          );
           return { ...prev, [seat]: 0 };
         }
         return { ...prev, [seat]: newTime };
@@ -89,13 +105,20 @@ const Booking = () => {
     }));
   };
 
-  const unselectSeat = (seat) => {
+  const unselectSeat = (
+    seat,
+    setSelectedSeats,
+    setTimer,
+    setIntervalIds,
+    selectedSeats
+  ) => {
     const ticketType = selectedSeats[seat];
     setSelectedSeats((prev) => {
       const { [seat]: _, ...rest } = prev;
       return rest;
     });
-    clearInterval(intervalIds[seat]);
+    clearInterval(intervalIds8AM[seat]);
+    clearInterval(intervalIds12AM[seat]);
     setTimer((prev) => {
       const { [seat]: _, ...rest } = prev;
       return rest;
@@ -107,6 +130,10 @@ const Booking = () => {
     updateRemainingSeats(ticketType, 0.5);
   };
 
+  const amount_slot = () => {
+    const S = 10 - currentPriceInfor.special.remaining;
+    calculate_S(S);
+  };
 
   return (
     <>
@@ -134,10 +161,26 @@ const Booking = () => {
                       title="8:00"
                     >
                       <Trip8AM
-                        selectedSeats={selectedSeats}
-                        handleSeatSelection={handleSeatSelection}
-                        unselectSeat={unselectSeat}
-                        timer={timer}
+                        selectedSeats={selectedSeats8AM}
+                        handleSeatSelection={(seat, ticketType) =>
+                          handleSeatSelection(
+                            seat,
+                            ticketType,
+                            setSelectedSeats8AM,
+                            setTimer8AM,
+                            setIntervalIds8AM
+                          )
+                        }
+                        unselectSeat={(seat) =>
+                          unselectSeat(
+                            seat,
+                            setSelectedSeats8AM,
+                            setTimer8AM,
+                            setIntervalIds8AM,
+                            selectedSeats8AM
+                          )
+                        }
+                        timer={timer8AM}
                       />
                     </Tab>
                     <Tab
@@ -146,10 +189,26 @@ const Booking = () => {
                       title="12:00"
                     >
                       <Trip12AM
-                        selectedSeats={selectedSeats}
-                        handleSeatSelection={handleSeatSelection}
-                        unselectSeat={unselectSeat}
-                        timer={timer}
+                        selectedSeats={selectedSeats12AM}
+                        handleSeatSelection={(seat, ticketType) =>
+                          handleSeatSelection(
+                            seat,
+                            ticketType,
+                            setSelectedSeats12AM,
+                            setTimer12AM,
+                            setIntervalIds12AM
+                          )
+                        }
+                        unselectSeat={(seat) =>
+                          unselectSeat(
+                            seat,
+                            setSelectedSeats12AM,
+                            setTimer12AM,
+                            setIntervalIds12AM,
+                            selectedSeats12AM
+                          )
+                        }
+                        timer={timer12AM}
                       />
                     </Tab>
                   </Tabs>
@@ -164,18 +223,53 @@ const Booking = () => {
                 <div className="title">CHIỀU ĐI</div>
                 <div className="content">
                   <ul className="nav-tab">
-                    {Object.keys(selectedSeats).length > 0 && (
+                    {Object.keys(selectedSeats8AM).length > 0 && (
                       <>
                         <div className="wrap-nav-tab">
                           <h4>Ghế đang giữ</h4>
-                          {Object.keys(selectedSeats).map((seat) => (
+                          {Object.keys(selectedSeats8AM).map((seat) => (
                             <div className="item" key={seat}>
                               <div className="seat-item">Ghế {seat}</div>
-                              <div className="time-item">{timer[seat]}</div>
+                              <div className="time-item">{timer8AM[seat]}</div>
                               <div>
                                 <i
                                   className="bi bi-trash"
-                                  onClick={() => unselectSeat(seat)}
+                                  onClick={() =>
+                                    unselectSeat(
+                                      seat,
+                                      setSelectedSeats8AM,
+                                      setTimer8AM,
+                                      setIntervalIds8AM,
+                                      selectedSeats8AM
+                                    )
+                                  }
+                                ></i>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                    {Object.keys(selectedSeats12AM).length > 0 && (
+                      <>
+                        <div className="wrap-nav-tab">
+                          <h4>Ghế đang giữ</h4>
+                          {Object.keys(selectedSeats12AM).map((seat) => (
+                            <div className="item" key={seat}>
+                              <div className="seat-item">Ghế {seat}</div>
+                              <div className="time-item">{timer12AM[seat]}</div>
+                              <div>
+                                <i
+                                  className="bi bi-trash"
+                                  onClick={() =>
+                                    unselectSeat(
+                                      seat,
+                                      setSelectedSeats12AM,
+                                      setTimer12AM,
+                                      setIntervalIds12AM,
+                                      selectedSeats12AM
+                                    )
+                                  }
                                 ></i>
                               </div>
                             </div>
@@ -195,23 +289,34 @@ const Booking = () => {
                       </h4>
                       <div className="item">
                         <div className="name">Số lượng:</div>
-                        <div className="price">{currentPriceInfor.special.quantity}</div>
+                        <div className="price">
+                          {currentPriceInfor.special.quantity}
+                        </div>
                       </div>
                       <div className="item">
                         <div className="name">Còn lại:</div>
-                        <div className="price">{currentPriceInfor.special.remaining}</div>
+                        <div className="price">
+                          {currentPriceInfor.special.remaining}
+                        </div>
                       </div>
                       <div className="item">
-                        <div className="name">Người lớn:</div>
-                        <div className="price">{currentPriceInfor.special.adultPrice}</div>
+                        <div className="name">Giá vé (người lớn):</div>
+                        <div className="price">
+                          {currentPriceInfor.special.adultPrice.toLocaleString()}{" "}
+                          VND
+                        </div>
                       </div>
                       <div className="item">
-                        <div className="name">Trẻ em:</div>
-                        <div className="price">{currentPriceInfor.special.childPrice}</div>
+                        <div className="name">Giá vé (trẻ em):</div>
+                        <div className="price">
+                          {currentPriceInfor.special.childPrice.toLocaleString()}{" "}
+                          VND
+                        </div>
                       </div>
                     </div>
+
                     <div className="prices">
-                      <h4>Vé Thường</h4>
+                      <h4>Vé thường</h4>
                       <div className="item">
                         <div className="name">Số lượng:</div>
                         <div className="price">
@@ -225,15 +330,17 @@ const Booking = () => {
                         </div>
                       </div>
                       <div className="item">
-                        <div className="name">Người lớn:</div>
+                        <div className="name">Giá vé (người lớn):</div>
                         <div className="price">
-                          {currentPriceInfor.regular.adultPrice}
+                          {currentPriceInfor.regular.adultPrice.toLocaleString()}{" "}
+                          VND
                         </div>
                       </div>
                       <div className="item">
-                        <div className="name">Trẻ em:</div>
+                        <div className="name">Giá vé (trẻ em):</div>
                         <div className="price">
-                          {currentPriceInfor.regular.childPrice}
+                          {currentPriceInfor.regular.childPrice.toLocaleString()}{" "}
+                          VND
                         </div>
                       </div>
                     </div>
@@ -242,13 +349,13 @@ const Booking = () => {
               </div>
             </div>
           </div>
-        </div>
-        <div className="btn-btm text-center mbot-50 mtop-20">
-          <Link to="/passengers">
-            <button type="submit">
-              <span>Tiếp tục</span>
-            </button>
-          </Link>
+          <div className="btn-btm text-center mbot-50 mtop-20">
+            <Link to="/passengers">
+              <button type="submit">
+                <span>Tiếp tục</span>
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
     </>

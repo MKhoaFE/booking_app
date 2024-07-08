@@ -39,121 +39,123 @@ function Trip8AM({ selectedSeats, handleSeatSelection, unselectSeat, timer }) {
 
   return (
     <>
-      <div className="line"></div>
-      <div className="select-seat-container">
-        <div className="top row">
-          <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
-            <img src={empty_seat} alt="" /> Ghế trống
+      <div className="trip8AM">
+        <div className="line"></div>
+        <div className="select-seat-container">
+          <div className="top row">
+            <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
+              <img src={empty_seat} alt="" /> Ghế trống
+            </div>
+            <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
+              <img src={reserved_seat} alt="" /> Ghế đã đặt
+            </div>
+            <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
+              <img src={selecting_seat} alt="" /> Ghế đang chọn
+            </div>
+            <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
+              <img src={saleoff_seat} alt="" /> Vé khuyến mãi
+            </div>
           </div>
-          <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
-            <img src={reserved_seat} alt="" /> Ghế đã đặt
-          </div>
-          <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
-            <img src={selecting_seat} alt="" /> Ghế đang chọn
-          </div>
-          <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
-            <img src={saleoff_seat} alt="" /> Vé khuyến mãi
-          </div>
-        </div>
 
-        <div className="bottom row">
-          <div className="ship-container roboto-medium">
-            <table style={{ marginTop: "48px", marginLeft: "80px" }}>
-              <tbody>
-                {seats.map((row, rowIndex) => (
-                  <tr key={rowIndex}>
-                    {Array(7)
-                      .fill(null)
-                      .map((_, idx) => (
-                        <td
-                          width="37px"
-                          height="33px"
-                          key={`empty-${rowIndex}-${idx}`}
-                        ></td>
-                      ))}
-                    {row.map((seat, seatIndex) => (
-                      <td key={seatIndex} width="37px" height="33px">
-                        <div
-                          className={`seat ${
-                            selectedSeats[seat]
-                              ? selectedSeats[seat] === "special"
-                                ? "saleoff"
-                                : "selecting"
-                              : ""
-                          }`}
-                          onClick={() =>
-                            selectedSeats[seat]
-                              ? unselectSeat(seat)
-                              : togglePopup(seat)
-                          }
-                        >
-                          <span>{seat}</span>
-                          {activeSeat === seat && (
-                            <div
-                              className="popuptext show"
-                              onClick={handlePopupClick}
-                            >
-                              <div className="infor">
-                                <h4>Xin vui lòng chọn lớp vé (Thường)</h4>
-                                <label>
-                                  <div>
-                                    <input
-                                      type="radio"
-                                      name={`ticket-${seat}`}
-                                      value="special"
-                                      checked={
-                                        selectedSeats[seat] === "special"
-                                      }
-                                      onChange={() =>
-                                        handleRadioChange(seat, "special")
-                                      }
-                                    ></input>
-                                  </div>
+          <div className="bottom row">
+            <div className="ship-container roboto-medium">
+              <table style={{ marginTop: "48px", marginLeft: "80px" }}>
+                <tbody>
+                  {seats.map((row, rowIndex) => (
+                    <tr key={rowIndex}>
+                      {Array(7)
+                        .fill(null)
+                        .map((_, idx) => (
+                          <td
+                            width="37px"
+                            height="33px"
+                            key={`empty-${rowIndex}-${idx}`}
+                          ></td>
+                        ))}
+                      {row.map((seat, seatIndex) => (
+                        <td key={seatIndex} width="37px" height="33px">
+                          <div
+                            className={`seat ${
+                              selectedSeats[seat]
+                                ? selectedSeats[seat] === "special"
+                                  ? "saleoff"
+                                  : "selecting"
+                                : ""
+                            }`}
+                            onClick={() =>
+                              selectedSeats[seat]
+                                ? unselectSeat(seat)
+                                : togglePopup(seat)
+                            }
+                          >
+                            <span>{seat}</span>
+                            {activeSeat === seat && (
+                              <div
+                                className="popuptext show"
+                                onClick={handlePopupClick}
+                              >
+                                <div className="infor">
+                                  <h4>Xin vui lòng chọn lớp vé (Thường)</h4>
+                                  <label>
+                                    <div>
+                                      <input
+                                        type="radio"
+                                        name={`ticket-${seat}`}
+                                        value="special"
+                                        checked={
+                                          selectedSeats[seat] === "special"
+                                        }
+                                        onChange={() =>
+                                          handleRadioChange(seat, "special")
+                                        }
+                                      ></input>
+                                    </div>
 
-                                  <div className="text">
-                                    <span>
-                                      Vé đặc biệt đặt trước 1 ngày (Áp dụng vé
-                                      người lớn)
-                                    </span>
+                                    <div className="text">
+                                      <span>
+                                        Vé đặc biệt đặt trước 1 ngày (Áp dụng vé
+                                        người lớn)
+                                      </span>
 
-                                    <p>Giá vé (người lớn): 260.000 VND</p>
+                                      <p>Giá vé (người lớn): 260.000 VND</p>
 
-                                    <p className="note">
-                                      Không được hoàn, đổi vé, không áp dụng
-                                      thanh toán tại quầy.
-                                    </p>
-                                  </div>
-                                </label>
-                                <label>
-                                  <div>
-                                    <input
-                                      type="radio"
-                                      name={`ticket-${seat}`}
-                                      value="regular"
-                                      checked={
-                                        selectedSeats[seat] === "regular"
-                                      }
-                                      onChange={() =>
-                                        handleRadioChange(seat, "regular")
-                                      }
-                                    ></input>
-                                  </div>
-                                  <div className="text">
-                                    <span>Vé thường</span>
+                                      <p className="note">
+                                        Không được hoàn, đổi vé, không áp dụng
+                                        thanh toán tại quầy.
+                                      </p>
+                                    </div>
+                                  </label>
+                                  <label>
+                                    <div>
+                                      <input
+                                        type="radio"
+                                        name={`ticket-${seat}`}
+                                        value="regular"
+                                        checked={
+                                          selectedSeats[seat] === "regular"
+                                        }
+                                        onChange={() =>
+                                          handleRadioChange(seat, "regular")
+                                        }
+                                      ></input>
+                                    </div>
+                                    <div className="text">
+                                      <span>Vé thường</span>
 
-                                    <p>Giá vé (người lớn): 320.000 VND</p>
-                                  </div>
-                                </label>
+                                      <p>Giá vé (người lớn): 320.000 VND</p>
+                                    </div>
+                                  </label>
+                                </div>
                               </div>
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                            )}
+                          </div>
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

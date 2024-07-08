@@ -1,14 +1,75 @@
-.passenger-infor{
-    .line {
-        width: 100%;
-        border-top: 1px dotted rgb(153, 152, 152);
-        margin-top: 3rem;
-        @media (max-width: 768px) {
-          display: none;
+.passenger-infor {
+  .line {
+    width: 100%;
+    border-top: 1px dotted rgb(153, 152, 152);
+    margin-top: 3rem;
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+  .wrapper {
+    margin-top: 1rem;
+    margin-bottom: 5rem;
+    .ticket-table {
+      overflow: auto;
+      table {
+        th{
+          padding: 5px 10px;
+        }
+        td {
+          background: white;
+          font-size: 13px;
+          padding: 5px 10px;
+          box-shadow: none;
+        }
+        td:hover{
+       
         }
       }
-    .wrapper{
-        margin-top: 1rem;
-        margin-bottom: 5rem;
+      .field-item {
+        display: flex;
+        margin-bottom: 5px;
+        input{
+          width: 100%;
+          padding: 5px;
+          margin-left: 0;
+          border: 1px solid #ccc;
+          font-size: 1em;
+          line-height: 1rem;
+        }
+        .col-md-4{
+          text-align: left;
+          font-size: 14px;
+          font-weight: 500;
+          max-width: 100%;
+          padding-left: 15px;
+          padding-right: 15px;
+          label{
+            margin-bottom: 5px;
+          }
+        }
+        .col-md-8{
+          padding-left: 15px;
+          padding-right: 15px;
+        }
+        .col-md-6{
+          text-align: center;
+          font-size: 14px;
+          font-weight: 500;
+          max-width: 100%;
+          label{
+            margin-bottom: 5px;
+          }
+          select{
+            width: 100%;
+            padding: 5px;
+            margin-left: 0;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            line-height: 1rem;
+          }
+        }
+      }
     }
+  }
 }
