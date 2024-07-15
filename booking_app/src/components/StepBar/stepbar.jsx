@@ -15,7 +15,7 @@ function Stepbar() {
                 <div className="item">Tìm kiếm</div>
                 <div className={`item ${pathname === '/booking'?'active' :''}`}>Chọn chỗ ngồi</div>
                 <div className={`item ${pathname === '/passengers'?'active' :''}`}>Thông tin hành khách</div>
-                <div className="item">Thanh toán</div>
+                <div className={`item ${pathname === '/payment'?'active' :''}`}>Thanh toán</div>
                 <div className="item">Kết thúc</div>
               </div>
             </div>

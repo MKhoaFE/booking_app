@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "../booking/booking.css";
 import "../../GlobalStyles/glbStyles.css";
 import { Link } from "react-router-dom";
@@ -12,7 +12,7 @@ import Tabs from "react-bootstrap/Tabs";
 import Trip8AM from "../../components/trip8am/trip8AM";
 import Trip12AM from "../../components/trip12am/trip12AM";
 
-const Booking = ({ calculate_S }) => {
+const Booking = () => {
   const [key, setKey] = useState("8:00");
   const [selectedSeats8AM, setSelectedSeats8AM] = useState({});
   const [selectedSeats12AM, setSelectedSeats12AM] = useState({});
@@ -50,6 +50,7 @@ const Booking = ({ calculate_S }) => {
       },
     },
   });
+
   const currentPriceInfor = priceInfor[key];
   
 
@@ -130,16 +131,14 @@ const Booking = ({ calculate_S }) => {
     updateRemainingSeats(ticketType, 0.5);
   };
 
-  const amount_slot = () => {
-    const S = 10 - currentPriceInfor.special.remaining;
-    calculate_S(S);
-  };
+  const remainingTickets = 10 - currentPriceInfor.special.remaining + 78 - currentPriceInfor.regular.remaining;
+
+
 
   return (
     <>
       <BookingHeader />
       <Stepbar />
-
       <div className="segment-container container">
         <div className="row">
           <div className="col-md-9">
@@ -350,7 +349,7 @@ const Booking = ({ calculate_S }) => {
             </div>
           </div>
           <div className="btn-btm text-center mbot-50 mtop-20">
-            <Link to="/passengers">
+            <Link to="/passengers" state={{remainingTickets}}>
               <button type="submit">
                 <span>Tiếp tục</span>
               </button>

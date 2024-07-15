@@ -15,6 +15,13 @@
 .passenger-infor .wrapper .ticket-table {
   overflow: auto;
 }
+.passenger-infor .wrapper .ticket-table .trip-infor .wrap {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  height: 100%;
+  margin-top: 3rem;
+}
 .passenger-infor .wrapper .ticket-table table th {
   padding: 5px 10px;
 }
@@ -24,11 +31,19 @@
   padding: 5px 10px;
   box-shadow: none;
 }
-.passenger-infor .wrapper .ticket-table .field-item {
+.passenger-infor .wrapper .ticket-table table tr .total {
+  text-align: right;
+}
+.passenger-infor .field-item {
   display: flex;
   margin-bottom: 5px;
 }
-.passenger-infor .wrapper .ticket-table .field-item input {
+@media (max-width: 768px) {
+  .passenger-infor .field-item {
+    display: block;
+  }
+}
+.passenger-infor .field-item input {
   width: 100%;
   padding: 5px;
   margin-left: 0;
@@ -36,7 +51,7 @@
   font-size: 1em;
   line-height: 1rem;
 }
-.passenger-infor .wrapper .ticket-table .field-item .col-md-4 {
+.passenger-infor .field-item .col-md-4 {
   text-align: left;
   font-size: 14px;
   font-weight: 500;
@@ -44,27 +59,147 @@
   padding-left: 15px;
   padding-right: 15px;
 }
-.passenger-infor .wrapper .ticket-table .field-item .col-md-4 label {
+.passenger-infor .field-item .col-md-4 label {
   margin-bottom: 5px;
 }
-.passenger-infor .wrapper .ticket-table .field-item .col-md-8 {
+.passenger-infor .field-item .col-md-8 {
   padding-left: 15px;
   padding-right: 15px;
 }
-.passenger-infor .wrapper .ticket-table .field-item .col-md-6 {
+.passenger-infor .field-item .col-md-6 {
   text-align: center;
   font-size: 14px;
   font-weight: 500;
   max-width: 100%;
+  padding-left: 15px;
 }
-.passenger-infor .wrapper .ticket-table .field-item .col-md-6 label {
+@media (max-width: 768px) {
+  .passenger-infor .field-item .col-md-6 {
+    text-align: left;
+  }
+}
+.passenger-infor .field-item .col-md-6 .field-item {
+  gap: 1rem;
+}
+@media (max-width: 768px) {
+  .passenger-infor .field-item .col-md-6 .field-item {
+    display: flex;
+  }
+}
+.passenger-infor .field-item .col-md-6 label {
   margin-bottom: 5px;
 }
-.passenger-infor .wrapper .ticket-table .field-item .col-md-6 select {
-  width: 100%;
-  padding: 5px;
+.passenger-infor .field-item .col-md-6 select {
+  margin-left: 5px;
+  padding: 0 5px;
   margin-left: 0;
   border: 1px solid #ccc;
   font-size: 1em;
   line-height: 1rem;
+}
+.passenger-infor .contact-infor {
+  padding-top: 1rem;
+}
+.passenger-infor .contact-infor h2 {
+  text-transform: uppercase;
+}
+.passenger-infor .contact-infor .col-md-12 {
+  display: flex;
+  margin-bottom: 1rem;
+}
+@media (max-width: 768px) {
+  .passenger-infor .contact-infor .col-md-12 {
+    display: block;
+  }
+}
+.passenger-infor .contact-infor .field-item {
+  display: flex;
+  align-items: center;
+}
+@media (max-width: 768px) {
+  .passenger-infor .contact-infor .field-item {
+    display: block;
+  }
+}
+.passenger-infor .checkbox {
+  padding-top: 3rem;
+}
+.passenger-infor .checkbox label {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 1rem;
+}
+.passenger-infor .checkbox .box {
+  width: 100%;
+  height: 250px;
+  overflow-y: scroll;
+  padding: 10px;
+  margin: 10px 0px;
+  border-width: 1px 2px 1px 1px;
+  border-style: solid;
+  border-color: rgb(204, 204, 204);
+  -o-border-image: initial;
+     border-image: initial;
+  background-color: white;
+}
+
+.btn-btm {
+  margin-bottom: 5rem;
+}
+.btn-btm button {
+  margin-top: 2rem;
+  padding: 10px 60px 10px 10px;
+  overflow: hidden;
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  background: none;
+  cursor: pointer;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 400;
+  outline: none;
+  position: relative;
+  transition: all 0.3s;
+  background: #00552b;
+  color: #fff;
+}
+.btn-btm button:before {
+  font-family: "FontAwesome";
+  content: "\f178";
+  right: 0;
+  z-index: 2;
+  position: absolute;
+  height: 100%;
+  left: auto;
+  top: 0;
+  line-height: 40px;
+  font-size: 110%;
+  width: 35px;
+}
+.btn-btm button:after {
+  content: "";
+  width: 30%;
+  height: 200%;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 1;
+  right: 0;
+  top: 0;
+  margin: -5px 0 0 -5px;
+  -webkit-transform-origin: 0 0;
+  -webkit-transform: rotate(-20deg);
+  -moz-transform-origin: 0 0;
+  -moz-transform: rotate(-20deg);
+  -ms-transform-origin: 0 0;
+  -ms-transform: rotate(-20deg);
+  transform-origin: 0 0;
+  transform: rotate(-20deg);
+  position: absolute;
+  transition: all 0.3s;
+}
+.btn-btm a {
+  text-decoration: none;
+  color: white;
 }/*# sourceMappingURL=passenger.css.map */

@@ -12,11 +12,12 @@ import Booking from "./page/booking/Booking.jsx";
 import Passengers from "./page/passengers/passengers.jsx";
 import Login from "./page/login/login.jsx";
 import Signup from "./page/signup/signup.jsx";
+import Payment from "./page/payment/payment.jsx";
 
 function App() {
   return (
     <BrowserRouter>
-      <Layout>
+      <Layout style={{backgroundColor:"#FFF"}}>
         <HeaderComponent></HeaderComponent>
         <Content>
           <Routes>
@@ -26,6 +27,7 @@ function App() {
             <Route path="/passengers" element={<Passengers/>}></Route>
             <Route path="/signup" element={<Signup/>}></Route>
             <Route path="/login" element={<Login/>}></Route>
+            <Route path="/payment" element={<Payment/>}></Route>
           </Routes>
         </Content>
 
