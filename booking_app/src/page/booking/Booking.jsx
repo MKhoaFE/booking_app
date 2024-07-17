@@ -12,6 +12,37 @@ import Tabs from "react-bootstrap/Tabs";
 import Trip8AM from "../../components/trip8am/trip8AM";
 import Trip12AM from "../../components/trip12am/trip12AM";
 
+const initialPriceInfor = {
+  "8:00": {
+    special: {
+      quantity: 10,
+      remaining: 10,
+      adultPrice: 260000,
+      childPrice: 190000,
+    },
+    regular: {
+      quantity: 78,
+      remaining: 78,
+      adultPrice: 320000,
+      childPrice: 270000,
+    },
+  },
+  "12:00": {
+    special: {
+      quantity: 10,
+      remaining: 10,
+      adultPrice: 260000,
+      childPrice: 190000,
+    },
+    regular: {
+      quantity: 78,
+      remaining: 78,
+      adultPrice: 320000,
+      childPrice: 270000,
+    },
+  },
+};
+
 const Booking = () => {
   const [key, setKey] = useState("8:00");
   const [selectedSeats8AM, setSelectedSeats8AM] = useState({});
@@ -20,39 +51,9 @@ const Booking = () => {
   const [timer12AM, setTimer12AM] = useState({});
   const [intervalIds8AM, setIntervalIds8AM] = useState({});
   const [intervalIds12AM, setIntervalIds12AM] = useState({});
-  const [priceInfor, setPriceInfor] = useState({
-    "8:00": {
-      special: {
-        quantity: 10,
-        remaining: 10,
-        adultPrice: 260000,
-        childPrice: 190000,
-      },
-      regular: {
-        quantity: 78,
-        remaining: 78,
-        adultPrice: 320000,
-        childPrice: 270000,
-      },
-    },
-    "12:00": {
-      special: {
-        quantity: 10,
-        remaining: 10,
-        adultPrice: 260000,
-        childPrice: 190000,
-      },
-      regular: {
-        quantity: 78,
-        remaining: 78,
-        adultPrice: 320000,
-        childPrice: 270000,
-      },
-    },
-  });
+  const [priceInfor, setPriceInfor] = useState(initialPriceInfor);
 
   const currentPriceInfor = priceInfor[key];
-  
 
   const handleSeatSelection = (
     seat,
@@ -131,9 +132,21 @@ const Booking = () => {
     updateRemainingSeats(ticketType, 0.5);
   };
 
-  const remainingTickets = 10 - currentPriceInfor.special.remaining + 78 - currentPriceInfor.regular.remaining;
+  const resetTabState = () => {
+    setSelectedSeats8AM({});
+    setSelectedSeats12AM({});
+    setTimer8AM({});
+    setTimer12AM({});
+    setIntervalIds8AM({});
+    setIntervalIds12AM({});
+    setPriceInfor(initialPriceInfor);
+  };
 
-
+  const remainingTickets =
+    10 -
+    currentPriceInfor.special.remaining +
+    78 -
+    currentPriceInfor.regular.remaining;
 
   return (
     <>
@@ -152,7 +165,10 @@ const Booking = () => {
                     id="uncontrolled-tab-example"
                     className="mb-3 special mt-4 nav-tabs"
                     activeKey={key}
-                    onSelect={(k) => setKey(k)}
+                    onSelect={(k) => {
+                      setKey(k);
+                      resetTabState();
+                    }}
                   >
                     <Tab
                       className={key === "8:00" ? "active" : ""}
@@ -349,7 +365,7 @@ const Booking = () => {
             </div>
           </div>
           <div className="btn-btm text-center mbot-50 mtop-20">
-            <Link to="/passengers" state={{remainingTickets}}>
+            <Link to="/passengers" state={{ remainingTickets }}>
               <button type="submit">
                 <span>Tiếp tục</span>
               </button>
