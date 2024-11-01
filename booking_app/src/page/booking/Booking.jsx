@@ -73,10 +73,18 @@ const Booking = () => {
   const updateRemainingSeats = (ticketType, change) => {
     setPriceInfor((prevPriceInfor) => {
       const updatedInfor = { ...prevPriceInfor };
-      updatedInfor[key][ticketType].remaining += change;
+  
+      // Kiểm tra tồn tại của key và ticketType trước khi cập nhật
+      if (updatedInfor[key] && updatedInfor[key][ticketType]) {
+        updatedInfor[key][ticketType].remaining += change;
+      } else {
+        console.warn("Ticket type or key does not exist in priceInfor:", ticketType, key);
+      }
+  
       return updatedInfor;
     });
   };
+  
 
   const startTimer = (seat, setTimer, setIntervalIds) => {
     clearInterval(intervalIds8AM[seat]);
@@ -114,11 +122,19 @@ const Booking = () => {
     setIntervalIds,
     selectedSeats
   ) => {
-    const ticketType = selectedSeats[seat];
+    const ticketType = selectedSeats[seat]; // Lấy ticketType từ selectedSeats
+  
+    // Nếu không có ticketType, không gọi updateRemainingSeats
+    if (!ticketType) {
+      console.warn("Ticket type is undefined for seat:", seat);
+      return;
+    }
+  
     setSelectedSeats((prev) => {
       const { [seat]: _, ...rest } = prev;
       return rest;
     });
+    
     clearInterval(intervalIds8AM[seat]);
     clearInterval(intervalIds12AM[seat]);
     setTimer((prev) => {
@@ -129,8 +145,11 @@ const Booking = () => {
       const { [seat]: _, ...rest } = prev;
       return rest;
     });
+  
+    // Gọi updateRemainingSeats chỉ khi ticketType hợp lệ
     updateRemainingSeats(ticketType, 0.5);
   };
+  
 
   const resetTabState = () => {
     setSelectedSeats8AM({});
