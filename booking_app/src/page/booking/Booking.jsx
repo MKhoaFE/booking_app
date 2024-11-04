@@ -53,6 +53,7 @@ const Booking = () => {
   const [intervalIds12AM, setIntervalIds12AM] = useState({});
   const [priceInfor, setPriceInfor] = useState(initialPriceInfor);
 
+  
   const currentPriceInfor = priceInfor[key];
 
   const handleSeatSelection = (
@@ -122,9 +123,8 @@ const Booking = () => {
     setIntervalIds,
     selectedSeats
   ) => {
-    const ticketType = selectedSeats[seat]; // Lấy ticketType từ selectedSeats
+    const ticketType = selectedSeats[seat];
   
-    // Nếu không có ticketType, không gọi updateRemainingSeats
     if (!ticketType) {
       console.warn("Ticket type is undefined for seat:", seat);
       return;
@@ -134,9 +134,10 @@ const Booking = () => {
       const { [seat]: _, ...rest } = prev;
       return rest;
     });
-    
+  
     clearInterval(intervalIds8AM[seat]);
     clearInterval(intervalIds12AM[seat]);
+  
     setTimer((prev) => {
       const { [seat]: _, ...rest } = prev;
       return rest;
@@ -146,9 +147,9 @@ const Booking = () => {
       return rest;
     });
   
-    // Gọi updateRemainingSeats chỉ khi ticketType hợp lệ
-    updateRemainingSeats(ticketType, 0.5);
+    updateRemainingSeats(ticketType, 0.5); // Cập nhật lại số lượng vé khi hủy ghế
   };
+  
   
 
   const resetTabState = () => {
@@ -167,6 +168,8 @@ const Booking = () => {
     78 -
     currentPriceInfor.regular.remaining;
 
+
+  
   return (
     <>
       <BookingHeader />
