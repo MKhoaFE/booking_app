@@ -1,12 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../trip8am/trip8AM.css";
 import selecting_seat from "../../assets/selecting-seat.png";
 import saleoff_seat from "../../assets/saleoff-seat.png";
 import reserved_seat from "../../assets/reserved-seat.png";
 import empty_seat from "../../assets/empty-seat.png";
 
-function Trip8AM({ selectedSeats, handleSeatSelection, unselectSeat, timer }) {
+function Trip8AM({ handleSeatSelection, timer }) {
+  const [selectedSeats, setSelectedSeats] = useState({});
   const [activeSeat, setActiveSeat] = useState(null);
+
+  // Load saved seats from localStorage when the component mounts
+  useEffect(() => {
+    const savedSeats = JSON.parse(localStorage.getItem("selectedSeats")) || {};
+    setSelectedSeats(savedSeats);
+  }, []);
 
   const togglePopup = (seat) => {
     if (activeSeat === seat) {
@@ -17,12 +24,26 @@ function Trip8AM({ selectedSeats, handleSeatSelection, unselectSeat, timer }) {
   };
 
   const handlePopupClick = (event) => {
-    event.stopPropagation(); //ngăn chặn lan truyền event khi click vào trong popup
+    event.stopPropagation(); // Prevent event propagation when clicking inside the popup
   };
 
   const handleRadioChange = (seat, ticketType) => {
+    const updatedSeats = { ...selectedSeats, [seat]: ticketType };
+    setSelectedSeats(updatedSeats);
     handleSeatSelection(seat, ticketType);
     setActiveSeat(null);
+
+    // Save the updated seat selection to localStorage
+    localStorage.setItem("selectedSeats", JSON.stringify(updatedSeats));
+  };
+
+  const unselectSeat = (seat) => {
+    const updatedSeats = { ...selectedSeats };
+    delete updatedSeats[seat];
+    setSelectedSeats(updatedSeats);
+
+    // Update localStorage after removing a seat
+    localStorage.setItem("selectedSeats", JSON.stringify(updatedSeats));
   };
 
   const seats = [
@@ -38,128 +59,122 @@ function Trip8AM({ selectedSeats, handleSeatSelection, unselectSeat, timer }) {
   ];
 
   return (
-    <>
-      <div className="trip8AM">
-        <div className="line"></div>
-        <div className="select-seat-container">
-          <div className="top row">
-            <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
-              <img src={empty_seat} alt="" /> Ghế trống
-            </div>
-            <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
-              <img src={reserved_seat} alt="" /> Ghế đã đặt
-            </div>
-            <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
-              <img src={selecting_seat} alt="" /> Ghế đang chọn
-            </div>
-            <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
-              <img src={saleoff_seat} alt="" /> Vé khuyến mãi
-            </div>
+    <div className="trip8AM">
+      <div className="line"></div>
+      <div className="select-seat-container">
+        <div className="top row">
+          <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
+            <img src={empty_seat} alt="" /> Ghế trống
           </div>
+          <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
+            <img src={reserved_seat} alt="" /> Ghế đã đặt
+          </div>
+          <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
+            <img src={selecting_seat} alt="" /> Ghế đang chọn
+          </div>
+          <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
+            <img src={saleoff_seat} alt="" /> Vé khuyến mãi
+          </div>
+        </div>
 
-          <div className="bottom row">
-            <div className="ship-container roboto-medium">
-              <table style={{ marginTop: "48px", marginLeft: "80px" }}>
-                <tbody>
-                  {seats.map((row, rowIndex) => (
-                    <tr key={rowIndex}>
-                      {Array(7)
-                        .fill(null)
-                        .map((_, idx) => (
-                          <td
-                            width="37px"
-                            height="33px"
-                            key={`empty-${rowIndex}-${idx}`}
-                          ></td>
-                        ))}
-                      {row.map((seat, seatIndex) => (
-                        <td key={seatIndex} width="37px" height="33px">
-                          <div
-                            className={`seat ${
-                              selectedSeats[seat]
-                                ? selectedSeats[seat] === "special"
-                                  ? "saleoff"
-                                  : "selecting"
-                                : ""
-                            }`}
-                            onClick={() =>
-                              selectedSeats[seat]
-                                ? unselectSeat(seat)
-                                : togglePopup(seat)
-                            }
-                          >
-                            <span>{seat}</span>
-                            {activeSeat === seat && (
-                              <div
-                                className="popuptext show"
-                                onClick={handlePopupClick}
-                              >
-                                <div className="infor">
-                                  <h4>Xin vui lòng chọn lớp vé (Thường)</h4>
-                                  <label>
-                                    <div>
-                                      <input
-                                        type="radio"
-                                        name={`ticket-${seat}`}
-                                        value="special"
-                                        checked={
-                                          selectedSeats[seat] === "special"
-                                        }
-                                        onChange={() =>
-                                          handleRadioChange(seat, "special")
-                                        }
-                                      ></input>
-                                    </div>
-
-                                    <div className="text">
-                                      <span>
-                                        Vé đặc biệt đặt trước 1 ngày (Áp dụng vé
-                                        người lớn)
-                                      </span>
-
-                                      <p>Giá vé (người lớn): 260.000 VND</p>
-
-                                      <p className="note">
-                                        Không được hoàn, đổi vé, không áp dụng
-                                        thanh toán tại quầy.
-                                      </p>
-                                    </div>
-                                  </label>
-                                  <label>
-                                    <div>
-                                      <input
-                                        type="radio"
-                                        name={`ticket-${seat}`}
-                                        value="regular"
-                                        checked={
-                                          selectedSeats[seat] === "regular"
-                                        }
-                                        onChange={() =>
-                                          handleRadioChange(seat, "regular")
-                                        }
-                                      ></input>
-                                    </div>
-                                    <div className="text">
-                                      <span>Vé thường</span>
-
-                                      <p>Giá vé (người lớn): 320.000 VND</p>
-                                    </div>
-                                  </label>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </td>
+        <div className="bottom row">
+          <div className="ship-container roboto-medium">
+            <table style={{ marginTop: "48px", marginLeft: "80px" }}>
+              <tbody>
+                {seats.map((row, rowIndex) => (
+                  <tr key={rowIndex}>
+                    {Array(7)
+                      .fill(null)
+                      .map((_, idx) => (
+                        <td
+                          width="37px"
+                          height="33px"
+                          key={`empty-${rowIndex}-${idx}`}
+                        ></td>
                       ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                    {row.map((seat, seatIndex) => (
+                      <td key={seatIndex} width="37px" height="33px">
+                        <div
+                          className={`seat ${
+                            selectedSeats[seat]
+                              ? selectedSeats[seat] === "special"
+                                ? "saleoff"
+                                : "selecting"
+                              : ""
+                          }`}
+                          onClick={() =>
+                            selectedSeats[seat]
+                              ? unselectSeat(seat)
+                              : togglePopup(seat)
+                          }
+                        >
+                          <span>{seat}</span>
+                          {activeSeat === seat && (
+                            <div
+                              className="popuptext show"
+                              onClick={handlePopupClick}
+                            >
+                              <div className="infor">
+                                <h4>Xin vui lòng chọn lớp vé (Thường)</h4>
+                                <label>
+                                  <div>
+                                    <input
+                                      type="radio"
+                                      name={`ticket-${seat}`}
+                                      value="special"
+                                      checked={
+                                        selectedSeats[seat] === "special"
+                                      }
+                                      onChange={() =>
+                                        handleRadioChange(seat, "special")
+                                      }
+                                    ></input>
+                                  </div>
+                                  <div className="text">
+                                    <span>
+                                      Vé đặc biệt đặt trước 1 ngày (Áp dụng vé
+                                      người lớn)
+                                    </span>
+                                    <p>Giá vé (người lớn): 260.000 VND</p>
+                                    <p className="note">
+                                      Không được hoàn, đổi vé, không áp dụng
+                                      thanh toán tại quầy.
+                                    </p>
+                                  </div>
+                                </label>
+                                <label>
+                                  <div>
+                                    <input
+                                      type="radio"
+                                      name={`ticket-${seat}`}
+                                      value="regular"
+                                      checked={
+                                        selectedSeats[seat] === "regular"
+                                      }
+                                      onChange={() =>
+                                        handleRadioChange(seat, "regular")
+                                      }
+                                    ></input>
+                                  </div>
+                                  <div className="text">
+                                    <span>Vé thường</span>
+                                    <p>Giá vé (người lớn): 320.000 VND</p>
+                                  </div>
+                                </label>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

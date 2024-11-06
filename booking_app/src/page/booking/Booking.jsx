@@ -168,7 +168,8 @@ const Booking = () => {
     78 -
     currentPriceInfor.regular.remaining;
 
-
+  const countSpecialTicket = 10 - currentPriceInfor.special.remaining;
+  const countRegularTicket = 78 - currentPriceInfor.regular.remaining;
   
   return (
     <>
@@ -387,7 +388,7 @@ const Booking = () => {
             </div>
           </div>
           <div className="btn-btm text-center mbot-50 mtop-20">
-            <Link to="/passengers" state={{ remainingTickets }}>
+            <Link to="/passengers" state={{ remainingTickets, countSpecialTicket, countRegularTicket }}>
               <button type="submit">
                 <span>Tiếp tục</span>
               </button>
