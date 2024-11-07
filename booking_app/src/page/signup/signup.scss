@@ -1,8 +1,8 @@
 .login-wrapper {
-    height: 600px;
+    height: 800px;
     position: relative;
     @media (max-width:768px) {
-      height: 785px;
+      height: 870px;
     }
     .bg {
       background-image: url("../../assets/bg-login.jpg");
@@ -125,7 +125,8 @@
               input[type="repassword"],
               input[type="fullname"],
               input[type="email"],
-              input[type="password"] {
+              input[type="password"], 
+              input[type="phonenumber"] {
                 width: 100%;
                 padding: 8px;
                 box-sizing: border-box;

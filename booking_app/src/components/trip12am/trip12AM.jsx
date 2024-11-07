@@ -5,18 +5,10 @@ import saleoff_seat from "../../assets/saleoff-seat.png";
 import reserved_seat from "../../assets/reserved-seat.png";
 import empty_seat from "../../assets/empty-seat.png";
 
-function Trip12AM({handleSeatSelection,  timer }) {
+function Trip12AM({ handleSeatSelection, timer }) {
   const [selectedSeats, setSelectedSeats] = useState({});
   const [activeSeat12AM, setActiveSeat12AM] = useState(null);
-  const handleUnselectSeat = (seat) => {
-    unselectSeat(seat); // Gọi hàm từ Booking để cập nhật thông tin
-    const updatedSeats = { ...selectedSeats };
-    delete updatedSeats[seat];
-    setSelectedSeats(updatedSeats);
 
-    // Cập nhật localStorage sau khi xóa ghế
-    localStorage.setItem("selectedSeats", JSON.stringify(updatedSeats));
-  };
   useEffect(() => {
     // Load saved seats from localStorage when the component mounts
     const savedSeats = JSON.parse(localStorage.getItem("selectedSeats")) || {};

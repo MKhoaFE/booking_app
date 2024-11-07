@@ -11,10 +11,12 @@ function Signup() {
   const [password, setPassword] = useState("");
   const [fullname, setFullname] = useState("");
   const [repassword, setRepassword] = useState("");
+  const [phonenumber, setPhonenumber] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [repasswordError, setRepassworderror] = useState("");
   const [fullnameError, setFullnameerror] = useState("");
+  const [phonenumberError, setPhonenumbererror] = useState("");
   const handleEmailBlur = () => {
     if (email === "") {
       setEmailError("Vui lòng nhập dữ liệu");
@@ -34,6 +36,13 @@ function Signup() {
       setFullnameerror("Vui lòng nhập dữ liệu");
     } else {
       setFullnameerror("");
+    }
+  };
+  const handlePhonenumberBlur = () => {
+    if (phonenumber === "") {
+      setPhonenumbererror("Vui lòng nhập dữ liệu");
+    } else {
+      setPhonenumbererror("");
     }
   };
   const handlePasswordBlur = () => {
@@ -90,64 +99,85 @@ function Signup() {
               </div>
               <div className="col-md-7 col-xs-12 container">
                 <form className="form-login" onSubmit={handleSubmit}>
-                  <div className="form-group">
-                    <label>Họ và tên (*)</label>
-                    <input
-                      type="fullname"
-                      value={fullname}
-                      onChange={(e) => setFullname(e.target.value)}
-                      onBlur={handleFullnameBlur}
-                      className={
-                        fullname === "" && fullnameError ? "error" : ""
-                      }
-                    />
-                    {fullname === "" && fullnameError && (
-                      <span className="error-message">{fullnameError}</span>
-                    )}
-                  </div>
-                  <div className="form-group">
-                    <label>Địa chỉ email (*)</label>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      onBlur={handleEmailBlur}
-                      className={email === "" && emailError ? "error" : ""}
-                    />
-                    {email === "" && emailError && (
-                      <span className="error-message">{emailError}</span>
-                    )}
-                  </div>
-                  <div className="form-group">
-                    <label>Mật khẩu (*)</label>
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      onBlur={handlePasswordBlur}
-                      className={
-                        password === "" && passwordError ? "error" : ""
-                      }
-                    />
-                    {password === "" && passwordError && (
-                      <span className="error-message">{passwordError}</span>
-                    )}
-                  </div>
-                  <div className="form-group">
-                    <label>Xác nhận mật khẩu (*)</label>
-                    <input
-                      type="password"
-                      value={repassword}
-                      onChange={(e) => setRepassword(e.target.value)}
-                      onBlur={handleRepasswordBlur}
-                      className={
-                        repassword === "" && repasswordError ? "error" : ""
-                      }
-                    />
-                    {repassword === "" && repasswordError && (
-                      <span className="error-message">{repasswordError}</span>
-                    )}
-                  </div>
+                <div className="form-group">
+                        <label>Họ và tên (*)</label>
+                        <input
+                          type="fullname"
+                          value={fullname}
+                          onChange={(e) => setFullname(e.target.value)}
+                          onBlur={handleFullnameBlur}
+                          className={
+                            fullname === "" && fullnameError ? "error" : ""
+                          }
+                        />
+                        {fullname === "" && fullnameError && (
+                          <span className="error-message">{fullnameError}</span>
+                        )}
+                      </div>
+                      <div className="form-group">
+                        <label>Địa chỉ email (*)</label>
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          onBlur={handleEmailBlur}
+                          className={email === "" && emailError ? "error" : ""}
+                        />
+                        {email === "" && emailError && (
+                          <span className="error-message">{emailError}</span>
+                        )}
+                      </div>
+                      <div className="form-group">
+                        <label>Mật khẩu (*)</label>
+                        <input
+                          type="password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          onBlur={handlePasswordBlur}
+                          className={
+                            password === "" && passwordError ? "error" : ""
+                          }
+                        />
+                        {password === "" && passwordError && (
+                          <span className="error-message">{passwordError}</span>
+                        )}
+                      </div>
+                      <div className="form-group">
+                        <label>Xác nhận mật khẩu (*)</label>
+                        <input
+                          type="password"
+                          value={repassword}
+                          onChange={(e) => setRepassword(e.target.value)}
+                          onBlur={handleRepasswordBlur}
+                          className={
+                            repassword === "" && repasswordError ? "error" : ""
+                          }
+                        />
+                        {repassword === "" && repasswordError && (
+                          <span className="error-message">
+                            {repasswordError}
+                          </span>
+                        )}
+                      </div>
+                      <div className="form-group">
+                        <label>Số điện thoại (*)</label>
+                        <input
+                          type="phonenumber"
+                          value={phonenumber}
+                          onChange={(e) => setPhonenumber(e.target.value)}
+                          onBlur={handlePhonenumberBlur}
+                          className={
+                            phonenumber === "" && phonenumberError
+                              ? "error"
+                              : ""
+                          }
+                        />
+                        {phonenumber === "" && phonenumberError && (
+                          <span className="error-message">
+                            {phonenumberError}
+                          </span>
+                        )}
+                      </div>
 
                   <div className="form-actions">
                     <button type="submit" className="login-btn">
