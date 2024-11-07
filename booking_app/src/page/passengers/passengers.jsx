@@ -13,8 +13,8 @@ function Passengers() {
   const { countSpecialTicket } = location.state || {};
   const { countRegularTicket } = location.state || {};
 
-
-  console.log(countRegularTicket);
+  console.log("vé thường: ",countRegularTicket);
+  console.log("vé đặc biệt: ",countSpecialTicket);
   return (
     <>
       <BookingHeader></BookingHeader>
@@ -24,7 +24,6 @@ function Passengers() {
           <div className="line"></div>
           <div className="wrapper">
             <div className="ticket-table">
-              <h1>{remainingTickets} </h1>
               <Table striped bordered hover>
                 <thead>
                   <tr>
@@ -111,6 +110,9 @@ function Passengers() {
                               <div>Chặng: TP. Hồ Chí Minh - Vũng Tàu</div>
                               <div>Ngày giờ: 09/07/2024 10:00</div>
                               <div>Ghế: H3</div>
+                              <div>
+                                Loại vé: <b>Thường</b>{" "}
+                              </div>
                             </span>
                           </div>
                         </td>
@@ -118,17 +120,99 @@ function Passengers() {
                           <div style={{ marginTop: "5rem" }}></div>
                         </td>
                         <td>
-                          <div style={{ marginTop: "5rem" }}>VND</div>
+                          <div style={{ marginTop: "5rem" }}>320.000 VND</div>
                         </td>
                         <td>
-                          <div style={{ marginTop: "5rem" }}>VND</div>
+                          <div style={{ marginTop: "5rem" }}>320.000 VND</div>
+                        </td>
+                      </tr>
+                    ))}
+                  {Array(countSpecialTicket)
+                    .fill()
+                    .map((_, index) => (
+                      <tr key={index}>
+                        <td>
+                          <div className="field-item">
+                            <div className="col-md-4">
+                              <label>Họ và tên (*)</label>
+                            </div>
+                            <div className="col-md-8">
+                              <input type="text" />
+                            </div>
+                          </div>
+                          <div className="field-item">
+                            <div className="col-md-4">
+                              <label>Số điện thoại</label>
+                            </div>
+                            <div className="col-md-8">
+                              <input type="text" />
+                            </div>
+                          </div>
+                          <div className="field-item">
+                            <div className="col-md-4">
+                              <label>CMND</label>
+                            </div>
+                            <div className="col-md-8">
+                              <input type="text" />
+                            </div>
+                          </div>
+                          <div className="field-item">
+                            <div className="col-md-4">
+                              <label>Quốc gia</label>
+                            </div>
+                            <div className="col-md-8">
+                              <input type="text" />
+                            </div>
+                          </div>
+                          <div className="col-md-12 field-item">
+                            <div className="col-md-6">
+                              <div className="field-item">
+                                <label>Giới tính</label>
+                                <select>
+                                  <option value="1">Nam</option>
+                                  <option value="2">Nữ</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div className="col-md-6">
+                              <div className="field-item">
+                                <label>Năm sinh</label>
+                                <select>
+                                  <option value="1">1990</option>
+                                  <option value="2">1991</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="trip-infor">
+                          <div className="wrap">
+                            <span>
+                              <div>Giữ chỗ trong giây</div>
+                              <div>Chặng: TP. Hồ Chí Minh - Vũng Tàu</div>
+                              <div>Ngày giờ: 09/07/2024 10:00</div>
+                              <div>Ghế: H3</div>
+                              <div>
+                                Loại vé:<b> Đặc biệt</b>
+                              </div>
+                            </span>
+                          </div>
+                        </td>
+                        <td>
+                          <div style={{ marginTop: "5rem" }}></div>
+                        </td>
+                        <td>
+                          <div style={{ marginTop: "5rem" }}>260.000 VND</div>
+                        </td>
+                        <td>
+                          <div style={{ marginTop: "5rem" }}>260.000 VND</div>
                         </td>
                       </tr>
                     ))}
 
                   <tr>
                     <td className="total" colSpan={5}>
-                      <strong>TỔNG TIỀN : 350.000 VND</strong>
+                      <h3>TỔNG TIỀN : {(countRegularTicket*320000 + countSpecialTicket*260000).toLocaleString('vi-VN')} VND</h3>
                     </td>
                   </tr>
                 </tbody>
