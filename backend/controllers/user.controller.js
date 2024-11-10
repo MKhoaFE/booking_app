@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 // Đăng ký người dùng
 exports.registerUser = async (req, res) => {
   try {
-    const { userId, name, email, phone, password } = req.body;
+    const { name, email, phone, password } = req.body;
 
     // Kiểm tra xem email đã được sử dụng chưa
     const existingUser = await User.findOne({ email });
@@ -17,9 +17,8 @@ exports.registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
-    // Tạo người dùng mới
+    // Tạo người dùng mới mà không cần userId (được tạo tự động)
     const newUser = new User({
-      userId,
       name,
       email,
       phone,
@@ -63,4 +62,3 @@ exports.loginUser = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
-
