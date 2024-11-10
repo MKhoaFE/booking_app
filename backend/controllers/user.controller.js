@@ -1,32 +1,66 @@
-const jwt = require('jsonwebtoken');
+const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
-const User = require('../models/user.model');  // Giả sử bạn có model người dùng
+const jwt = require('jsonwebtoken');
 
-const registerUser = async (req, res) => {
+// Đăng ký người dùng
+exports.registerUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ email, password: hashedPassword });
-    res.status(201).json(newUser);
+    const { userId, name, email, phone, password } = req.body;
+
+    // Kiểm tra xem email đã được sử dụng chưa
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already in use' });
+    }
+
+    // Hash mật khẩu
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(password, salt);
+
+    // Tạo người dùng mới
+    const newUser = new User({
+      userId,
+      name,
+      email,
+      phone,
+      passwordHash
+    });
+
+    const savedUser = await newUser.save();
+    res.status(201).json({ message: 'User registered successfully', user: savedUser });
   } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+    console.error("Error:", err); // Thêm dòng này để log chi tiết lỗi
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 
-const loginUser = async (req, res) => {
+// Đăng nhập người dùng
+exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    // Tìm người dùng bằng email
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: 'User not found' });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+    // Kiểm tra mật khẩu
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
 
-    const token = jwt.sign({ id: user._id }, process.env.SECRET_ACCESS_TOKEN, { expiresIn: '1h' });
-    res.json({ token });
+    // Tạo token
+    const token = jwt.sign(
+      { userId: user.userId, email: user.email },
+      process.env.SECRET_ACCESS_TOKEN,
+      { expiresIn: '1h' }
+    );
+
+    res.status(200).json({ message: 'Login successful', token });
   } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 
-module.exports = { registerUser, loginUser };
