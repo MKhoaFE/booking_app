@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import "../login/login.css";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import "font-awesome/css/font-awesome.min.css";
 import "../../GlobalStyles/glbStyles.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import axios from "axios";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const navigate = useNavigate();
 
   const handleEmailBlur = () => {
     if (email === "") {
@@ -27,11 +29,30 @@ function Login() {
     }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Handle login logic here
-    console.log("Email:", email);
-    console.log("Password:", password);
+    if (!email || !password) {
+      alert("Vui lòng điền đủ thông tin");
+      return;
+    }
+    const formData = {
+      email: email,
+      password: password,
+    };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/users/login",
+        formData
+      );
+      alert("Đăng nhập thành công");
+      localStorage.setItem('token', response.data.token);
+      navigate("/");
+      console.log(response.data);
+    } catch(error) {
+      alert("Sai tài khoản hoặc mật khẩu");
+      console.error(error.response?.data || error.message);
+    }
   };
 
   return (
@@ -119,7 +140,10 @@ function Login() {
                   </div>
 
                   <div className="sign-up">
-                    <span>Chưa có tài khoản</span> <Link to="/signup"><button>Đăng ký</button></Link>
+                    <span>Chưa có tài khoản</span>{" "}
+                    <Link to="/signup">
+                      <button>Đăng ký</button>
+                    </Link>
                   </div>
                 </form>
               </div>
