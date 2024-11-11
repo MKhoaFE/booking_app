@@ -6,6 +6,8 @@ import "../../GlobalStyles/glbStyles.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
+import Cookies from "js-cookie";
+
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -45,11 +47,16 @@ function Login() {
         "http://localhost:5000/api/users/login",
         formData
       );
+      const { token, user } = response.data; // Giả định backend trả về cả token và thông tin người dùng
+
+      // Lưu JWT và thông tin người dùng vào cookie
+      Cookies.set('token', token, { expires: 1 });
+      Cookies.set('user', JSON.stringify(user), { expires: 1 });
+
       alert("Đăng nhập thành công");
-      localStorage.setItem('token', response.data.token);
       navigate("/");
       console.log(response.data);
-    } catch(error) {
+    } catch (error) {
       alert("Sai tài khoản hoặc mật khẩu");
       console.error(error.response?.data || error.message);
     }

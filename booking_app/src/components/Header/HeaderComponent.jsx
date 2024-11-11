@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../Header/header.css";
 import "@fontsource/roboto/700.css";
 import EmailIcon from "@mui/icons-material/Email";
@@ -16,7 +16,18 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import logo_header from "../../assets/logo-image.png";
 import english from "../../assets/english.png";
 import { Link } from "react-router-dom";
+import LogoutIcon from '@mui/icons-material/Logout';
+import Cookies from "js-cookie";
 function HeaderComponent() {
+  const [userName, setUserName] = useState('');
+
+  useEffect(() => {
+    const userCookie = Cookies.get('user');
+    if (userCookie) {
+      const user = JSON.parse(userCookie);
+      setUserName(user.name); // Hiển thị tên từ thông tin người dùng trong cookie
+    }
+  }, []);
   return (
     <div className="navbar roboto-medium">
       <div className="top">
@@ -41,14 +52,21 @@ function HeaderComponent() {
               </span>
               <img src={logo1} alt="" />
               <img src={logo2} alt="" />
-              <Link to="/login" style={{textDecoration:"none"}}>
-                
-                <Button
-                  style={{ background: "none", color: "white", border: "none" }}
-                >
-                  Đăng nhập
-                </Button>
-              </Link>
+              {userName ? (
+                <strong>Xin chào, {userName}</strong>
+              ) : (
+                <Link to="/login" style={{ textDecoration: "none" }}>
+                  <Button
+                    style={{
+                      background: "none",
+                      color: "white",
+                      border: "none",
+                    }}
+                  >
+                    Đăng nhập
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>

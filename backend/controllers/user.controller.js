@@ -1,6 +1,10 @@
+const express = require('express');
 const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 // Đăng ký người dùng
 exports.registerUser = async (req, res) => {
@@ -57,7 +61,16 @@ exports.loginUser = async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    res.status(200).json({ message: 'Login successful', token });
+    // Trả về token và thông tin người dùng
+    res.status(200).json({
+      message: 'Login successful',
+      token,
+      user: {
+        id: user.userId,
+        name: user.name,
+        email: user.email
+      }
+    });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
