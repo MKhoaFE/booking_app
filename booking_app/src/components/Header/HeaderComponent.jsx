@@ -21,12 +21,31 @@ import Cookies from "js-cookie";
 function HeaderComponent() {
   const [userName, setUserName] = useState('');
 
+    // Hàm cập nhật user từ cookie
+    const updateUserNameFromCookie = () => {
+      const userCookie = Cookies.get('user');
+      if (userCookie) {
+        const user = JSON.parse(userCookie);
+        setUserName(user.name);
+      } else {
+        setUserName('');
+      }
+    };
+
   useEffect(() => {
     const userCookie = Cookies.get('user');
+        // Lấy tên user khi component được mount
+        updateUserNameFromCookie();
+
+        // Lắng nghe sự thay đổi trên sự kiện window để cập nhật user
+        window.addEventListener('cookieChange', updateUserNameFromCookie);
     if (userCookie) {
       const user = JSON.parse(userCookie);
       setUserName(user.name); // Hiển thị tên từ thông tin người dùng trong cookie
     }
+    return () => {
+      window.removeEventListener('cookieChange', updateUserNameFromCookie);
+    };
   }, []);
   return (
     <div className="navbar roboto-medium">

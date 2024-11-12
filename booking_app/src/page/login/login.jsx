@@ -14,7 +14,7 @@ function Login() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
-
+  
   const handleEmailBlur = () => {
     if (email === "") {
       setEmailError("Vui lòng nhập dữ liệu");
@@ -52,7 +52,7 @@ function Login() {
       // Lưu JWT và thông tin người dùng vào cookie
       Cookies.set('token', token, { expires: 1 });
       Cookies.set('user', JSON.stringify(user), { expires: 1 });
-
+      window.dispatchEvent(new Event('cookieChange'));
       alert("Đăng nhập thành công");
       navigate("/");
       console.log(response.data);
