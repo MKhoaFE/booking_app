@@ -55,12 +55,10 @@ const Booking = () => {
 
   useEffect(() => {
     // Lưu trạng thái component hiện tại vào localStorage khi key thay đổi
-    const currentSelectedSeats = key === "8:00" ? selectedSeats8AM : selectedSeats12AM;
     const storageData = {
-      selectedSeats: currentSelectedSeats,
       currentTab: key,
     };
-    localStorage.setItem("selectedCurrent", JSON.stringify(storageData));
+    localStorage.setItem("selectedTab", JSON.stringify(storageData));
   }, [key, selectedSeats8AM, selectedSeats12AM]);
 
   const currentPriceInfor = priceInfor[key];
@@ -69,7 +67,7 @@ const Booking = () => {
     seat,
     ticketType,
     setSelectedSeats,
-    setTimer,
+    setTimer, 
     setIntervalIds
   ) => {
     setSelectedSeats((prev) => ({

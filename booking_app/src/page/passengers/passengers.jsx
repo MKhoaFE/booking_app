@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import BookingHeader from "../../components/Booking-header/bookingHeader";
 import Stepbar from "../../components/StepBar/stepbar";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -12,9 +12,23 @@ function Passengers() {
   const { remainingTickets } = location.state || {};
   const { countSpecialTicket } = location.state || {};
   const { countRegularTicket } = location.state || {};
+  const [selectedTab, setSelectedTab] = useState(null);
+  const [selectedSeats, setSelectedSeats] = useState({});
+  useEffect(() => {
+    const seats = localStorage.getItem("selectedSeat8AM");
+    if (seats) {
+      setSelectedSeats(JSON.parse(seats));
+    }
+  }, []);
+  useEffect(() => {
+    const tab = localStorage.getItem("selectedTab");
+    if (tab) {
+      setSelectedTab(JSON.parse(tab));
+    }
+  }, []);
 
-  console.log("vé thường: ",countRegularTicket);
-  console.log("vé đặc biệt: ",countSpecialTicket);
+  console.log("vé thường: ", countRegularTicket);
+  console.log("vé đặc biệt: ", countSpecialTicket);
   return (
     <>
       <BookingHeader></BookingHeader>
@@ -24,6 +38,38 @@ function Passengers() {
           <div className="line"></div>
           <div className="wrapper">
             <div className="ticket-table">
+              <p>
+                {selectedTab ? (
+                  <strong>
+                    Chuyến hiện tại:{" "}
+                    <span
+                      style={{
+                        color: "green",
+                        fontSize: "2rem",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      {selectedTab.currentTab}
+                    </span>{" "}
+                  </strong>
+                ) : (
+                  <strong>Không có tab nào được chọn.</strong>
+                )}
+              </p>
+              <p>
+                {" "}
+                {Object.keys(selectedSeats).length > 0 ? (
+                  <ul>
+                    {Object.entries(selectedSeats).map(([seat, type]) => (
+                      <li key={seat}>
+                        Ghế: {seat} - Loại: {type}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>Không có ghế nào được chọn.</p>
+                )}
+              </p>
               <Table striped bordered hover>
                 <thead>
                   <tr>
@@ -212,7 +258,14 @@ function Passengers() {
 
                   <tr>
                     <td className="total" colSpan={5}>
-                      <h3>TỔNG TIỀN : {(countRegularTicket*320000 + countSpecialTicket*260000).toLocaleString('vi-VN')} VND</h3>
+                      <h3>
+                        TỔNG TIỀN :{" "}
+                        {(
+                          countRegularTicket * 320000 +
+                          countSpecialTicket * 260000
+                        ).toLocaleString("vi-VN")}{" "}
+                        VND
+                      </h3>
                     </td>
                   </tr>
                 </tbody>

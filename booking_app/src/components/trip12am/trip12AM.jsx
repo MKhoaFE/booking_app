@@ -11,7 +11,7 @@ function Trip12AM({ handleSeatSelection, timer }) {
 
   useEffect(() => {
     // Load saved seats from localStorage when the component mounts
-    const savedSeats = JSON.parse(localStorage.getItem("selectedSeats")) || {};
+    const savedSeats = JSON.parse(localStorage.getItem("selectedSeat12AM")) || {};
     setSelectedSeats(savedSeats);
   }, []);
 
@@ -34,7 +34,7 @@ function Trip12AM({ handleSeatSelection, timer }) {
     setActiveSeat12AM(null);
 
     // Save the updated seat selection to localStorage
-    localStorage.setItem("selectedSeats", JSON.stringify(updatedSeats));
+    localStorage.setItem("selectedSeat12AM", JSON.stringify(updatedSeats));
   };
 
     // Thêm hàm để bỏ chọn ghế
@@ -44,7 +44,7 @@ function Trip12AM({ handleSeatSelection, timer }) {
       setSelectedSeats(updatedSeats);
   
       // Cập nhật localStorage sau khi xóa ghế
-      localStorage.setItem("selectedSeats", JSON.stringify(updatedSeats));
+      localStorage.setItem("selectedSeat12AM", JSON.stringify(updatedSeats));
     };
 
   const seats12AM = [
