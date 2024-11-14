@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../booking/booking.css";
 import "../../GlobalStyles/glbStyles.css";
 import { Link } from "react-router-dom";
@@ -53,7 +53,16 @@ const Booking = () => {
   const [intervalIds12AM, setIntervalIds12AM] = useState({});
   const [priceInfor, setPriceInfor] = useState(initialPriceInfor);
 
-  
+  useEffect(() => {
+    // Lưu trạng thái component hiện tại vào localStorage khi key thay đổi
+    const currentSelectedSeats = key === "8:00" ? selectedSeats8AM : selectedSeats12AM;
+    const storageData = {
+      selectedSeats: currentSelectedSeats,
+      currentTab: key,
+    };
+    localStorage.setItem("selectedCurrent", JSON.stringify(storageData));
+  }, [key, selectedSeats8AM, selectedSeats12AM]);
+
   const currentPriceInfor = priceInfor[key];
 
   const handleSeatSelection = (

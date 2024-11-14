@@ -11,7 +11,7 @@ function Trip8AM({ handleSeatSelection, timer }) {
 
   // Load saved seats from localStorage when the component mounts
   useEffect(() => {
-    const savedSeats = JSON.parse(localStorage.getItem("selectedSeatsTrip8AM")) || {};
+    const savedSeats = JSON.parse(localStorage.getItem("selectedSeats")) || {};
     setSelectedSeats(savedSeats);
   }, []);
 
@@ -34,7 +34,7 @@ function Trip8AM({ handleSeatSelection, timer }) {
     setActiveSeat(null);
 
     // Save the updated seat selection to localStorage
-    localStorage.setItem("selectedSeatsTrip8AM", JSON.stringify(updatedSeats));
+    localStorage.setItem("selectedSeats", JSON.stringify(updatedSeats));
   };
 
   const unselectSeat = (seat) => {
@@ -43,7 +43,7 @@ function Trip8AM({ handleSeatSelection, timer }) {
     setSelectedSeats(updatedSeats);
 
     // Update localStorage after removing a seat
-    localStorage.setItem("selectedSeatsTrip8AM", JSON.stringify(updatedSeats));
+    localStorage.setItem("selectedSeats", JSON.stringify(updatedSeats));
   };
 
   const seats = [
