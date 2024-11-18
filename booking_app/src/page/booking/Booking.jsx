@@ -206,6 +206,7 @@ const Booking = () => {
                       title="8:00"
                     >
                       <Trip8AM
+                      
                         selectedSeats={selectedSeats8AM}
                         handleSeatSelection={(seat, ticketType) =>
                           handleSeatSelection(
@@ -225,6 +226,7 @@ const Booking = () => {
                             selectedSeats8AM
                           )
                         }
+                        updateRemainingSeats={updateRemainingSeats}
                         timer={timer8AM}
                       />
                     </Tab>

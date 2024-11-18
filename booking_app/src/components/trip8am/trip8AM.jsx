@@ -5,10 +5,10 @@ import saleoff_seat from "../../assets/saleoff-seat.png";
 import reserved_seat from "../../assets/reserved-seat.png";
 import empty_seat from "../../assets/empty-seat.png";
 
-function Trip8AM({ handleSeatSelection, timer }) {
+function Trip8AM({ handleSeatSelection, timer, updateRemainingSeats  }) {
   const [selectedSeats, setSelectedSeats] = useState({});
   const [activeSeat, setActiveSeat] = useState(null);
-
+  
   // Load saved seats from localStorage when the component mounts
   useEffect(() => {
     const savedSeats = JSON.parse(localStorage.getItem("selectedSeat8AM")) || {};
@@ -38,12 +38,21 @@ function Trip8AM({ handleSeatSelection, timer }) {
   };
 
   const unselectSeat = (seat) => {
+    const ticketType = selectedSeats[seat];
+
+    if (!ticketType) {
+      console.warn("Ticket type is undefined for seat:", seat);
+      return;
+    }
+
     const updatedSeats = { ...selectedSeats };
     delete updatedSeats[seat];
     setSelectedSeats(updatedSeats);
 
     // Update localStorage after removing a seat
     localStorage.setItem("selectedSeat8AM", JSON.stringify(updatedSeats));
+    updateRemainingSeats(ticketType, 0.5);
+
   };
 
   const seats = [
