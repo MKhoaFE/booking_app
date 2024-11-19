@@ -45,7 +45,11 @@ const initialPriceInfor = {
 
 const Booking = () => {
   const [key, setKey] = useState("8:00");
-  const [selectedSeats8AM, setSelectedSeats8AM] = useState({});
+  const [selectedSeats8AM, setSelectedSeats8AM] = useState(()=>{
+    const storedSeats = localStorage.getItem("selectedSeat8AM");
+    return storedSeats ? JSON.parse(storedSeats):{};
+
+  });
   const [selectedSeats12AM, setSelectedSeats12AM] = useState({});
   const [timer8AM, setTimer8AM] = useState({});
   const [timer12AM, setTimer12AM] = useState({});
@@ -60,6 +64,11 @@ const Booking = () => {
     };
     localStorage.setItem("selectedTab", JSON.stringify(storageData));
   }, [key, selectedSeats8AM, selectedSeats12AM]);
+
+  useEffect(() => {
+    localStorage.setItem("selectedSeats8AM", JSON.stringify(selectedSeats8AM));
+    
+  }, [selectedSeats8AM]);
 
   const currentPriceInfor = priceInfor[key];
 
@@ -136,12 +145,13 @@ const Booking = () => {
       console.warn("Ticket type is undefined for seat:", seat);
       return;
     }
+    
   
     setSelectedSeats((prev) => {
-      const { [seat]: _, ...rest } = prev;
-      return rest;
+      const updatedSeats = { ...prev };
+      delete updatedSeats[seat];
+      return updatedSeats;
     });
-  
     clearInterval(intervalIds8AM[seat]);
     clearInterval(intervalIds12AM[seat]);
   
