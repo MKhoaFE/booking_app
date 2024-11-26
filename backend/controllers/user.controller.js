@@ -84,6 +84,10 @@ exports.loginUser = async (req, res) => {
 };
 
 exports.logoutUser = async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ success: false, message: "User not authenticated" });
+  }
+
   if (req.headers && req.headers.authorization) {
     const token = req.headers.authorization.split(" ")[1];
     if (!token) {

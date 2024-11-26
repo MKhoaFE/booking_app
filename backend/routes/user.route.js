@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const {isAuth} = require('../middlewares/authentication.mdw');
 const validateUserData = require('../middlewares/validate.mdw');
 const { registerUser, loginUser, logoutUser } = require('../controllers/user.controller');
+const isAuth = require('../middlewares/authentication.mdw');
 
 router.post('/signup', validateUserData, registerUser);
 router.post('/login', loginUser);
