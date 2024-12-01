@@ -84,23 +84,44 @@ exports.loginUser = async (req, res) => {
 };
 
 exports.logoutUser = async (req, res) => {
-  if (!req.user) {
-    return res.status(401).json({ success: false, message: "User not authenticated" });
-  }
-
-  if (req.headers && req.headers.authorization) {
-    const token = req.headers.authorization.split(" ")[1];
-    if (!token) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Authorization fail!" });
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not authenticated",
+      });
     }
 
-    const tokens = req.user.tokens;
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: "Authorization token is missing!",
+      });
+    }
 
+    const tokens = req.user.tokens || [];
     const newTokens = tokens.filter((t) => t.token !== token);
 
+    if (tokens.length === newTokens.length) {
+      return res.status(404).json({
+        success: false,
+        message: "Token not found in user's session",
+      });
+    }
+
+    // Cập nhật tokens
     await User.findByIdAndUpdate(req.user._id, { tokens: newTokens });
-    res.json({ success: true, message: "Sign out successfully!" });
+
+    return res.status(200).json({
+      success: true,
+      message: "Sign out successfully!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: err.message,
+    });
   }
 };

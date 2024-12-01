@@ -16,35 +16,61 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import logo_header from "../../assets/logo-image.png";
 import english from "../../assets/english.png";
 import { Link } from "react-router-dom";
-import LogoutIcon from '@mui/icons-material/Logout';
+import LogoutIcon from "@mui/icons-material/Logout";
 import Cookies from "js-cookie";
+import axios from "axios";
 function HeaderComponent() {
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState("");
 
-    // Hàm cập nhật user từ cookie
-    const updateUserNameFromCookie = () => {
-      const userCookie = Cookies.get('user');
-      if (userCookie) {
-        const user = JSON.parse(userCookie);
-        setUserName(user.name);
-      } else {
-        setUserName('');
-      }
-    };
+  // Hàm cập nhật user từ cookie
+  const updateUserNameFromCookie = () => {
+    const userCookie = Cookies.get("user");
+    if (userCookie) {
+      const user = JSON.parse(userCookie);
+      setUserName(user.name);
+    } else {
+      setUserName("");
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      // Gọi API logout
+      const token = Cookies.get("token"); // Lấy token từ cookie
+      await axios.post(
+        "http://localhost:5000/api/users/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Xóa cookie sau khi đăng xuất
+      Cookies.remove("user");
+      Cookies.remove("token");
+      setUserName("");
+      alert("Đăng xuất thành công!");
+    } catch (error) {
+      console.error("Lỗi khi đăng xuất:", error);
+      alert("Đăng xuất thất bại!");
+    }
+  };
 
   useEffect(() => {
-    const userCookie = Cookies.get('user');
-        // Lấy tên user khi component được mount
-        updateUserNameFromCookie();
+    const userCookie = Cookies.get("user");
+    // Lấy tên user khi component được mount
+    updateUserNameFromCookie();
 
-        // Lắng nghe sự thay đổi trên sự kiện window để cập nhật user
-        window.addEventListener('cookieChange', updateUserNameFromCookie);
+    // Lắng nghe sự thay đổi trên sự kiện window để cập nhật user
+    window.addEventListener("cookieChange", updateUserNameFromCookie);
     if (userCookie) {
       const user = JSON.parse(userCookie);
       setUserName(user.name); // Hiển thị tên từ thông tin người dùng trong cookie
     }
     return () => {
-      window.removeEventListener('cookieChange', updateUserNameFromCookie);
+      window.removeEventListener("cookieChange", updateUserNameFromCookie);
     };
   }, []);
   return (
@@ -72,7 +98,15 @@ function HeaderComponent() {
               <img src={logo1} alt="" />
               <img src={logo2} alt="" />
               {userName ? (
-                <strong>Xin chào, {userName}</strong>
+                <>
+                  <strong>Xin chào, {userName}</strong>{" "}
+                  <button
+                    onClick={handleLogout}
+                    style={{ background: "none", color: "white" }}
+                  >
+                    logout
+                  </button>
+                </>
               ) : (
                 <Link to="/login" style={{ textDecoration: "none" }}>
                   <Button

@@ -12,6 +12,10 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
+app.use((err, req, res, next) => {
+  console.error("Error occurred:", err.message);
+  next(err); // Chuyển lỗi tiếp tới các handler khác
+});
 
 const userRoutes = require("./routes/user.route");
 const sessionRoutes = require("./routes/session.route")
