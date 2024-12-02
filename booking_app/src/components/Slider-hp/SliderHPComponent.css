@@ -1,0 +1,110 @@
+.lp-slideshow {
+  width: 100%;
+}
+.lp-slideshow *, .lp-slideshow {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+.lp-slideshow > .content {
+  position: relative;
+  margin: auto;
+  width: 100%;
+  max-height: 700px;
+}
+.lp-slideshow > .content > .slide {
+  width: 100%;
+  max-height: 700px;
+  position: absolute;
+  margin: auto;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  -webkit-transition: opacity 0.6s ease;
+  -moz-transition: opacity 0.6s ease;
+  -o-transition: opacity 0.6s ease;
+}
+.lp-slideshow > .content > .slide.active {
+  opacity: 1;
+}
+.lp-slideshow > .content > .slide > .image {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.lp-slideshow > .content > .slide > .number-text {
+  color: #fff;
+  font-size: 1rem;
+  padding: 8px 12px;
+  position: absolute;
+  top: 0;
+}
+.lp-slideshow > .content > .slide > .caption-text {
+  color: #fff;
+  font-size: 1.3rem;
+  padding: 8px 12px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+.lp-slideshow > .content > .prev,
+.lp-slideshow > .content > .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  margin-top: -22px;
+  padding: 16px;
+  font-size: 18px;
+  background-color: rgba(0, 0, 0, 0);
+  color: #fff;
+  font-weight: bold;
+  transition: background-color 0.6s ease;
+  -webkit-transition: background-color 0.6s ease;
+  -moz-transition: background-color 0.6s ease;
+  -o-transition: background-color 0.6s ease;
+}
+.lp-slideshow > .content > .prev:hover,
+.lp-slideshow > .content > .next:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+.lp-slideshow > .content > .prev {
+  left: 0;
+  border-radius: 0 3px 3px 0;
+}
+.lp-slideshow > .content > .next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+.lp-slideshow > .content:hover > .prev,
+.lp-slideshow > .content:hover > .next {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+.lp-slideshow > .content:hover > .prev:hover,
+.lp-slideshow > .content:hover > .next:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+.lp-slideshow > .dot-container {
+  text-align: center;
+  margin: 1rem auto;
+}
+.lp-slideshow > .dot-container > .dot {
+  height: 15px;
+  width: 15px;
+  margin: 0 0.4rem;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+  -webkit-transition: background-color 0.6s ease;
+  -moz-transition: background-color 0.6s ease;
+  -o-transition: background-color 0.6s ease;
+}
+.lp-slideshow > .dot-container > .dot.active, .lp-slideshow > .dot-container > .dot:hover {
+  background-color: #717171;
+}
+.lp-slideshow > .dot-container > .dot:not(.active):hover {
+  cursor: pointer;
+}/*# sourceMappingURL=SliderHPComponent.css.map */

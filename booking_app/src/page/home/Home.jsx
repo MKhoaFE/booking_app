@@ -1,30 +1,54 @@
 import React, { useEffect, useState } from "react";
 import home_image from "../../assets/home_image.png";
 import "../home/home.css";
-import { Box, FormControl, InputLabel } from "@mui/material";
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  NativeSelect,
+  Select,
+} from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import SlideComponent from "../../components/Slide/SlideComponent.jsx";
 import Input from "@mui/material/Input";
 import InputAdornment from "@mui/material/InputAdornment";
 import { Link } from "react-router-dom";
+import img1 from '../../assets/slide_1.jpg';
+import img2 from '../../assets/slide_2.png';
+import img3 from '../../assets/slide_3.jpg';
+import img4 from '../../assets/slide_4.jpg';
+import SliderHPComponent from "../../components/Slider-hp/SliderHPComponent.jsx";
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [slideIndex, setSlideIndex] = useState(0);
   const [slideRightIndex, setRightSlideIndex] = useState(0);
-
-  const times = ["9:00", "12:00", "18:00"];
-  const ITEM_HEIGHT = 48;
-  const ITEM_PADDING_TOP = 8;
-  const MenuProps = {
-    PaperProps: {
-      style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 250,
-      },
-    },
+  const today = new Date().toISOString().split("T")[0];
+  const [selectedDate, setSelectedDate] = useState(today);
+  const handleDateChange = (event) => {
+    setSelectedDate(event.target.value);
   };
+
+  const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1))
+    .toISOString()
+    .split("T")[0];
+  const [returnDate, setReturnDate] = useState(tomorrow);
+
+  const [age, setAge] = React.useState("");
+
+  const handleChange = (event) => {
+    setAge(event.target.value);
+  };
+
+
+const collection = [
+  { src: img1 },
+  { src: img2 },
+  { src: img3 },
+  { src: img4 }
+];
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
@@ -120,7 +144,12 @@ export default function Home() {
   return (
     <>
       <div className="main">
-        <img src={home_image} alt=""></img>
+      <SliderHPComponent
+          input={collection}
+          ratio={`3:2`}
+          mode={`automatic`}
+          timeout={`3000`}
+        />
         <div
           className={`booking-wrap roboto-regular ${
             isScrolled ? "content-fixed roboto-regular" : ""
@@ -180,7 +209,6 @@ export default function Home() {
               }}
               noValidate
               autoComplete="off"
-              fontSize="15px"
               padding="1.5rem"
             >
               <FormControl variant="standard">
@@ -194,6 +222,8 @@ export default function Home() {
                   id="input-with-icon-adornment"
                   type="date"
                   format="YYYY/MM/DD"
+                  value={selectedDate}
+                  onChange={handleDateChange}
                   style={{ fontSize: "15px", fontWeight: 300 }}
                   startAdornment={
                     <InputAdornment position="start"></InputAdornment>
@@ -211,19 +241,21 @@ export default function Home() {
               fontSize="15px"
               padding="1.5rem"
             >
-              <FormControl variant="standard ">
+              <FormControl variant="standard" fullWidth>
                 <InputLabel style={{ fontSize: "20px", fontWeight: "600" }}>
                   GIỜ
                 </InputLabel>
-                <Input
-                  id="input-with-icon-adornment"
-                  type="time"
-                  defaultValue="12:00"
-                  style={{ fontSize: "15px" }}
-                  startAdornment={
-                    <InputAdornment position="start"></InputAdornment>
-                  }
-                />
+                <NativeSelect
+                  style={{ fontSize: "15px", width:"7rem" }}
+                  defaultValue={1}
+                  inputProps={{
+                    name: "age",
+                    id: "uncontrolled-native",
+                  }}
+                >
+                  <option value={1}>8:00</option>
+                  <option value={2}>12:00</option>
+                </NativeSelect>
               </FormControl>
             </Box>
 
@@ -247,6 +279,8 @@ export default function Home() {
                 <Input
                   id="input-with-icon-adornment"
                   type="date"
+                  value={returnDate} // Giá trị mặc định là ngày mai
+                  onChange={(e) => setReturnDate(e.target.value)}
                   style={{ fontSize: "15px", fontWeight: 300 }}
                   startAdornment={
                     <InputAdornment position="start"></InputAdornment>
@@ -264,19 +298,22 @@ export default function Home() {
               fontSize="15px"
               padding="1.5rem"
             >
-              <FormControl variant="standard ">
+              <FormControl variant="standard" fullWidth>
                 <InputLabel style={{ fontSize: "20px", fontWeight: "600" }}>
                   GIỜ
                 </InputLabel>
-                <Input
-                  id="input-with-icon-adornment"
-                  type="time"
-                  defaultValue="12:00"
-                  style={{ fontSize: "15px" }}
-                  startAdornment={
-                    <InputAdornment position="start"></InputAdornment>
-                  }
-                />
+                <NativeSelect
+                  style={{ fontSize: "15px", width:"7rem" }}
+                  
+                  defaultValue={1}
+                  inputProps={{
+                    name: "age",
+                    id: "uncontrolled-native",
+                  }}
+                >
+                  <option value={1}>8:00</option>
+                  <option value={2}>12:00</option>
+                </NativeSelect>
               </FormControl>
             </Box>
             <Link to="/booking">
