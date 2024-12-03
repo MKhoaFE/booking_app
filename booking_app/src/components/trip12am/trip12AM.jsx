@@ -5,49 +5,28 @@ import saleoff_seat from "../../assets/saleoff-seat.png";
 import reserved_seat from "../../assets/reserved-seat.png";
 import empty_seat from "../../assets/empty-seat.png";
 
-function Trip12AM({ handleSeatSelection, timer }) {
-  const [selectedSeats, setSelectedSeats] = useState({});
-  const [activeSeat12AM, setActiveSeat12AM] = useState(null);
+function Trip12AM({ handleSeatSelection, timer, updatedSeats, selectedSeats,  unselectSeat }) {
+  const [activeSeat, setActiveSeat] = useState(null);
 
-  useEffect(() => {
-    // //xuất seat từ local storage
-    const savedSeats = JSON.parse(localStorage.getItem("selectedSeat12AM")) || {};
-    setSelectedSeats(savedSeats);
-  }, []);
 
-  const togglePopup12AM = (seat) => {
-    if (activeSeat12AM === seat) {
-      setActiveSeat12AM(null); // Deselect if clicking on the same seat
+  const togglePopup = (seat) => {
+    if (activeSeat === seat) {
+      setActiveSeat(null); // Deselect if clicking on the same seat
     } else {
-      setActiveSeat12AM(seat); // Select a new seat
+      setActiveSeat(seat); // Select a new seat
     }
   };
 
-  const handlePopupClick12AM = (event) => {
+  const handlePopupClick = (event) => {
     event.stopPropagation(); // Prevent event propagation when clicking inside the popup
   };
 
-  const handleRadioChange12AM = (seat, ticketType) => {
-    const updatedSeats = { ...selectedSeats, [seat]: ticketType };
-    setSelectedSeats(updatedSeats);
+  const handleRadioChang128AM = (seat, ticketType) => {
     handleSeatSelection(seat, ticketType);
-    setActiveSeat12AM(null);
-
-    // Save the updated seat selection to localStorage
-    localStorage.setItem("selectedSeat12AM", JSON.stringify(updatedSeats));
+    setActiveSeat(null);
   };
 
-    // Thêm hàm để bỏ chọn ghế
-    const unselectSeat = (seat) => {
-      const updatedSeats = { ...selectedSeats };
-      delete updatedSeats[seat];
-      setSelectedSeats(updatedSeats);
-  
-      // Cập nhật localStorage sau khi xóa ghế
-      localStorage.setItem("selectedSeat12AM", JSON.stringify(updatedSeats));
-    };
-
-  const seats12AM = [
+  const seats12 = [
     ["A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8", "J8", "K8", "L8"],
     ["A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7", "J7", "K7", "L7"],
     ["A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6", "J6", "K6", "L6"],
@@ -82,7 +61,7 @@ function Trip12AM({ handleSeatSelection, timer }) {
           <div className="ship-container roboto-medium">
             <table style={{ marginTop: "48px", marginLeft: "80px" }}>
               <tbody>
-                {seats12AM.map((row, rowIndex) => (
+                {seats12.map((row, rowIndex) => (
                   <tr key={rowIndex}>
                     {Array(7)
                       .fill(null)
@@ -106,14 +85,14 @@ function Trip12AM({ handleSeatSelection, timer }) {
                           onClick={() =>
                             selectedSeats[seat]
                               ? unselectSeat(seat)
-                              : togglePopup12AM(seat)
+                              : togglePopup(seat)
                           }
                         >
                           <span>{seat}</span>
-                          {activeSeat12AM === seat && (
+                          {activeSeat === seat && (
                             <div
                               className="popuptext show"
-                              onClick={handlePopupClick12AM}
+                              onClick={handlePopupClick}
                             >
                               <div className="infor">
                                 <h4>Xin vui lòng chọn lớp vé (Thường)</h4>
@@ -127,7 +106,7 @@ function Trip12AM({ handleSeatSelection, timer }) {
                                         selectedSeats[seat] === "special"
                                       }
                                       onChange={() =>
-                                        handleRadioChange12AM(seat, "special")
+                                        handleRadioChang128AM(seat, "special")
                                       }
                                     ></input>
                                   </div>
@@ -153,7 +132,7 @@ function Trip12AM({ handleSeatSelection, timer }) {
                                         selectedSeats[seat] === "regular"
                                       }
                                       onChange={() =>
-                                        handleRadioChange12AM(seat, "regular")
+                                        handleRadioChang128AM(seat, "regular")
                                       }
                                     ></input>
                                   </div>

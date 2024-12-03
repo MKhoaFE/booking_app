@@ -5,9 +5,9 @@ import saleoff_seat from "../../assets/saleoff-seat.png";
 import reserved_seat from "../../assets/reserved-seat.png";
 import empty_seat from "../../assets/empty-seat.png";
 
-function Trip8AM({ handleSeatSelection, timer, updatedSeats,  unselectSeat  }) {
+function Trip8AM({ handleSeatSelection, timer, updatedSeats, selectedSeats,  unselectSeat  }) {
   const [activeSeat, setActiveSeat] = useState(null);
-  const [selectedSeats, setSelectedSeats] = useState({});
+
 
   const togglePopup = (seat) => {
     if (activeSeat === seat) {
@@ -21,19 +21,11 @@ function Trip8AM({ handleSeatSelection, timer, updatedSeats,  unselectSeat  }) {
     event.stopPropagation(); // Prevent event propagation when clicking inside the popup
   };
 
-  const handleRadioChange = (seat, ticketType) => {
-    handleSeatSelection(seat, ticketType);
-    setActiveSeat(null);
-  };
   const handleRadioChange8AM = (seat, ticketType) => {
-    const updatedSeats = { ...selectedSeats, [seat]: ticketType };
-    setSelectedSeats(updatedSeats);
     handleSeatSelection(seat, ticketType);
     setActiveSeat(null);
-
-    // Save the updated seat selection to localStorage
-    localStorage.setItem("selectedSeat12AM", JSON.stringify(updatedSeats));
   };
+
 
   const seats = [
     ["A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8", "J8", "K8", "L8"],

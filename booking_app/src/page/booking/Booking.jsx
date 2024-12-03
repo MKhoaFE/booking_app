@@ -47,10 +47,29 @@ const initialPriceInfor = {
 const Booking = () => {
   const [key, setKey] = useState("8:00");
   const [selectedSeats8AM, setSelectedSeats8AM] = useState(() => {
-    const storedSeats = localStorage.getItem("selectedSeat8AM");
-    return storedSeats ? JSON.parse(storedSeats) : {};
+    const savedSeats = localStorage.getItem("selectedSeats8AM");
+    return savedSeats ? JSON.parse(savedSeats) : {};
   });
-  const [selectedSeats12AM, setSelectedSeats12AM] = useState({});
+  const [selectedSeats12AM, setSelectedSeats12AM] = useState(() => {
+    const savedSeats = localStorage.getItem("selectedSeats12AM");
+    return savedSeats ? JSON.parse(savedSeats) : {};
+  });
+  const [visibleTabs, setVisibleTabs] = useState({});
+  useEffect(() => {
+    // Lấy dữ liệu từ localStorage
+    const travelData = JSON.parse(localStorage.getItem("travelData"));
+    if (travelData?.time === "8:00") {
+      setVisibleTabs({ show8AM: true, show12AM: false });
+      setKey("8:00");
+    } else if (travelData?.time === "12:00") {
+      setVisibleTabs({ show8AM: false, show12AM: true });
+      setKey("12:00");
+    } else {
+      // Hiển thị cả hai nếu không có dữ liệu
+      setVisibleTabs({ show8AM: true, show12AM: true });
+    }
+  }, []);
+
   const [timer8AM, setTimer8AM] = useState({});
   const [timer12AM, setTimer12AM] = useState({});
   const [intervalIds8AM, setIntervalIds8AM] = useState({});
@@ -68,8 +87,15 @@ const Booking = () => {
   useEffect(() => {
     localStorage.setItem("selectedSeats8AM", JSON.stringify(selectedSeats8AM));
   }, [selectedSeats8AM]);
+  useEffect(() => {
+    localStorage.setItem("selectedSeats12AM", JSON.stringify(selectedSeats12AM));
+  }, [selectedSeats12AM]);
 
-  const [travelData, setTravelData] = useState({trip:"", date:"", time:"" });
+  const [travelData, setTravelData] = useState({
+    trip: "",
+    date: "",
+    time: "",
+  });
   useEffect(() => {
     //Lấy dữ liệu từ localStorage
     const storedData = JSON.parse(localStorage.getItem("travelData"));
@@ -178,12 +204,7 @@ const Booking = () => {
   };
 
   const resetTabState = () => {
-    setSelectedSeats8AM({});
-    setSelectedSeats12AM({});
-    setTimer8AM({});
-    setTimer12AM({});
-    setIntervalIds8AM({});
-    setIntervalIds12AM({});
+
     setPriceInfor(initialPriceInfor);
   };
 
@@ -208,7 +229,10 @@ const Booking = () => {
                 {travelData ? (
                   <div>
                     Đặt vé từ{" "}
-                    <span className="place-name" style={{color:"green"}}>{travelData.trip}</span> {" "} /  Ngày {""}
+                    <span className="place-name" style={{ color: "green" }}>
+                      {travelData.trip}
+                    </span>{" "}
+                    / Ngày {""}
                     {travelData.date}
                   </div>
                 ) : (
@@ -226,63 +250,67 @@ const Booking = () => {
                       resetTabState();
                     }}
                   >
-                    <Tab
-                      className={key === "8:00" ? "active" : ""}
-                      eventKey="8:00"
-                      title="8:00"
-                    >
-                      <Trip8AM
-                        selectedSeats={selectedSeats8AM}
-                        handleSeatSelection={(seat, ticketType) =>
-                          handleSeatSelection(
-                            seat,
-                            ticketType,
-                            setSelectedSeats8AM,
-                            setTimer8AM,
-                            setIntervalIds8AM
-                          )
-                        }
-                        unselectSeat={(seat) =>
-                          unselectSeat(
-                            seat,
-                            setSelectedSeats8AM,
-                            setTimer8AM,
-                            setIntervalIds8AM,
-                            selectedSeats8AM
-                          )
-                        }
-                        updateRemainingSeats={updateRemainingSeats}
-                        timer={timer8AM}
-                      />
-                    </Tab>
-                    <Tab
-                      className={key === "12:00" ? "active" : ""}
-                      eventKey="12:00"
-                      title="12:00"
-                    >
-                      <Trip12AM
-                        selectedSeats={selectedSeats12AM}
-                        handleSeatSelection={(seat, ticketType) =>
-                          handleSeatSelection(
-                            seat,
-                            ticketType,
-                            setSelectedSeats12AM,
-                            setTimer12AM,
-                            setIntervalIds12AM
-                          )
-                        }
-                        unselectSeat={(seat) =>
-                          unselectSeat(
-                            seat,
-                            setSelectedSeats12AM,
-                            setTimer12AM,
-                            setIntervalIds12AM,
-                            selectedSeats12AM
-                          )
-                        }
-                        timer={timer12AM}
-                      />
-                    </Tab>
+                    {visibleTabs.show8AM && (
+                      <Tab
+                        className={key === "8:00" ? "active" : ""}
+                        eventKey="8:00"
+                        title="8:00"
+                      >
+                        <Trip8AM
+                          selectedSeats={selectedSeats8AM}
+                          handleSeatSelection={(seat, ticketType) =>
+                            handleSeatSelection(
+                              seat,
+                              ticketType,
+                              setSelectedSeats8AM,
+                              setTimer8AM,
+                              setIntervalIds8AM
+                            )
+                          }
+                          unselectSeat={(seat) =>
+                            unselectSeat(
+                              seat,
+                              setSelectedSeats8AM,
+                              setTimer8AM,
+                              setIntervalIds8AM,
+                              selectedSeats8AM
+                            )
+                          }
+                          updateRemainingSeats={updateRemainingSeats}
+                          timer={timer8AM}
+                        />
+                      </Tab>
+                    )}
+                    {visibleTabs.show12AM && (
+                      <Tab
+                        className={key === "12:00" ? "active" : ""}
+                        eventKey="12:00"
+                        title="12:00"
+                      >
+                        <Trip12AM
+                          selectedSeats={selectedSeats12AM}
+                          handleSeatSelection={(seat, ticketType) =>
+                            handleSeatSelection(
+                              seat,
+                              ticketType,
+                              setSelectedSeats12AM,
+                              setTimer12AM,
+                              setIntervalIds12AM
+                            )
+                          }
+                          unselectSeat={(seat) =>
+                            unselectSeat(
+                              seat,
+                              setSelectedSeats12AM,
+                              setTimer12AM,
+                              setIntervalIds12AM,
+                              selectedSeats12AM
+                            )
+                          }
+                          timer={timer12AM}
+                        />
+                      </Tab>
+                    )}
                   </Tabs>
                 </div>
               </div>
