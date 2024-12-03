@@ -208,7 +208,7 @@ const Booking = () => {
                 {travelData ? (
                   <div>
                     Đặt vé từ{" "}
-                    <span className="place-name">{travelData.trip}</span> {" "} -  Ngày {""}
+                    <span className="place-name" style={{color:"green"}}>{travelData.trip}</span> {" "} /  Ngày {""}
                     {travelData.date}
                   </div>
                 ) : (

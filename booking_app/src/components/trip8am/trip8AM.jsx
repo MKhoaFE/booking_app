@@ -5,9 +5,9 @@ import saleoff_seat from "../../assets/saleoff-seat.png";
 import reserved_seat from "../../assets/reserved-seat.png";
 import empty_seat from "../../assets/empty-seat.png";
 
-function Trip8AM({ handleSeatSelection, timer, updatedSeats, selectedSeats, unselectSeat  }) {
+function Trip8AM({ handleSeatSelection, timer, updatedSeats,  unselectSeat  }) {
   const [activeSeat, setActiveSeat] = useState(null);
-  
+  const [selectedSeats, setSelectedSeats] = useState({});
 
   const togglePopup = (seat) => {
     if (activeSeat === seat) {
@@ -25,7 +25,15 @@ function Trip8AM({ handleSeatSelection, timer, updatedSeats, selectedSeats, unse
     handleSeatSelection(seat, ticketType);
     setActiveSeat(null);
   };
+  const handleRadioChange8AM = (seat, ticketType) => {
+    const updatedSeats = { ...selectedSeats, [seat]: ticketType };
+    setSelectedSeats(updatedSeats);
+    handleSeatSelection(seat, ticketType);
+    setActiveSeat(null);
 
+    // Save the updated seat selection to localStorage
+    localStorage.setItem("selectedSeat12AM", JSON.stringify(updatedSeats));
+  };
 
   const seats = [
     ["A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8", "J8", "K8", "L8"],
@@ -107,7 +115,7 @@ function Trip8AM({ handleSeatSelection, timer, updatedSeats, selectedSeats, unse
                                         selectedSeats[seat] === "special"
                                       }
                                       onChange={() =>
-                                        handleRadioChange(seat, "special")
+                                        handleRadioChange8AM(seat, "special")
                                       }
                                     ></input>
                                   </div>
@@ -133,7 +141,7 @@ function Trip8AM({ handleSeatSelection, timer, updatedSeats, selectedSeats, unse
                                         selectedSeats[seat] === "regular"
                                       }
                                       onChange={() =>
-                                        handleRadioChange(seat, "regular")
+                                        handleRadioChange8AM(seat, "regular")
                                       }
                                     ></input>
                                   </div>

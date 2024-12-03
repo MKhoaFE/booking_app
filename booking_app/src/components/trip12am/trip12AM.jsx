@@ -10,7 +10,7 @@ function Trip12AM({ handleSeatSelection, timer }) {
   const [activeSeat12AM, setActiveSeat12AM] = useState(null);
 
   useEffect(() => {
-    // Load saved seats from localStorage when the component mounts
+    // //xuất seat từ local storage
     const savedSeats = JSON.parse(localStorage.getItem("selectedSeat12AM")) || {};
     setSelectedSeats(savedSeats);
   }, []);
