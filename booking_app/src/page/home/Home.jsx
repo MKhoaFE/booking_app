@@ -48,9 +48,8 @@ export default function Home() {
 
   //hàm lưu data time slot vào local storage
   const saveDTStoLocalStorage = () => {
-    const existingData = JSON.parse(localStorage.getItem("travelData")) || [];
-    const newEntry = { trip: selectedTrip ,date: selectedDate, time: selectedTime };
 
+    const travelData = { trip: selectedTrip ,date: selectedDate, time: selectedTime };
     //Kiểm tra ngày hợp lệ trước khi lưu
     if(!selectedDate){
       alert("vui lòng chọn ngày đi!");
@@ -58,8 +57,7 @@ export default function Home() {
     }
 
     //thêm mục mới vào mảng và lưu lại
-    const updatedData =[newEntry];
-    localStorage.setItem("travelData",JSON.stringify(updatedData));
+    localStorage.setItem("travelData",JSON.stringify(travelData));
   };
 
   const collection = [

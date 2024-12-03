@@ -11,6 +11,7 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import Trip8AM from "../../components/trip8am/trip8AM";
 import Trip12AM from "../../components/trip12am/trip12AM";
+import { Typography } from "@mui/material";
 
 const initialPriceInfor = {
   "8:00": {
@@ -45,10 +46,9 @@ const initialPriceInfor = {
 
 const Booking = () => {
   const [key, setKey] = useState("8:00");
-  const [selectedSeats8AM, setSelectedSeats8AM] = useState(()=>{
+  const [selectedSeats8AM, setSelectedSeats8AM] = useState(() => {
     const storedSeats = localStorage.getItem("selectedSeat8AM");
-    return storedSeats ? JSON.parse(storedSeats):{};
-
+    return storedSeats ? JSON.parse(storedSeats) : {};
   });
   const [selectedSeats12AM, setSelectedSeats12AM] = useState({});
   const [timer8AM, setTimer8AM] = useState({});
@@ -67,8 +67,16 @@ const Booking = () => {
 
   useEffect(() => {
     localStorage.setItem("selectedSeats8AM", JSON.stringify(selectedSeats8AM));
-    
   }, [selectedSeats8AM]);
+
+  const [travelData, setTravelData] = useState({trip:"", date:"", time:"" });
+  useEffect(() => {
+    //Lấy dữ liệu từ localStorage
+    const storedData = JSON.parse(localStorage.getItem("travelData"));
+    if (storedData) {
+      setTravelData(storedData);
+    }
+  }, []);
 
   const currentPriceInfor = priceInfor[key];
 
@@ -76,7 +84,7 @@ const Booking = () => {
     seat,
     ticketType,
     setSelectedSeats,
-    setTimer, 
+    setTimer,
     setIntervalIds
   ) => {
     setSelectedSeats((prev) => ({
@@ -90,18 +98,21 @@ const Booking = () => {
   const updateRemainingSeats = (ticketType, change) => {
     setPriceInfor((prevPriceInfor) => {
       const updatedInfor = { ...prevPriceInfor };
-  
+
       // Kiểm tra tồn tại của key và ticketType trước khi cập nhật
       if (updatedInfor[key] && updatedInfor[key][ticketType]) {
         updatedInfor[key][ticketType].remaining += change;
       } else {
-        console.warn("Ticket type or key does not exist in priceInfor:", ticketType, key);
+        console.warn(
+          "Ticket type or key does not exist in priceInfor:",
+          ticketType,
+          key
+        );
       }
-  
+
       return updatedInfor;
     });
   };
-  
 
   const startTimer = (seat, setTimer, setIntervalIds) => {
     clearInterval(intervalIds8AM[seat]);
@@ -140,13 +151,12 @@ const Booking = () => {
     selectedSeats
   ) => {
     const ticketType = selectedSeats[seat];
-  
+
     if (!ticketType) {
       console.warn("Ticket type is undefined for seat:", seat);
       return;
     }
-    
-  
+
     setSelectedSeats((prev) => {
       const updatedSeats = { ...prev };
       delete updatedSeats[seat];
@@ -154,7 +164,7 @@ const Booking = () => {
     });
     clearInterval(intervalIds8AM[seat]);
     clearInterval(intervalIds12AM[seat]);
-  
+
     setTimer((prev) => {
       const { [seat]: _, ...rest } = prev;
       return rest;
@@ -163,11 +173,9 @@ const Booking = () => {
       const { [seat]: _, ...rest } = prev;
       return rest;
     });
-  
+
     updateRemainingSeats(ticketType, 0.5); // Cập nhật lại số lượng vé khi hủy ghế
   };
-  
-  
 
   const resetTabState = () => {
     setSelectedSeats8AM({});
@@ -187,7 +195,7 @@ const Booking = () => {
 
   const countSpecialTicket = 10 - currentPriceInfor.special.remaining;
   const countRegularTicket = 78 - currentPriceInfor.regular.remaining;
-  
+
   return (
     <>
       <BookingHeader />
@@ -197,8 +205,16 @@ const Booking = () => {
           <div className="col-md-9">
             <div className="container">
               <div className="segment-info">
-                Đặt vé từ <span className="place-name">TP. HỒ CHÍ MINH</span>{" "}
-                đến <span className="place-name">VŨNG TÀU</span> ngày 04/06/2024
+                {travelData ? (
+                  <div>
+                    Đặt vé từ{" "}
+                    <span className="place-name">{travelData.trip}</span> {" "} -  Ngày {""}
+                    {travelData.date}
+                  </div>
+                ) : (
+                  <Typography variant="body1">Không có dữ liệu.</Typography>
+                )}
+
                 <div className="detail-wrap">
                   <Tabs
                     defaultActiveKey="profile"
@@ -216,7 +232,6 @@ const Booking = () => {
                       title="8:00"
                     >
                       <Trip8AM
-                      
                         selectedSeats={selectedSeats8AM}
                         handleSeatSelection={(seat, ticketType) =>
                           handleSeatSelection(
@@ -407,7 +422,14 @@ const Booking = () => {
             </div>
           </div>
           <div className="btn-btm text-center mbot-50 mtop-20">
-            <Link to="/passengers" state={{ remainingTickets, countSpecialTicket, countRegularTicket }}>
+            <Link
+              to="/passengers"
+              state={{
+                remainingTickets,
+                countSpecialTicket,
+                countRegularTicket,
+              }}
+            >
               <button type="submit">
                 <span>Tiếp tục</span>
               </button>
