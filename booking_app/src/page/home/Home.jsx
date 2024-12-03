@@ -15,10 +15,10 @@ import SlideComponent from "../../components/Slide/SlideComponent.jsx";
 import Input from "@mui/material/Input";
 import InputAdornment from "@mui/material/InputAdornment";
 import { Link } from "react-router-dom";
-import img1 from '../../assets/slide_1.jpg';
-import img2 from '../../assets/slide_2.png';
-import img3 from '../../assets/slide_3.jpg';
-import img4 from '../../assets/slide_4.jpg';
+import img1 from "../../assets/slide_1.jpg";
+import img2 from "../../assets/slide_2.png";
+import img3 from "../../assets/slide_3.jpg";
+import img4 from "../../assets/slide_4.jpg";
 import SliderHPComponent from "../../components/Slider-hp/SliderHPComponent.jsx";
 
 export default function Home() {
@@ -30,25 +30,44 @@ export default function Home() {
   const handleDateChange = (event) => {
     setSelectedDate(event.target.value);
   };
-
   const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1))
     .toISOString()
     .split("T")[0];
   const [returnDate, setReturnDate] = useState(tomorrow);
 
-  const [age, setAge] = React.useState("");
-
-  const handleChange = (event) => {
-    setAge(event.target.value);
+  const [selectedTime, setSelectedTime] = useState("8:00");
+  const handleChangeTime = (event) => {
+    setSelectedTime(event.target.value);
   };
 
+  const [selectedTrip, setSelectedTrip] = useState("CẦN GIỜ - TP.HỒ CHÍ MINH");
+  const handleChangeTrip = (event)=>{
+    setSelectedTrip(event.target.value);
+  }
 
-const collection = [
-  { src: img1 },
-  { src: img2 },
-  { src: img3 },
-  { src: img4 }
-];
+
+  //hàm lưu data time slot vào local storage
+  const saveDTStoLocalStorage = () => {
+    const existingData = JSON.parse(localStorage.getItem("travelData")) || [];
+    const newEntry = { trip: selectedTrip ,date: selectedDate, time: selectedTime };
+
+    //Kiểm tra ngày hợp lệ trước khi lưu
+    if(!selectedDate){
+      alert("vui lòng chọn ngày đi!");
+      return;
+    }
+
+    //thêm mục mới vào mảng và lưu lại
+    const updatedData =[newEntry];
+    localStorage.setItem("travelData",JSON.stringify(updatedData));
+  };
+
+  const collection = [
+    { src: img1 },
+    { src: img2 },
+    { src: img3 },
+    { src: img4 },
+  ];
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
@@ -144,7 +163,7 @@ const collection = [
   return (
     <>
       <div className="main">
-      <SliderHPComponent
+        <SliderHPComponent
           input={collection}
           ratio={`3:2`}
           mode={`automatic`}
@@ -174,29 +193,31 @@ const collection = [
                     backgroundColor: "#D7D7D7",
                     padding: "1rem",
                   }}
+                  value={selectedTrip}
+                  onChange={handleChangeTrip}
                 >
-                  <option style={{ backgroundColor: "white" }} value="1">
+                  <option style={{ backgroundColor: "white" }} value="CẦN GIỜ - TP.HỒ CHÍ MINH">
                     CẦN GIỜ - TP.HỒ CHÍ MINH
                   </option>
-                  <option style={{ backgroundColor: "white" }} value="2">
+                  <option style={{ backgroundColor: "white" }} value="CẦN GIỜ - VŨNG TÀU">
                     CẦN GIỜ - VŨNG TÀU
                   </option>
-                  <option style={{ backgroundColor: "white" }} value="3">
+                  <option style={{ backgroundColor: "white" }} value="VŨNG TÀU - CẦN GIỜ">
                     VŨNG TÀU - CẦN GIỜ
                   </option>
-                  <option style={{ backgroundColor: "white" }} value="4">
+                  <option style={{ backgroundColor: "white" }} value="VŨNG TÀU - TP.HỒ CHÍ MINH">
                     VŨNG TÀU - TP.HỒ CHÍ MINH
                   </option>
-                  <option style={{ backgroundColor: "white" }} value="5">
+                  <option style={{ backgroundColor: "white" }} value="TP.HỒ CHÍ MINH - VŨNG TÀU">
                     TP.HỒ CHÍ MINH - VŨNG TÀU
                   </option>
-                  <option style={{ backgroundColor: "white" }} value="6">
+                  <option style={{ backgroundColor: "white" }} value="TP.HỒ CHÍ MINH - CẦN GIỜ">
                     TP.HỒ CHÍ MINH - CẦN GIỜ
                   </option>
-                  <option style={{ backgroundColor: "white" }} value="7">
+                  <option style={{ backgroundColor: "white" }} value="BẠCH ĐẰNG - CỦ CHI">
                     BẠCH ĐẰNG - CỦ CHI
                   </option>
-                  <option style={{ backgroundColor: "white" }} value="8">
+                  <option style={{ backgroundColor: "white" }} value="CỦ CHI - BẠCH ĐẰNG">
                     CỦ CHI - BẠCH ĐẰNG
                   </option>
                 </select>
@@ -246,15 +267,17 @@ const collection = [
                   GIỜ
                 </InputLabel>
                 <NativeSelect
-                  style={{ fontSize: "15px", width:"7rem" }}
-                  defaultValue={1}
+                  style={{ fontSize: "15px", width: "7rem" }}
+                  // defaultValue={1}
+                  value={selectedTime}
+                  onChange={handleChangeTime}
                   inputProps={{
                     name: "age",
                     id: "uncontrolled-native",
                   }}
                 >
-                  <option value={1}>8:00</option>
-                  <option value={2}>12:00</option>
+                  <option value="8:00">8:00</option>
+                  <option value="12:00">12:00</option>
                 </NativeSelect>
               </FormControl>
             </Box>
@@ -303,8 +326,7 @@ const collection = [
                   GIỜ
                 </InputLabel>
                 <NativeSelect
-                  style={{ fontSize: "15px", width:"7rem" }}
-                  
+                  style={{ fontSize: "15px", width: "7rem" }}
                   defaultValue={1}
                   inputProps={{
                     name: "age",
@@ -317,7 +339,7 @@ const collection = [
               </FormControl>
             </Box>
             <Link to="/booking">
-              <button>ĐẶT VÉ</button>
+              <button onClick={saveDTStoLocalStorage}>ĐẶT VÉ</button>
             </Link>
           </div>
         </div>
