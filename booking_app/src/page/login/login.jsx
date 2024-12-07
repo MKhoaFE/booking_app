@@ -55,6 +55,7 @@ function Login() {
       window.dispatchEvent(new Event('cookieChange'));
       alert("Đăng nhập thành công");
       navigate("/");
+      window.location.reload();
       console.log(response.data);
     } catch (error) {
       alert("Sai tài khoản hoặc mật khẩu");

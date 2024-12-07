@@ -23,7 +23,11 @@ import { AuthContext } from "../../context/Auth.context";
 function HeaderComponent() {
   const [userName, setUserName] = useState("");
   const { isAuthenticated, logout } = useContext(AuthContext);
+  const [currentUserName, setCurrentUserName] = useState(userName);
 
+  useEffect(() => {
+    setCurrentUserName(userName);
+  }, [userName]);
   // Hàm cập nhật user từ cookie
   const updateUserNameFromCookie = () => {
     const userCookie = Cookies.get("user");
@@ -101,9 +105,9 @@ function HeaderComponent() {
               <img src={logo1} alt="" />
               <img src={logo2} alt="" />
   
-              {isAuthenticated && userName ? (
+              {isAuthenticated ? (
                 <>
-                  <strong>Xin chào, {userName}</strong>{" "}
+                  <strong>Xin chào, {currentUserName}</strong>{" "}
                   <button
                     onClick={handleLogout}
                     style={{ background: "none", color: "white" }}
