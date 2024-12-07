@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "../Header/header.css";
 import "@fontsource/roboto/700.css";
 import EmailIcon from "@mui/icons-material/Email";
@@ -19,8 +19,10 @@ import { Link } from "react-router-dom";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Cookies from "js-cookie";
 import axios from "axios";
+import { AuthContext } from "../../context/Auth.context";
 function HeaderComponent() {
   const [userName, setUserName] = useState("");
+  const { isAuthenticated, logout } = useContext(AuthContext);
 
   // Hàm cập nhật user từ cookie
   const updateUserNameFromCookie = () => {
@@ -50,6 +52,7 @@ function HeaderComponent() {
       // Xóa cookie sau khi đăng xuất
       Cookies.remove("user");
       Cookies.remove("token");
+      logout(); 
       setUserName("");
       alert("Đăng xuất thành công!");
     } catch (error) {
@@ -97,7 +100,8 @@ function HeaderComponent() {
               </span>
               <img src={logo1} alt="" />
               <img src={logo2} alt="" />
-              {userName ? (
+  
+              {isAuthenticated && userName ? (
                 <>
                   <strong>Xin chào, {userName}</strong>{" "}
                   <button

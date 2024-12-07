@@ -1,16 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Navigate } from "react-router-dom";
-import Cookies from "js-cookie";
+import { AuthContext } from "../../context/Auth.context";
 
 const ProtectedRoute = ({ children }) => {
-  const token = Cookies.get("token"); // Lấy token từ cookies
+  const { isAuthenticated } = useContext(AuthContext);
 
-  if (!token) {
-    // Nếu không có token, chuyển hướng đến trang login
+  if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
 
-  return children; // Nếu có token, cho phép truy cập
+  return children;
 };
 
 export default ProtectedRoute;
