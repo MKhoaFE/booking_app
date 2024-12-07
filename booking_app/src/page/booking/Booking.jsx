@@ -220,9 +220,7 @@ const Booking = () => {
 
   const countSpecialTicket = 10 - currentPriceInfor.special.remaining;
   const countRegularTicket = 78 - currentPriceInfor.regular.remaining;
-  const [bookingData, setBookingData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -245,8 +243,6 @@ const Booking = () => {
             },
           }
         );
-
-        setBookingData(response.data); // Lưu dữ liệu nhận được
       } catch (err) {
         console.error("Error fetching protected data:", err);
         setError("Failed to fetch booking data. Please try again later.");
@@ -257,9 +253,6 @@ const Booking = () => {
 
     fetchData();
   }, []);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
 
   return (
     <>
