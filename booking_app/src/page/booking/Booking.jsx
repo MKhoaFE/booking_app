@@ -221,6 +221,8 @@ const Booking = () => {
   const countSpecialTicket = 10 - currentPriceInfor.special.remaining;
   const countRegularTicket = 78 - currentPriceInfor.regular.remaining;
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
