@@ -24,7 +24,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route 
-          path="/booking" 
+          path="/booking/seats" 
           element={
             <ProtectedRoute>
               <Booking />
@@ -32,7 +32,7 @@ function App() {
           } 
         />
         <Route 
-          path="/passengers" 
+          path="/booking/passengers" 
           element={
             <ProtectedRoute>
               <Passengers />
@@ -40,7 +40,7 @@ function App() {
           } 
         />
         <Route 
-          path="/payment" 
+          path="/booking/payment" 
           element={
             <ProtectedRoute>
               <Payment />

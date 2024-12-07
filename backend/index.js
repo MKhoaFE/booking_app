@@ -23,6 +23,8 @@ const ticketRoute = require("./routes/ticket.route")
 const protectedRoutes = require("./routes/protectedData.route");
 app.use("/api/users", userRoutes);
 app.use("/api", protectedRoutes);
+app.use("/booking", sessionRoutes);
+
 // Kết nối đến MongoDB
 mongoose
   .connect(process.env.MONGO_URI, {

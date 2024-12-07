@@ -556,7 +556,7 @@ function Passengers() {
           </div>
         </div>
         <div className="btn-btm text-center mbot-50 mtop-20">
-          <Link to="/payment">
+          <Link to="/booking/payment">
             <button type="submit">
               <span>Tiếp tục</span>
             </button>

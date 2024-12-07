@@ -490,7 +490,7 @@ const Booking = () => {
           </div>
           <div className="btn-btm text-center mbot-50 mtop-20">
             <Link
-              to="/passengers"
+              to="/booking/passengers"
               state={{
                 remainingTickets,
                 countSpecialTicket,

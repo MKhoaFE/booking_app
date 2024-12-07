@@ -336,7 +336,7 @@ export default function Home() {
                 </NativeSelect>
               </FormControl>
             </Box>
-            <Link to="/booking">
+            <Link to="/booking/seats">
               <button onClick={saveDTStoLocalStorage}>ĐẶT VÉ</button>
             </Link>
           </div>

@@ -58,7 +58,7 @@ function HeaderComponent() {
       Cookies.remove("token");
       logout(); 
       setUserName("");
-      alert("Đăng xuất thành công!");
+
     } catch (error) {
       console.error("Lỗi khi đăng xuất:", error);
       alert("Đăng xuất thất bại!");
