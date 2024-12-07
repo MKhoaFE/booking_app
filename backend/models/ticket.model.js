@@ -4,7 +4,7 @@ const ticketSchema = new mongoose.Schema({
   ticketId: { type: String, required: true, unique: true },
   userId: { type: String, required: true, ref: 'User' },
   trainId: { type: String, required: true, ref: 'Train' },
-  seatNumber: { type: String, required: true },
+  seatNumber: [{ type: String, required: true }],
   bookingDate: { type: Date, default: Date.now },
   status: { type: String, enum: ['confirmed', 'cancelled', 'pending'], default: 'pending' },
   price: { type: Number, required: true },

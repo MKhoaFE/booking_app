@@ -7,4 +7,5 @@ const isAuth = require('../middlewares/authentication.mdw');
 router.post('/signup', validateUserData, registerUser);
 router.post('/login', loginUser);
 router.post('/logout',isAuth, logoutUser);
+
 module.exports = router;

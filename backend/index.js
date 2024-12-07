@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 const morgan = require("morgan");
-const User = require("./models/user.model"); // Import User model
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -21,8 +20,9 @@ const userRoutes = require("./routes/user.route");
 const sessionRoutes = require("./routes/session.route")
 const trainRoute = require("./routes/train.route")
 const ticketRoute = require("./routes/ticket.route")
+const protectedRoutes = require("./routes/protectedData.route");
 app.use("/api/users", userRoutes);
-
+app.use("/api", protectedRoutes);
 // Kết nối đến MongoDB
 mongoose
   .connect(process.env.MONGO_URI, {

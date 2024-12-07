@@ -12,6 +12,8 @@ import Tabs from "react-bootstrap/Tabs";
 import Trip8AM from "../../components/trip8am/trip8AM";
 import Trip12AM from "../../components/trip12am/trip12AM";
 import { Typography } from "@mui/material";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 const initialPriceInfor = {
   "8:00": {
@@ -88,7 +90,10 @@ const Booking = () => {
     localStorage.setItem("selectedSeats8AM", JSON.stringify(selectedSeats8AM));
   }, [selectedSeats8AM]);
   useEffect(() => {
-    localStorage.setItem("selectedSeats12AM", JSON.stringify(selectedSeats12AM));
+    localStorage.setItem(
+      "selectedSeats12AM",
+      JSON.stringify(selectedSeats12AM)
+    );
   }, [selectedSeats12AM]);
 
   const [travelData, setTravelData] = useState({
@@ -204,7 +209,6 @@ const Booking = () => {
   };
 
   const resetTabState = () => {
-
     setPriceInfor(initialPriceInfor);
   };
 
@@ -216,6 +220,46 @@ const Booking = () => {
 
   const countSpecialTicket = 10 - currentPriceInfor.special.remaining;
   const countRegularTicket = 78 - currentPriceInfor.regular.remaining;
+  const [bookingData, setBookingData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = Cookies.get("token");
+
+        // Kiểm tra nếu không có token
+        if (!token) {
+          setError("No token found. Please login.");
+          setLoading(false);
+          return;
+        }
+
+        // Gọi API protected-data
+        const response = await axios.get(
+          "http://localhost:5000/api/protected-data",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Đính kèm token vào header
+            },
+          }
+        );
+
+        setBookingData(response.data); // Lưu dữ liệu nhận được
+      } catch (err) {
+        console.error("Error fetching protected data:", err);
+        setError("Failed to fetch booking data. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <>

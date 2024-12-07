@@ -13,27 +13,49 @@ import Passengers from "./page/passengers/passengers.jsx";
 import Login from "./page/login/login.jsx";
 import Signup from "./page/signup/signup.jsx";
 import Payment from "./page/payment/payment.jsx";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute.js";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Layout style={{backgroundColor:"#FFF"}}>
-        <HeaderComponent></HeaderComponent>
-        <Content>
-          <Routes>
-            <Route path="/" element={<Home />}></Route>
-            <Route path="/booking" element={<Booking />}></Route>
-            <Route path="*" element={<Err/>}></Route>
-            <Route path="/passengers" element={<Passengers/>}></Route>
-            <Route path="/signup" element={<Signup/>}></Route>
-            <Route path="/login" element={<Login/>}></Route>
-            <Route path="/payment" element={<Payment/>}></Route>
-          </Routes>
-        </Content>
+<BrowserRouter>
+  <Layout style={{ backgroundColor: "#FFF" }}>
+    <HeaderComponent />
+    <Content>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route 
+          path="/booking" 
+          element={
+            <ProtectedRoute>
+              <Booking />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/passengers" 
+          element={
+            <ProtectedRoute>
+              <Passengers />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/payment" 
+          element={
+            <ProtectedRoute>
+              <Payment />
+            </ProtectedRoute>
+          } 
+        />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<Err />} />
+      </Routes>
+    </Content>
+    <FooterComponent />
+  </Layout>
+</BrowserRouter>
 
-        <FooterComponent></FooterComponent>
-      </Layout>
-    </BrowserRouter>
   );
 }
 
