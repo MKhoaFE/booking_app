@@ -13,7 +13,7 @@ exports.createSession = async (req, res) => {
       sessionId: `session_${Date.now()}`,
       userId,
       trainId,
-      selectedSeats,
+      selectedSeats, // selectedSeats là một object JSON
       expiresAt,
     });
 
@@ -27,6 +27,7 @@ exports.createSession = async (req, res) => {
     res.status(500).json({ error: 'Failed to create session' });
   }
 };
+
 
 // Lấy thông tin session
 exports.getSession = async (req, res) => {
@@ -44,6 +45,34 @@ exports.getSession = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch session' });
   }
 };
+exports.updateSeats = async (req, res) => {
+  try {
+    const { sessionId, selectedSeats } = req.body;
+
+    if (!sessionId || !selectedSeats) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const session = await Session.findOneAndUpdate(
+      { sessionId },
+      { selectedSeats }, // Cập nhật toàn bộ selectedSeats
+      { new: true }
+    );
+
+    if (!session) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+
+    res.status(200).json({
+      message: 'Seats updated successfully',
+      session,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to update seats' });
+  }
+};
+
 
 // Cập nhật thông tin hành khách
 exports.updatePassengers = async (req, res) => {
