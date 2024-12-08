@@ -35,4 +35,12 @@
 .navbar .bottom {
   width: 100%;
   background-color: white;
+}
+.navbar .bottom .responsive-hide-loginbtn {
+  display: none;
+}
+@media (max-width: 768px) {
+  .navbar .bottom .responsive-hide-loginbtn {
+    display: block;
+  }
 }/*# sourceMappingURL=header.css.map */

@@ -33,6 +33,12 @@
   .bottom {
     width: 100%;
     background-color: white;
+    .responsive-hide-loginbtn{
+      display: none;
+      @media (max-width: 768px) {
+        display: block;
+    }
+    }
   }
 }
 

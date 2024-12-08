@@ -175,7 +175,7 @@ function HeaderComponent() {
                 <Nav.Link href="#action3">TÌM KIẾM VÉ</Nav.Link>
               </Nav>
             </Navbar.Collapse>
-            <Form className="d-flex">
+            <Form className="d-block">
               <Button
                 variant="outline-success"
                 style={{
@@ -187,6 +187,9 @@ function HeaderComponent() {
               >
                 <img src={english} alt="" />
               </Button>
+              <div className="responsive-hide-loginbtn">
+                <Link to="/login">Đăng nhập</Link>
+              </div>
             </Form>
           </Navbar>
         </div>
