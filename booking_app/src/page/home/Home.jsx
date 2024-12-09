@@ -1,25 +1,19 @@
 import React, { useEffect, useState } from "react";
-import home_image from "../../assets/home_image.png";
 import "../home/home.css";
-import {
-  Box,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  NativeSelect,
-  Select,
-} from "@mui/material";
+import { Box, FormControl, InputLabel, NativeSelect } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import SlideComponent from "../../components/Slide/SlideComponent.jsx";
 import Input from "@mui/material/Input";
 import InputAdornment from "@mui/material/InputAdornment";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import img1 from "../../assets/slide_1.jpg";
 import img2 from "../../assets/slide_2.png";
 import img3 from "../../assets/slide_3.jpg";
 import img4 from "../../assets/slide_4.jpg";
 import SliderHPComponent from "../../components/Slider-hp/SliderHPComponent.jsx";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -41,23 +35,25 @@ export default function Home() {
   };
 
   const [selectedTrip, setSelectedTrip] = useState("CẦN GIỜ - TP.HỒ CHÍ MINH");
-  const handleChangeTrip = (event)=>{
+  const handleChangeTrip = (event) => {
     setSelectedTrip(event.target.value);
-  }
+  };
 
-
-  //hàm lưu data time slot vào local storage
+  // hàm lưu data time slot vào local storage
   const saveDTStoLocalStorage = () => {
-
-    const travelData = { trip: selectedTrip ,date: selectedDate, time: selectedTime };
+    const travelData = {
+      trip: selectedTrip,
+      date: selectedDate,
+      time: selectedTime,
+    };
     //Kiểm tra ngày hợp lệ trước khi lưu
-    if(!selectedDate){
+    if (!selectedDate) {
       alert("vui lòng chọn ngày đi!");
       return;
     }
 
     //thêm mục mới vào mảng và lưu lại
-    localStorage.setItem("travelData",JSON.stringify(travelData));
+    localStorage.setItem("travelData", JSON.stringify(travelData));
   };
 
   const collection = [
@@ -194,28 +190,60 @@ export default function Home() {
                   value={selectedTrip}
                   onChange={handleChangeTrip}
                 >
-                  <option style={{ backgroundColor: "white" }} value="CẦN GIỜ - TP.HỒ CHÍ MINH">
+                  <option
+                    data-trainid="train001"
+                    style={{ backgroundColor: "white" }}
+                    value="CẦN GIỜ - TP.HỒ CHÍ MINH"
+                  >
                     CẦN GIỜ - TP.HỒ CHÍ MINH
                   </option>
-                  <option style={{ backgroundColor: "white" }} value="CẦN GIỜ - VŨNG TÀU">
+                  <option
+                    data-trainid="train002"
+                    style={{ backgroundColor: "white" }}
+                    value="CẦN GIỜ - VŨNG TÀU"
+                  >
                     CẦN GIỜ - VŨNG TÀU
                   </option>
-                  <option style={{ backgroundColor: "white" }} value="VŨNG TÀU - CẦN GIỜ">
+                  <option
+                    data-trainid="train003"
+                    style={{ backgroundColor: "white" }}
+                    value="VŨNG TÀU - CẦN GIỜ"
+                  >
                     VŨNG TÀU - CẦN GIỜ
                   </option>
-                  <option style={{ backgroundColor: "white" }} value="VŨNG TÀU - TP.HỒ CHÍ MINH">
+                  <option
+                    data-trainid="train004"
+                    style={{ backgroundColor: "white" }}
+                    value="VŨNG TÀU - TP.HỒ CHÍ MINH"
+                  >
                     VŨNG TÀU - TP.HỒ CHÍ MINH
                   </option>
-                  <option style={{ backgroundColor: "white" }} value="TP.HỒ CHÍ MINH - VŨNG TÀU">
+                  <option
+                    data-trainid="train005"
+                    style={{ backgroundColor: "white" }}
+                    value="TP.HỒ CHÍ MINH - VŨNG TÀU"
+                  >
                     TP.HỒ CHÍ MINH - VŨNG TÀU
                   </option>
-                  <option style={{ backgroundColor: "white" }} value="TP.HỒ CHÍ MINH - CẦN GIỜ">
+                  <option
+                    data-trainid="train006"
+                    style={{ backgroundColor: "white" }}
+                    value="TP.HỒ CHÍ MINH - CẦN GIỜ"
+                  >
                     TP.HỒ CHÍ MINH - CẦN GIỜ
                   </option>
-                  <option style={{ backgroundColor: "white" }} value="BẠCH ĐẰNG - CỦ CHI">
+                  <option
+                    data-trainid="train007"
+                    style={{ backgroundColor: "white" }}
+                    value="BẠCH ĐẰNG - CỦ CHI"
+                  >
                     BẠCH ĐẰNG - CỦ CHI
                   </option>
-                  <option style={{ backgroundColor: "white" }} value="CỦ CHI - BẠCH ĐẰNG">
+                  <option
+                    data-trainid="train008"
+                    style={{ backgroundColor: "white" }}
+                    value="CỦ CHI - BẠCH ĐẰNG"
+                  >
                     CỦ CHI - BẠCH ĐẰNG
                   </option>
                 </select>

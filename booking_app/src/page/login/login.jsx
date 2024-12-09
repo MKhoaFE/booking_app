@@ -50,8 +50,8 @@ function Login() {
       const { token, user } = response.data; // Giả định backend trả về cả token và thông tin người dùng
 
       // Lưu JWT và thông tin người dùng vào cookie
-      Cookies.set('token', token, { expires: 1 });
-      Cookies.set('user', JSON.stringify(user), { expires: 1 });
+      Cookies.set('token', token, { expires: 3600 });
+      Cookies.set('user', JSON.stringify(user), { expires: 3600 });
       window.dispatchEvent(new Event('cookieChange'));
       alert("Đăng nhập thành công");
       navigate("/");

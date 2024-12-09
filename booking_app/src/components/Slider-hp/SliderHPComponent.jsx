@@ -71,39 +71,20 @@ export default class SliderHPComponent extends React.Component {
     })
   }
 
-  /*
-  * Cập nhật chiều cao cho container khi thay đổi kích thước màn hình
-  * Trong phần CSS, mình để container có width = 100%,
-  * Nên dù kéo to hay thu nhỏ thì width vẫn bằng 100%
-  * Nhưng chiều cao phải tính lại dựa vào width và tỉ lệ this.ratioWH
-  */
+
   updateDimensions() {
     this.containerElm.style.height 
       = `${this.containerElm.offsetWidth / this.ratioWH}px`;
   }
 
-  /*
-  * Nếu người dùng truyền vào thuộc tính mode = automatic
-  * thì Slideshow sẽ chạy tự động dựa vào interval.
-  * Hàm này sẽ được gọi trong mỗi lượt lặp lại
-  * để cập nhật slideIndex mới cho Slideshow
-  */
+
   runAutomatic() {
     this.setState({
       slideIndex: this.getNewSlideIndex(1)
     });
   }
 
-  /*
-  * Hàm này thuộc về React Component Lifecycle
-  * được gọi sau khi component này được render xong
-  * Trong đây, sẽ lưu lại reference cho container - this.containerElm
-  * Cập nhật lại chiều cao cho container - this.updateDimensions();
-  * Đăng ký sự kiện thay đổi kích thước - resize
-  * Kiểm tra nếu mode === "automatic" thì sẽ tạo mới một interval
-  * để thay đổi hình ảnh - this.runAutomatic()
-  * với giá trị timeout được truyền từ props hoặc mặc định là 5000 ms
-  */
+
   componentDidMount() {
     this.rootElm = ReactDOM.findDOMNode(this);
     this.containerElm = this.rootElm.querySelector(".content");
@@ -121,22 +102,12 @@ export default class SliderHPComponent extends React.Component {
     }
   }
 
-  /*
-  * Hàm này cũng thuộc về React Component Lifecycle -
-  * được gọi khi component này bị xóa khỏi màn hình
-  * Lúc này, mình phải hủy bỏ sự kiện khi resize
-  * và xóa bỏ interval đã khai bảo bên trên để tránh leak memory.
-  */
   componentWillUnmount() {
     window.removeEventListener("resize", this.updateDimensions);
     if (this.automaticInterval) clearInterval(this.automaticInterval);
   }
 
-  /*
-  * Giao diện của component
-  * với phần tử ngoài cùng mình để className="lp-slideshow"
-  * để tránh xung đột về tên với các component khác
-  */
+
   render() {
     return (
       <div className="lp-slideshow">

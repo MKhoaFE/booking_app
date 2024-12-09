@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../booking/booking.css";
 import "../../GlobalStyles/glbStyles.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "font-awesome/css/font-awesome.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -255,6 +255,7 @@ const Booking = () => {
 
     fetchData();
   }, []);
+
 
   return (
     <>

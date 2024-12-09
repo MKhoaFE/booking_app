@@ -21,7 +21,6 @@ exports.registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
-    // Tạo người dùng mới mà không cần userId (được tạo tự động)
     const newUser = new User({
       name,
       email,
@@ -60,7 +59,7 @@ exports.loginUser = async (req, res) => {
     const token = jwt.sign(
       { _id: user._id, email: user.email },
       process.env.SECRET_ACCESS_TOKEN,
-      { expiresIn: "1h" }
+      { expiresIn: "24h" }
     );
 
     await User.updateOne(

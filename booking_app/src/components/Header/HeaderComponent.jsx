@@ -16,7 +16,6 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import logo_header from "../../assets/logo-image.png";
 import english from "../../assets/english.png";
 import { Link } from "react-router-dom";
-import LogoutIcon from "@mui/icons-material/Logout";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { AuthContext } from "../../context/Auth.context";
