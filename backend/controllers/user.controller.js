@@ -124,3 +124,30 @@ exports.logoutUser = async (req, res) => {
     });
   }
 };
+
+
+//get all users
+exports.getAllUsers = async (req,res)=>{
+  try{
+    const users = await User.find(); 
+    console.log((users));
+    res.status(200).json({users});
+  } catch(error){
+    console.error("Error fetching users: ", error);
+    res.status(500).json({message:"Failed to fetch users", error: error.message});
+  }
+};
+
+
+//add user
+exports.addUsers = async(req,res)=>{
+  try{
+    const {email, name} = req.body;
+    const newUser = new User({name, email});
+    await newUser.save();
+    res.status(200).json({message:"User added successfully", user: newUser});
+  }catch(error){
+    res.status(500).json({message: "Error adding user",error});
+
+  }
+};

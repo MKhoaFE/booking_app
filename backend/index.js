@@ -18,12 +18,18 @@ app.use((err, req, res, next) => {
 
 const userRoutes = require("./routes/user.route");
 const sessionRoutes = require("./routes/session.route")
-const trainRoute = require("./routes/train.route")
+const trainRoutes = require("./routes/train.route")
 const ticketRoute = require("./routes/ticket.route")
 const protectedRoutes = require("./routes/protectedData.route");
+
+//Client page
 app.use("/api/users", userRoutes);
 app.use("/api", protectedRoutes);
 app.use("/booking", sessionRoutes);
+
+//Admin page
+app.use("/api/trains", trainRoutes);
+
 
 // Kết nối đến MongoDB
 mongoose

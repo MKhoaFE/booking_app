@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import BookingHeader from "../../components/Booking-header/bookingHeader";
 import Stepbar from "../../components/StepBar/stepbar";
 import "../payment/payment.css";
 
 function Payment() {
+  const [selected, setSelected] = useState(null);
+
+  const toggle = (option) => {
+    setSelected(selected === option ? null : option);
+  };
   return (
     <>
       <BookingHeader></BookingHeader>
@@ -18,6 +23,14 @@ function Payment() {
             thức thanh toán tiên lợi nhất cho mình)
           </i>
         </p>
+        <div className="option" onClick={() => toggle("credit")}>
+          <h3>Thanh toán bằng thẻ tín dụng (Visa - master card)</h3>
+        </div>
+        {selected === "credit" && <div className="content">test content 1</div>}
+        <div className="option" onClick={() => toggle("atm")}>
+          <h3>Thanh toán bằng thẻ ATM</h3>
+        </div>
+        {selected === "atm" && <div className="content">test content 2</div>}
       </div>
     </>
   );

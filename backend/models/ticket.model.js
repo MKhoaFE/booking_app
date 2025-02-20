@@ -10,6 +10,6 @@ const ticketSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   paymentMethod: { type: String, required: true },
   transactionId: { type: String, required: true, unique: true }
-});
+},{collection: "Ticket"});
 
 module.exports = mongoose.model('Ticket', ticketSchema);

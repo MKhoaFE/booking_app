@@ -7,4 +7,7 @@
 .payment-wrap h4 {
   font-size: 18px;
   margin-top: 15px;
+}
+.payment-wrap .option {
+  cursor: pointer;
 }/*# sourceMappingURL=payment.css.map */

@@ -1,0 +1,58 @@
+const Train = require("../models/train.model");
+
+exports.getAllTrains = async (req, res) => {
+  try {
+    const trains = await Train.find(); //lấy tất cả các chuyến tàu
+    res.status(200).json({ trains });
+  } catch (error) {
+    console.error("Error fetching trains: ", error);
+    res
+      .status(500)
+      .json({ message: "Failed to fetch trains", error: error.message });
+  }
+};
+
+exports.registerTrip = async (req, res) => {
+  try {
+    const {
+      trainId,
+      vessel,
+      capacity,
+      departureStation,
+      arrivalStation,
+      departureTime,
+      arrivalTime,
+      regularSeats,
+      specialSeats,
+    } = req.body;
+
+    const existingTrip = await Train.findOne({
+      vessel,
+      departureStation,
+      arrivalStation,
+    });
+
+    if (existingTrip) {
+      return res.status(400).json({ message: "Trip already existed" });
+    }
+    const newTrip = new Train({
+      trainId,
+      vessel,
+      capacity,
+      departureStation,
+      arrivalStation,
+      departureTime,
+      arrivalTime,
+      regularSeats,
+      specialSeats,
+    });
+
+    const savedTrip = await newTrip.save();
+    res
+      .status(201)
+      .json({ message: "New Trip added successfully", trip: savedTrip });
+  } catch (error) {
+    console.error("Error: ", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
