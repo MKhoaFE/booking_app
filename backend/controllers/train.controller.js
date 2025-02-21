@@ -56,3 +56,19 @@ exports.registerTrip = async (req, res) => {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
+
+exports.lastestId = async(req,res)=>{
+  try{
+    const lastestTrain = await Train.findOne().sort({trainId: -1}); //lấy trainid mới nhất
+    if(lastestTrain){
+      res.json({trainId: lastestTrain.trainId});
+
+    }else{
+      res.json({trainId:"T000"});
+
+    }
+  }catch(error){
+      console.error("Lỗi lấy trainId newest: ", error);
+      res.status(500).json({error:"Lỗi server"});
+  }
+}
