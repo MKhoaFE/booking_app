@@ -5,5 +5,6 @@ const {getAllTrains, registerTrip, lastestId} = require("../controllers/train.co
 router.get("/", getAllTrains);
 router.post("/addTrips", registerTrip);
 router.get("/lastestId", lastestId);
+
 module.exports = router;
 

@@ -17,8 +17,8 @@ const trainSchema = new mongoose.Schema(
     // departureDate: { type: Date },
     capacity: { type: Number, required: true },
     vessel: { type: String, required: true },
-    regularSeats: {type: Number, required:true}, 
-    specialSeats: {type: Number, required:true}, 
+    // regularSeats: {type: Number, required:true}, 
+    // specialSeats: {type: Number, required:true}, 
     // availableSeats: [seatSchema],
   },
   { collection: "Train" }

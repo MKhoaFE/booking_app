@@ -21,7 +21,7 @@ const sessionRoutes = require("./routes/session.route")
 const trainRoutes = require("./routes/train.route")
 const ticketRoute = require("./routes/ticket.route")
 const protectedRoutes = require("./routes/protectedData.route");
-
+const trainScheduleRoutes = require("./routes/trainSchedule.route");
 //Client page
 app.use("/api/users", userRoutes);
 app.use("/api", protectedRoutes);
@@ -29,7 +29,7 @@ app.use("/booking", sessionRoutes);
 
 //Admin page
 app.use("/api/trains", trainRoutes);
-
+app.use("/api/trainSchedule", trainScheduleRoutes);
 
 // Kết nối đến MongoDB
 mongoose
