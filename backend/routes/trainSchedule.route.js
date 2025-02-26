@@ -1,9 +1,10 @@
 const express = require('express');
-const { newTrainSchedule } = require('../controllers/trainSchedule.controller');
+const { newTrainSchedule, getAllTrainSchedules } = require('../controllers/trainSchedule.controller');
 const router = express.Router();
 
-// tạo hành trình mới
-router.post("/addJourney", newTrainSchedule);
+
+router.post("/addJourney", newTrainSchedule);   // tạo hành trình mới
+router.get("/",getAllTrainSchedules) // lấy tất cả hành trình
 // update hành trình
 // xóa hành trình
 
