@@ -12,7 +12,8 @@ const trainSchedule = new mongoose.Schema(
     arrivalDate: { type: Date }, // Ngày đến
     regularSeats: { type: Number, }, // Số lượng ghế thường
     specialSeats: { type: Number }, // Số lượng ghế đặc biệt
-    ticketPrice: { type: Number }, // Giá vé
+    regularTicketPrice: { type: Number }, // Giá vé
+    specialTicketPrice: { type: Number }, // Giá vé
     status: {
       type: String,
       enum: ["active", "inactive"],

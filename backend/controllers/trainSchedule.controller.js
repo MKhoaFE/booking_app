@@ -4,7 +4,7 @@ const trainSchedule = require("../models/trainSchedule.model");
 // tạo hành trình mới
 exports.newTrainSchedule = async (req,res)=>{
     try{
-        const {trainId, departureDate, arrivalDate, departureTime, arrivalTime, regularSeats, specialSeats, ticketPrice} = req.body;
+        const {trainId, departureDate, arrivalDate, departureTime, arrivalTime, regularSeats, specialSeats, specialTicketPrice, regularTicketPrice} = req.body;
         //kiểm tra xem trainId có tồn tại không
         const train = await Train.findOne({trainId});
         if(!train){
@@ -32,7 +32,8 @@ exports.newTrainSchedule = async (req,res)=>{
             arrivalTime,
             regularSeats,
             specialSeats,
-            ticketPrice,
+            specialTicketPrice,
+            regularTicketPrice,
             status : "active",
         });
         
