@@ -125,29 +125,45 @@ exports.logoutUser = async (req, res) => {
   }
 };
 
-
 //get all users
-exports.getAllUsers = async (req,res)=>{
-  try{
-    const users = await User.find(); 
-    console.log((users));
-    res.status(200).json({users});
-  } catch(error){
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json({ users });
+  } catch (error) {
     console.error("Error fetching users: ", error);
-    res.status(500).json({message:"Failed to fetch users", error: error.message});
+    res
+      .status(500)
+      .json({ message: "Failed to fetch users", error: error.message });
   }
 };
 
-
 //add user
-exports.addUsers = async(req,res)=>{
-  try{
-    const {email, name} = req.body;
-    const newUser = new User({name, email});
+exports.addUsers = async (req, res) => {
+  try {
+    const { email, name } = req.body;
+    const newUser = new User({ name, email });
     await newUser.save();
-    res.status(200).json({message:"User added successfully", user: newUser});
-  }catch(error){
-    res.status(500).json({message: "Error adding user",error});
+    res.status(200).json({ message: "User added successfully", user: newUser });
+  } catch (error) {
+    res.status(500).json({ message: "Error adding user", error });
+  }
+};
 
+//delete user
+exports.deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findOne({ userId });
+    if (!user) {
+      return res.status(404).json({ message: "User không tồn tại" });
+    }
+
+    await User.deleteOne({ userId });
+    return res.status(200).json({ message: " Xóa user thành công" });
+  } catch (error) {
+    console.error("Lỗi khi xóa hành trình: ", error);
+    return res.status(500).json({ message: "LỖi server", error });
   }
 };

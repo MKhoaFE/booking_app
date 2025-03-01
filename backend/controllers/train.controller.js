@@ -72,3 +72,20 @@ exports.lastestId = async(req,res)=>{
       res.status(500).json({error:"Lỗi server"});
   }
 }
+
+exports.deleteTrain = async(req,res)=>{
+  try{
+    const {trainId} = req.params;
+    const train = Train.findOne({trainId});
+    if(!train){
+      return res.status(404).json({message:"Không tìm thấy train"});
+    }
+
+    await Train.deleteOne({trainId});
+    return res.status(200).json({message:"Xóa train thành công"});
+  }catch(error){
+    console.error("Lỗi khi xóa train: ", error);
+    return res.status(500).json({message:"Lỗi server: ",error});
+
+  }
+}
