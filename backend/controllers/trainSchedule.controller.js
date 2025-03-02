@@ -70,21 +70,43 @@ exports.getAllTrainSchedules = async (req, res) => {
 
 //delete hành trình
 exports.deleteTrainSchedule = async (req, res) => {
-    try {
-        const { journeyId } = req.params;
+  try {
+    const { journeyId } = req.params;
 
-        // Kiểm tra xem hành trình có tồn tại không
-        const journey = await trainSchedule.findOne({ journeyId });
-        if (!journey) {
-            return res.status(404).json({ message: "Hành trình không tồn tại" });
-        }
-
-        // Xóa hành trình
-        await trainSchedule.deleteOne({ journeyId });
-
-        return res.status(200).json({ message: "Xóa hành trình thành công!" });
-    } catch (error) {
-        console.error("Lỗi khi xóa hành trình: ", error);
-        return res.status(500).json({ message: "Lỗi server", error });
+    // Kiểm tra xem hành trình có tồn tại không
+    const journey = await trainSchedule.findOne({ journeyId });
+    if (!journey) {
+      return res.status(404).json({ message: "Hành trình không tồn tại" });
     }
+
+    // Xóa hành trình
+    await trainSchedule.deleteOne({ journeyId });
+
+    return res.status(200).json({ message: "Xóa hành trình thành công!" });
+  } catch (error) {
+    console.error("Lỗi khi xóa hành trình: ", error);
+    return res.status(500).json({ message: "Lỗi server", error });
+  }
+};
+
+// update hành trình
+exports.updateTrainSchedule = async (req, res) => {
+  try {
+    const { journeyId } = req.params;
+    const updateData = req.body;
+
+    //kiểm tra journey id có tồn tại không
+    const journey = await trainSchedule.findOne({ journeyId });
+    if (!journey) {
+      return res.status(404).json({ message: "Không tìm thấy hành trình: " });
+    }
+
+    //cập nhật hành trình
+    await trainSchedule.updateOne({ journeyId }, { $set: updateData });
+
+    return res.status(200).json({ message: "Cập nhật hành trình thành công" });
+  } catch (error) {
+    console.error("Lỗi không cập nhật được hành trình: ", error);
+    return res.status(500).json({ message: "Lỗi server: ", error });
+  }
 };
