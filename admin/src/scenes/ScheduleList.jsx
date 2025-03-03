@@ -23,11 +23,25 @@ import showToast from "./dashboard/gloabal/Toastify";
 import { toast } from "react-toastify";
 import ClearIcon from "@mui/icons-material/Clear";
 import SettingsIcon from "@mui/icons-material/Settings";
+import ModalPopup from "../scenes/dashboard/gloabal/ModalPopup";
 
 export default function ScheduleList() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [currentEvents, setCurrentEvents] = useState([]);
+  const [open, setOpen] = useState(false);
+
+  const [selectedJourneyId, setSelectedJourneyId] = useState(null);
+
+  const handleOpenModal = (journeyId) => {
+    console.log("Journey ID:", journeyId); // Kiểm tra giá trị
+    if (!journeyId) {
+      console.error("Error: Journey ID is undefined");
+      return;
+    }
+    setSelectedJourneyId(journeyId);
+    setOpen(true);
+  };
 
   useEffect(() => {
     // Gọi API để lấy danh sách hành trình từ backend
@@ -269,14 +283,16 @@ export default function ScheduleList() {
                       }}
                       variant="filled"
                       color="secondary"
-                      onClick={() => {
-                        handleEventClick({
-                          event: { id: event.id, title: event.title },
-                        });
-                      }}
+                      onClick={() => handleOpenModal(event.id)}
                     >
                       <SettingsIcon />
                     </Button>
+                    <ModalPopup
+                      open={open}
+                      handleClose={() => setOpen(false)}
+                      title="h1"
+                      journeyId={selectedJourneyId}
+                    />
                   </ListItemSecondaryAction>
                 </ListItem>
               ))

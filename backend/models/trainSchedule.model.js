@@ -19,6 +19,8 @@ const trainSchedule = new mongoose.Schema(
       enum: ["active", "inactive"],
       default: "active",
     }, // Trạng thái hành trình
+    regularTicketBooked:{type: Number, default: 0},
+    specialTicketBooked:{type: Number, default: 0},
     createdAt: { type: Date, default: Date.now }, // Ngày tạo hành trình
   },
   { collection: "trainSchedule" }

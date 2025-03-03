@@ -18,18 +18,11 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import { DatePicker, TimePicker } from "@mui/x-date-pickers";
-import { Title } from "@mui/icons-material";
 import { NumericFormat } from "react-number-format";
 import dayjs from "dayjs";
 
 function FormJourneys() {
   const navigate = useNavigate();
-  const [trainId, setTrainId] = useState();
-  const [vessel, setVessel] = useState();
-  const [capacity, setCapacity] = useState();
-  const [departureStation, setDepatureStation] = useState();
-  const [arrivalStation, setArrivalStation] = useState();
   const [departureDate, setDepartureDate] = useState(null);
   const [arrivalDate, setArrivalDate] = useState(null);
   const [specialSeats, setSpecialSeats] = useState();

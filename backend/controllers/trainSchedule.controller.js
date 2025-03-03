@@ -68,6 +68,30 @@ exports.getAllTrainSchedules = async (req, res) => {
   }
 };
 
+//get 1 hành trình
+exports.getOneTrainSchedule = async (req, res) => {
+  try {
+    const { journeyId } = req.params; // Lấy journeyId từ URL
+
+    // Kiểm tra nếu journeyId bị thiếu
+    if (!journeyId) {
+      return res.status(400).json({ message: "Thiếu journeyId." });
+    }
+
+    // Tìm hành trình bằng journeyId thay vì _id của MongoDB
+    const journey = await trainSchedule.findOne({ journeyId: journeyId });
+
+    if (!journey) {
+      return res.status(404).json({ message: "Không tìm thấy hành trình." });
+    }
+
+    res.status(200).json({message:"get thành công", journey});
+  } catch (error) {
+    console.error("Lỗi khi lấy hành trình:", error);
+    res.status(500).json({ message: "Lỗi server." });
+  }
+};
+
 //delete hành trình
 exports.deleteTrainSchedule = async (req, res) => {
   try {
