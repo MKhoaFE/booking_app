@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const journeyStatus = require("../middlewares/journeyStatus");
 
 const trainSchedule = new mongoose.Schema(
   {
@@ -16,14 +17,21 @@ const trainSchedule = new mongoose.Schema(
     specialTicketPrice: { type: Number }, // Giá vé
     status: {
       type: String,
-      enum: ["active", "inactive"],
+      enum: ["active", "inactive", "in progress"],
       default: "active",
     }, // Trạng thái hành trình
     regularTicketBooked:{type: Number, default: 0},
     specialTicketBooked:{type: Number, default: 0},
+    regularTicketPaid:{type: Number, default: 0},
+    specialTicketPaid:{type: Number, default: 0},
     createdAt: { type: Date, default: Date.now }, // Ngày tạo hành trình
   },
   { collection: "trainSchedule" }
 );
+
+trainSchedule.pre("find", async function (next) {
+  await journeyStatus(this.model); // Gọi middleware cập nhật trạng thái
+  next();
+});
 
 module.exports = mongoose.model("trainSchedule", trainSchedule);

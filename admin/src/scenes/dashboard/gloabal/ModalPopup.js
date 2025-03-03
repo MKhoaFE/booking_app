@@ -20,6 +20,7 @@ export default function ModalPopup({ open, handleClose, journeyId }) {
   const [departureDate, setDepartureDate] = useState();
   const [arrivalDate, setArrivalDate] = useState(null);
   const [trainSchedule, setTrainSchedule] = useState(null);
+
   useEffect(() => {}, [trainSchedule]);
   useEffect(() => {
     if (open && journeyId) {
@@ -47,7 +48,9 @@ export default function ModalPopup({ open, handleClose, journeyId }) {
 
     const fetchJourneyData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/trainSchedule/updateJourney/${journeyId}`);
+        const response = await fetch(
+          `http://localhost:5000/api/trainSchedule/updateJourney/${journeyId}`
+        );
         const data = await response.json();
         if (data.journey) {
           setDepartureDate(dayjs(data.journey.departureDate));
@@ -63,26 +66,33 @@ export default function ModalPopup({ open, handleClose, journeyId }) {
 
   const handleUpdateJourney = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/trainSchedule/updateJourney/${journeyId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          departureDate: departureDate.toISOString(),
-          arrivalDate: arrivalDate.toISOString(),
-        }),
+      const response = await fetch(
+        `http://localhost:5000/api/trainSchedule/updateJourney/${journeyId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            departureDate: departureDate.toISOString(),
+            arrivalDate: arrivalDate.toISOString(),
+          }),
+        }
+      );
+      console.log("Dữ liệu gửi lên server:", {
+        departureDate: departureDate.toISOString(),
+        arrivalDate: arrivalDate.toISOString(),
       });
-
       const result = await response.json();
       if (response.ok) {
-        alert("Cập nhật hành trình thành công!");
+        showToast("Cập nhật hành trình thành công!", "success");
+        handleClose();
       } else {
-        alert(`Lỗi: ${result.message}`);
+        showToast(`Lỗi: ${result.message}`, "error");
       }
     } catch (error) {
       console.error("Lỗi khi cập nhật hành trình:", error);
-      alert("Cập nhật thất bại!");
+      showToast("Cập nhật thất bại!", "error");
     }
   };
   return (
@@ -99,7 +109,24 @@ export default function ModalPopup({ open, handleClose, journeyId }) {
           <Formik>
             {trainSchedule ? (
               <form>
-                <h1>Thông tin hành trình: {trainSchedule.journey.journeyId}</h1>
+                <h1>
+                  Thông tin hành trình: {trainSchedule.journey.journeyId}{" "}
+                </h1>
+                <div style={{ fontSize: "1rem" }}>
+                  Tình trạng:{" "}
+                  <span
+                    style={{
+                      color:
+                        trainSchedule.journey.status === "active"
+                          ? "green"
+                          : trainSchedule.journey.status === "in progress"
+                          ? "orange"
+                          : "red",
+                    }}
+                  >
+                    {trainSchedule.journey.status}
+                  </span>{" "}
+                </div>
                 <Box display="block" gap="1rem" spacing={{ xs: 2, md: 3 }}>
                   <Box
                     display="grid"
@@ -231,6 +258,34 @@ export default function ModalPopup({ open, handleClose, journeyId }) {
                       label="Regular Ticket Price (each)"
                       name="regularTicketPrice"
                     />
+                    <TextField
+                      type="number"
+                      variant="filled"
+                      value={trainSchedule?.journey?.specialTicketBooked || ""}
+                      fullWidth
+                      label="Special Seats Booked"
+                      name="specialTicketBooked"
+                      disabled
+                    ></TextField>
+                    <TextField
+                      type="number"
+                      variant="filled"
+                      value={trainSchedule?.journey?.regularTicketBooked || ""}
+                      fullWidth
+                      label="Regular Seats Booked"
+                      name="regularTicketBooked"
+                      disabled
+                    ></TextField>
+                    <div style={{ display: "block" }}>
+                      <div>
+                        Pending ticket:{" "}
+                        {trainSchedule.journey.specialSeats +
+                          trainSchedule.journey.regularSeats -
+                          trainSchedule.journey.regularTicketBooked -
+                          trainSchedule.journey.specialTicketBooked}
+                      </div>
+                      <div>Đã thanh toán: {trainSchedule.journey.regularTicketPaid} Vé thường, {trainSchedule.journey.specialTicketPaid} Vé đặc biệt.</div>
+                    </div>
                   </Box>
                 </Box>
               </form>
@@ -242,7 +297,6 @@ export default function ModalPopup({ open, handleClose, journeyId }) {
             style={{ padding: "0.5rem" }}
             variant="contained"
             onClick={handleUpdateJourney}
-
           >
             Update hành trình
           </Button>

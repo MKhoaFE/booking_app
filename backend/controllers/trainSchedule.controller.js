@@ -125,8 +125,22 @@ exports.updateTrainSchedule = async (req, res) => {
       return res.status(404).json({ message: "Không tìm thấy hành trình: " });
     }
 
-    //cập nhật hành trình
-    await trainSchedule.updateOne({ journeyId }, { $set: updateData });
+    // Cập nhật ngày giờ mới
+    journey.departureDate = new Date(updateData.departureDate);
+    journey.arrivalDate = new Date(updateData.arrivalDate);
+
+    // Xử lý cập nhật trạng thái
+    const now = new Date();
+    if (now < journey.departureDate) {
+      journey.status = "active";
+    } else if (now >= journey.departureDate && now <= journey.arrivalDate) {
+      journey.status = "in progress";
+    } else {
+      journey.status = "inactive";
+    }
+
+    // Lưu vào DB
+    await journey.save();
 
     return res.status(200).json({ message: "Cập nhật hành trình thành công" });
   } catch (error) {
