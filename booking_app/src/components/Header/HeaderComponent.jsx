@@ -19,6 +19,8 @@ import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { AuthContext } from "../../context/Auth.context";
+import showToast from "../../../../booking_app/src/components/Toastify/Toastify.js";
+
 function HeaderComponent() {
   const [userName, setUserName] = useState("");
   const { isAuthenticated, logout } = useContext(AuthContext);
@@ -55,12 +57,12 @@ function HeaderComponent() {
       // Xóa cookie sau khi đăng xuất
       Cookies.remove("user");
       Cookies.remove("token");
-      logout(); 
+      logout();
       setUserName("");
-
+      showToast("Đăng xuất thành công", "success");
     } catch (error) {
       console.error("Lỗi khi đăng xuất:", error);
-      alert("Đăng xuất thất bại!");
+      showToast("Đăng xuất thất bại!","error");
     }
   };
 
@@ -103,7 +105,7 @@ function HeaderComponent() {
               </span>
               <img src={logo1} alt="" />
               <img src={logo2} alt="" />
-  
+
               {isAuthenticated ? (
                 <>
                   <strong>Xin chào, {currentUserName}</strong>{" "}
@@ -137,7 +139,9 @@ function HeaderComponent() {
             <Navbar.Toggle aria-controls="navbarScroll" />
             <Navbar.Brand href="#" style={{ padding: "1rem 0", margin: "0" }}>
               <Link to="/">
-                <img src={logo_header} alt="" />
+                <div className="logo_header">
+                  <img src={logo_header} alt="" />
+                </div>
               </Link>
             </Navbar.Brand>
 

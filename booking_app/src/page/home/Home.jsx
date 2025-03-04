@@ -14,22 +14,20 @@ import img4 from "../../assets/slide_4.jpg";
 import SliderHPComponent from "../../components/Slider-hp/SliderHPComponent.jsx";
 import axios from "axios";
 import Cookies from "js-cookie";
+import showToast from "../../../../booking_app/src/components/Toastify/Toastify.js";
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [slideIndex, setSlideIndex] = useState(0);
   const [slideRightIndex, setRightSlideIndex] = useState(0);
   const today = new Date().toISOString().split("T")[0];
-  const [selectedDate, setSelectedDate] = useState(today);
   const handleDateChange = (event) => {
     setSelectedDate(event.target.value);
   };
   const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1))
     .toISOString()
     .split("T")[0];
-  const [returnDate, setReturnDate] = useState(tomorrow);
 
-  const [selectedTime, setSelectedTime] = useState("8:00");
   const handleChangeTime = (event) => {
     setSelectedTime(event.target.value);
   };
@@ -39,20 +37,115 @@ export default function Home() {
     setSelectedTrip(event.target.value);
   };
 
-  // hàm lưu data time slot vào local storage
+  const [journeys, setJourneys] = useState([]); // Danh sách hành trình từ database
+  const [selectedRoute, setSelectedRoute] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(""); // Ngày đi từ hành trình
+  const [selectedTime, setSelectedTime] = useState(""); // Giờ đi từ hành trình
+  const [returnDate, setReturnDate] = useState(""); // Ngày về
+  const [returnTime, setReturnTime] = useState(""); // Giờ về
+
+  // Lấy danh sách hành trình từ backend khi component mount
+  useEffect(() => {
+    const fetchJourneys = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/api/trainSchedule"
+        );
+        const activeJourneys = response.data.trainSchedules.filter(
+          (journey) => journey.status === "active"
+        );
+        setJourneys(activeJourneys);
+
+        if (activeJourneys.length > 0) {
+          const firstRoute = {
+            departureStation: activeJourneys[0].departureStation,
+            arrivalStation: activeJourneys[0].arrivalStation,
+          };
+          setSelectedRoute(firstRoute);
+          const availableDates = [
+            ...new Set(
+              activeJourneys
+                .filter(
+                  (j) =>
+                    j.departureStation === firstRoute.departureStation &&
+                    j.arrivalStation === firstRoute.arrivalStation
+                )
+                .map(
+                  (j) => new Date(j.departureDate).toISOString().split("T")[0]
+                )
+            ),
+          ];
+          setSelectedDate(availableDates[0] || "");
+          const availableTimes = activeJourneys
+            .filter(
+              (j) =>
+                j.departureStation === firstRoute.departureStation &&
+                j.arrivalStation === firstRoute.arrivalStation &&
+                new Date(j.departureDate).toISOString().split("T")[0] ===
+                  availableDates[0]
+            )
+            .map((j) => j.departureTime);
+          setSelectedTime(availableTimes[0] || "");
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách hành trình:", error);
+      }
+    };
+    fetchJourneys();
+  }, []);
+
+  // Xử lý khi người dùng thay đổi hành trình
+  const handleChangeRoute = (event) => {
+    const [departureStation, arrivalStation] = event.target.value.split(" - ");
+    const newRoute = { departureStation, arrivalStation };
+    setSelectedRoute(newRoute);
+
+    const availableDates = [
+      ...new Set(
+        journeys
+          .filter(
+            (j) =>
+              j.departureStation === newRoute.departureStation &&
+              j.arrivalStation === newRoute.arrivalStation
+          )
+          .map((j) => new Date(j.departureDate).toISOString().split("T")[0])
+      ),
+    ];
+    const newDate = availableDates[0] || "";
+    setSelectedDate(newDate);
+
+    const availableTimes = journeys
+      .filter(
+        (j) =>
+          j.departureStation === newRoute.departureStation &&
+          j.arrivalStation === newRoute.arrivalStation &&
+          new Date(j.departureDate).toISOString().split("T")[0] === newDate
+      )
+      .map((j) => j.departureTime);
+    setSelectedTime(availableTimes[0] || "");
+  };
+
+  // Hàm lưu dữ liệu vào localStorage
   const saveDTStoLocalStorage = () => {
+    const selectedJourney = journeys.find(
+      (j) =>
+        j.departureStation === selectedRoute.departureStation &&
+        j.arrivalStation === selectedRoute.arrivalStation &&
+        new Date(j.departureDate).toISOString().split("T")[0] ===
+          selectedDate &&
+        j.departureTime === selectedTime
+    );
     const travelData = {
-      trip: selectedTrip,
+      journeyId: selectedJourney?._id || "",
       date: selectedDate,
       time: selectedTime,
+      returnDate: returnDate,
+      returnTime: returnTime,
     };
-    //Kiểm tra ngày hợp lệ trước khi lưu
     if (!selectedDate) {
-      alert("vui lòng chọn ngày đi!");
+      showToast("Vui lòng chọn ngày đi!", "error");
       return;
     }
-
-    //thêm mục mới vào mảng và lưu lại
     localStorage.setItem("travelData", JSON.stringify(travelData));
   };
 
@@ -169,10 +262,10 @@ export default function Home() {
           }`}
         >
           <div className="booking-wrap-form">
+            {/* Dropdown chọn hành trình */}
             <Box>
               <FormControl
                 sx={{
-                  // m: 1,
                   minWidth: "100%",
                   backgroundColor: "#D7D7D7",
                   border: "none",
@@ -180,168 +273,104 @@ export default function Home() {
               >
                 <select
                   className="roboto-medium"
-                  id="cars"
+                  id="journeys"
                   style={{
                     fontSize: "14px",
                     border: "none",
                     backgroundColor: "#D7D7D7",
                     padding: "1rem",
                   }}
-                  value={selectedTrip}
-                  onChange={handleChangeTrip}
+                  value={
+                    selectedRoute
+                      ? `${selectedRoute.departureStation} - ${selectedRoute.arrivalStation}`
+                      : ""
+                  }
+                  onChange={handleChangeRoute}
                 >
-                  <option
-                    data-trainid="train001"
-                    style={{ backgroundColor: "white" }}
-                    value="CẦN GIỜ - TP.HỒ CHÍ MINH"
-                  >
-                    CẦN GIỜ - TP.HỒ CHÍ MINH
-                  </option>
-                  <option
-                    data-trainid="train002"
-                    style={{ backgroundColor: "white" }}
-                    value="CẦN GIỜ - VŨNG TÀU"
-                  >
-                    CẦN GIỜ - VŨNG TÀU
-                  </option>
-                  <option
-                    data-trainid="train003"
-                    style={{ backgroundColor: "white" }}
-                    value="VŨNG TÀU - CẦN GIỜ"
-                  >
-                    VŨNG TÀU - CẦN GIỜ
-                  </option>
-                  <option
-                    data-trainid="train004"
-                    style={{ backgroundColor: "white" }}
-                    value="VŨNG TÀU - TP.HỒ CHÍ MINH"
-                  >
-                    VŨNG TÀU - TP.HỒ CHÍ MINH
-                  </option>
-                  <option
-                    data-trainid="train005"
-                    style={{ backgroundColor: "white" }}
-                    value="TP.HỒ CHÍ MINH - VŨNG TÀU"
-                  >
-                    TP.HỒ CHÍ MINH - VŨNG TÀU
-                  </option>
-                  <option
-                    data-trainid="train006"
-                    style={{ backgroundColor: "white" }}
-                    value="TP.HỒ CHÍ MINH - CẦN GIỜ"
-                  >
-                    TP.HỒ CHÍ MINH - CẦN GIỜ
-                  </option>
-                  <option
-                    data-trainid="train007"
-                    style={{ backgroundColor: "white" }}
-                    value="BẠCH ĐẰNG - CỦ CHI"
-                  >
-                    BẠCH ĐẰNG - CỦ CHI
-                  </option>
-                  <option
-                    data-trainid="train008"
-                    style={{ backgroundColor: "white" }}
-                    value="CỦ CHI - BẠCH ĐẰNG"
-                  >
-                    CỦ CHI - BẠCH ĐẰNG
-                  </option>
+                  {/* Lọc danh sách tuyến duy nhất */}
+                  {[
+                    ...new Set(
+                      journeys.map(
+                        (j) => `${j.departureStation} - ${j.arrivalStation}`
+                      )
+                    ),
+                  ].map((route) => (
+                    <option
+                      key={route}
+                      value={route}
+                      style={{ backgroundColor: "white" }}
+                    >
+                      {route}
+                    </option>
+                  ))}
                 </select>
               </FormControl>
             </Box>
+
+            {/* Dropdown chọn ngày đi */}
             <Box
               component="form"
-              sx={{
-                "& > :not(style)": { minWidth: "100px" },
-              }}
+              sx={{ "& > :not(style)": { minWidth: "100px" } }}
               noValidate
               autoComplete="off"
               padding="1.5rem"
             >
-              <FormControl variant="standard">
+              <FormControl variant="standard" fullWidth>
                 <InputLabel
                   className="roboto-medium"
                   style={{ fontSize: "20px", fontWeight: "500" }}
                 >
                   NGÀY ĐI
                 </InputLabel>
-                <Input
-                  id="input-with-icon-adornment"
-                  type="date"
-                  format="YYYY/MM/DD"
-                  value={selectedDate}
-                  onChange={handleDateChange}
-                  style={{ fontSize: "15px", fontWeight: 300 }}
-                  startAdornment={
-                    <InputAdornment position="start"></InputAdornment>
-                  }
-                />
-              </FormControl>
-            </Box>
-            <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { minWidth: "50px" },
-              }}
-              noValidate
-              autoComplete="off"
-              fontSize="15px"
-              padding="1.5rem"
-            >
-              <FormControl variant="standard" fullWidth>
-                <InputLabel style={{ fontSize: "20px", fontWeight: "600" }}>
-                  GIỜ
-                </InputLabel>
                 <NativeSelect
-                  style={{ fontSize: "15px", width: "7rem" }}
-                  // defaultValue={1}
-                  value={selectedTime}
-                  onChange={handleChangeTime}
-                  inputProps={{
-                    name: "age",
-                    id: "uncontrolled-native",
+                  style={{ fontSize: "15px" }}
+                  value={selectedDate}
+                  onChange={(e) => {
+                    setSelectedDate(e.target.value);
+                    const availableTimes = journeys
+                      .filter(
+                        (j) =>
+                          j.departureStation ===
+                            selectedRoute?.departureStation &&
+                          j.arrivalStation === selectedRoute?.arrivalStation &&
+                          new Date(j.departureDate)
+                            .toISOString()
+                            .split("T")[0] === e.target.value
+                      )
+                      .map((j) => j.departureTime);
+                    setSelectedTime(availableTimes[0] || "");
                   }}
+                  inputProps={{ name: "date", id: "departure-date" }}
                 >
-                  <option value="8:00">8:00</option>
-                  <option value="12:00">12:00</option>
+                  {[
+                    ...new Set(
+                      journeys
+                        .filter(
+                          (j) =>
+                            j.departureStation ===
+                              selectedRoute?.departureStation &&
+                            j.arrivalStation === selectedRoute?.arrivalStation
+                        )
+                        .map(
+                          (j) =>
+                            new Date(j.departureDate)
+                              .toISOString()
+                              .split("T")[0]
+                        )
+                    ),
+                  ].map((date) => (
+                    <option key={date} value={date}>
+                      {date}
+                    </option>
+                  ))}
                 </NativeSelect>
               </FormControl>
             </Box>
 
-            <div className="divider-header">
-              <div className="line"></div>
-            </div>
+            {/* Dropdown chọn giờ đi */}
             <Box
               component="form"
-              sx={{
-                "& > :not(style)": { minWidth: "100px" },
-              }}
-              noValidate
-              autoComplete="off"
-              fontSize="15px"
-              padding="1.5rem"
-            >
-              <FormControl variant="standard">
-                <InputLabel style={{ fontSize: "20px", fontWeight: "600" }}>
-                  NGÀY VỀ
-                </InputLabel>
-                <Input
-                  id="input-with-icon-adornment"
-                  type="date"
-                  value={returnDate} // Giá trị mặc định là ngày mai
-                  onChange={(e) => setReturnDate(e.target.value)}
-                  style={{ fontSize: "15px", fontWeight: 300 }}
-                  startAdornment={
-                    <InputAdornment position="start"></InputAdornment>
-                  }
-                />
-              </FormControl>
-            </Box>
-            <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { minWidth: "50px" },
-              }}
+              sx={{ "& > :not(style)": { minWidth: "50px" } }}
               noValidate
               autoComplete="off"
               fontSize="15px"
@@ -353,17 +382,30 @@ export default function Home() {
                 </InputLabel>
                 <NativeSelect
                   style={{ fontSize: "15px", width: "7rem" }}
-                  defaultValue={1}
-                  inputProps={{
-                    name: "age",
-                    id: "uncontrolled-native",
-                  }}
+                  value={selectedTime}
+                  onChange={(e) => setSelectedTime(e.target.value)}
+                  inputProps={{ name: "time", id: "departure-time" }}
                 >
-                  <option value={1}>8:00</option>
-                  <option value={2}>12:00</option>
+                  {journeys
+                    .filter(
+                      (j) =>
+                        j.departureStation ===
+                          selectedRoute?.departureStation &&
+                        j.arrivalStation === selectedRoute?.arrivalStation &&
+                        new Date(j.departureDate)
+                          .toISOString()
+                          .split("T")[0] === selectedDate
+                    )
+                    .map((j) => (
+                      <option key={j._id} value={j.departureTime}>
+                        {j.departureTime}
+                      </option>
+                    ))}
                 </NativeSelect>
               </FormControl>
             </Box>
+
+            {/* Nút đặt vé */}
             <Link to="/booking/seats">
               <button onClick={saveDTStoLocalStorage}>ĐẶT VÉ</button>
             </Link>

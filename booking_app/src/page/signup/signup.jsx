@@ -8,6 +8,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 import axios from "axios";
+import showToast from "../../../../booking_app/src/components/Toastify/Toastify.js";
+import { toast } from "react-toastify";
 
 function Signup() {
   const navigate = useNavigate();
@@ -22,14 +24,12 @@ function Signup() {
   const [fullnameError, setFullnameerror] = useState("");
   const [phonenumberError, setPhonenumbererror] = useState("");
 
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validate input fields
     if (!fullname || !email || !password || !repassword || !phonenumber) {
-      alert("Vui lòng điền đầy đủ thông tin");
+      showToast("Vui lòng điền đầy đủ thông tin","error");
       return;
     }
 
@@ -47,12 +47,15 @@ function Signup() {
     };
 
     try {
-      const response = await axios.post("http://localhost:5000/api/users/signup", formData);
-      alert("Đăng ký thành công!");
+      const response = await axios.post(
+        "http://localhost:5000/api/users/signup",
+        formData
+      );
+      showToast("Đăng ký thành công!", "success");
       navigate("/login");
       console.log(response.data);
     } catch (error) {
-      alert("Đăng ký thất bại. Vui lòng thử lại.");
+      showToast("Đăng ký thất bại. Vui lòng thử lại.", "error");
       console.error(error.response?.data || error.message);
     }
   };

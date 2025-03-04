@@ -33,7 +33,7 @@ function FormUsers() {
     e.preventDefault();
     //validate input fields
     if (!fullname || !email || !password || !repassword || !phone) {
-      alert("Vui lòng điền đầy đủ thông tin");
+      showToast("Vui lòng điền đầy đủ thông tin", "success");
       return;
     }
     if (password != repassword) {

@@ -1,4 +1,4 @@
-import React from "react"; 
+import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./GlobalStyles/glbStyles.css";
 import HeaderComponent from "./components/Header/HeaderComponent.jsx";
@@ -14,49 +14,59 @@ import Login from "./page/login/login.jsx";
 import Signup from "./page/signup/signup.jsx";
 import Payment from "./page/payment/payment.jsx";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute.js";
+import { ToastContainer } from "react-toastify"; // Import từ react-toastify
+import "react-toastify/dist/ReactToastify.css"; // Import CSS
 
 function App() {
   return (
-<BrowserRouter>
-  <Layout style={{ backgroundColor: "#FFF" }}>
-    <HeaderComponent />
-    <Content>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route 
-          path="/booking/seats" 
-          element={
-            <ProtectedRoute>
-              <Booking />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/booking/passengers" 
-          element={
-            <ProtectedRoute>
-              <Passengers />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/booking/payment" 
-          element={
-            <ProtectedRoute>
-              <Payment />
-            </ProtectedRoute>
-          } 
-        />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="*" element={<Err />} />
-      </Routes>
-    </Content>
-    <FooterComponent />
-  </Layout>
-</BrowserRouter>
+    <BrowserRouter>
 
+      <Layout style={{ backgroundColor: "#FFF" }}>
+      <ToastContainer
+          position="top-center" // Vị trí khớp với cấu hình trong showToast
+          autoClose={1500} // Thời gian tự đóng khớp với showToast
+          hideProgressBar={false}
+          closeOnClick
+          pauseOnHover={false}
+          draggable
+          theme="colored"
+        />
+        <HeaderComponent />
+        <Content>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/booking/seats"
+              element={
+                <ProtectedRoute>
+                  <Booking />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/booking/passengers"
+              element={
+                <ProtectedRoute>
+                  <Passengers />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/booking/payment"
+              element={
+                <ProtectedRoute>
+                  <Payment />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<Err />} />
+          </Routes>
+        </Content>
+        <FooterComponent />
+      </Layout>
+    </BrowserRouter>
   );
 }
-
 export default App;

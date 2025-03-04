@@ -43,4 +43,10 @@
   .navbar .bottom .responsive-hide-loginbtn {
     display: block;
   }
+}
+.navbar .bottom .logo_header img {
+  width: 100%;
+  aspect-ratio: 16/9;
+  -o-object-fit: cover;
+     object-fit: cover;
 }/*# sourceMappingURL=header.css.map */

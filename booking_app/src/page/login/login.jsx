@@ -7,6 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
 import Cookies from "js-cookie";
+import showToast from "../../../../booking_app/src/components/Toastify/Toastify.js";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -34,7 +35,7 @@ function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!email || !password) {
-      alert("Vui lòng điền đủ thông tin");
+      showToast("Vui lòng điền đủ thông tin","error");
       return;
     }
     const formData = {
@@ -53,12 +54,12 @@ function Login() {
       Cookies.set('token', token, { expires: 3600 });
       Cookies.set('user', JSON.stringify(user), { expires: 3600 });
       window.dispatchEvent(new Event('cookieChange'));
-      alert("Đăng nhập thành công");
+      showToast("Đăng nhập thành công", "success");
       navigate("/");
       window.location.reload();
       console.log(response.data);
     } catch (error) {
-      alert("Sai tài khoản hoặc mật khẩu");
+      showToast("Sai tài khoản hoặc mật khẩu","success");
       console.error(error.response?.data || error.message);
     }
   };
