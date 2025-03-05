@@ -7,39 +7,112 @@ import { Table } from "react-bootstrap";
 import "../passengers/passenger.css";
 import { Link, useLocation } from "react-router-dom";
 import "../../GlobalStyles/glbStyles.css";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { Typography } from "@mui/material";
+
 function Passengers() {
   const location = useLocation();
-  const { remainingTickets } = location.state || {};
-  const { countSpecialTicket } = location.state || {};
-  const { countRegularTicket } = location.state || {};
-  const [selectedTab, setSelectedTab] = useState(null);
+  const { remainingTickets, countSpecialTicket, countRegularTicket } = location.state || {};
+  const [travelData, setTravelData] = useState(null);
   const [selectedSeats, setSelectedSeats] = useState({});
+  const [priceInfor, setPriceInfor] = useState({});
+  const [userData, setUserData] = useState(null); // Thông tin người dùng từ cookie
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   useEffect(() => {
-    const seats = localStorage.getItem("selectedSeat8AM");
-    if (seats) {
-      setSelectedSeats(JSON.parse(seats));
-    }
-  }, []);
-  useEffect(() => {
-    const tab = localStorage.getItem("selectedTab");
-    if (tab) {
-      setSelectedTab(JSON.parse(tab));
+    const storedData = JSON.parse(localStorage.getItem("travelData"));
+    if (storedData) {
+      setTravelData(storedData);
+      const seats = JSON.parse(localStorage.getItem(`selectedSeats_${storedData.time}`)) || {};
+      setSelectedSeats(seats);
+      fetchJourneyData(storedData.journeyId);
+      loadUserDataFromCookie();
+    } else {
+      setError("Không tìm thấy dữ liệu hành trình. Vui lòng quay lại trang chủ.");
+      setLoading(false);
     }
   }, []);
 
-  console.log("vé thường: ", countRegularTicket);
-  console.log("vé đặc biệt: ", countSpecialTicket);
+  const fetchJourneyData = async (journeyId) => {
+    try {
+      const token = Cookies.get("token");
+      if (!token) {
+        setError("Vui lòng đăng nhập để tiếp tục.");
+        setLoading(false);
+        return;
+      }
+
+      const response = await axios.get(
+        `http://localhost:5000/api/trainSchedule/getJourneyById/${journeyId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const journey = response.data.journey;
+      if (!journey) {
+        throw new Error("Không tìm thấy hành trình.");
+      }
+
+      setPriceInfor({
+        special: {
+          regularTicketPrice: journey.specialTicketPrice,
+          specialTicketPrice: journey.specialTicketPrice,
+        },
+        regular: {
+          regularTicketPrice: journey.regularTicketPrice,
+          specialTicketPrice: journey.regularTicketPrice,
+        },
+      });
+    } catch (err) {
+      console.error("Lỗi khi lấy dữ liệu hành trình:", err);
+      setError("Không thể tải dữ liệu hành trình. Vui lòng thử lại.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Lấy thông tin người dùng từ cookie
+  const loadUserDataFromCookie = () => {
+    const userCookie = Cookies.get("user");
+    if (userCookie) {
+      const user = JSON.parse(userCookie);
+      setUserData({
+        name: user.name || "",
+        email: user.email || "",
+        phone: user.phone|| "", 
+      });
+    } else {
+      setError("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập.");
+    }
+  };
+
+  if (loading) {
+    return <Typography>Đang tải dữ liệu...</Typography>;
+  }
+  if (error) {
+    return <Typography color="error">{error}</Typography>;
+  }
+
+  const totalPrice =
+    (countRegularTicket * (priceInfor.regular?.regularTicketPrice || 0)) +
+    (countSpecialTicket * (priceInfor.special?.regularTicketPrice || 0));
+
+  const seatList = Object.entries(selectedSeats);
+
   return (
     <>
-      <BookingHeader></BookingHeader>
-      <Stepbar></Stepbar>
+      <BookingHeader />
+      <Stepbar />
       <div className="container">
         <div className="passenger-infor">
           <div className="line"></div>
           <div className="wrapper">
             <div className="ticket-table">
               <p>
-                {selectedTab ? (
+                {travelData ? (
                   <strong>
                     Chuyến hiện tại:{" "}
                     <span
@@ -49,18 +122,17 @@ function Passengers() {
                         fontStyle: "italic",
                       }}
                     >
-                      {selectedTab.currentTab}
-                    </span>{" "}
+                      {travelData.time}
+                    </span>
                   </strong>
                 ) : (
-                  <strong>Không có tab nào được chọn.</strong>
+                  <strong>Không có chuyến nào được chọn.</strong>
                 )}
               </p>
               <p>
-                {" "}
-                {Object.keys(selectedSeats).length > 0 ? (
+                {seatList.length > 0 ? (
                   <ul>
-                    {Object.entries(selectedSeats).map(([seat, type]) => (
+                    {seatList.map(([seat, type]) => (
                       <li key={seat}>
                         Ghế: {seat} - Loại: {type}
                       </li>
@@ -91,180 +163,99 @@ function Passengers() {
                   </tr>
                 </thead>
                 <tbody>
-                  {Array(countRegularTicket)
-                    .fill()
-                    .map((_, index) => (
-                      <tr key={index}>
-                        <td>
-                          <div className="field-item">
-                            <div className="col-md-4">
-                              <label>Họ và tên (*)</label>
-                            </div>
-                            <div className="col-md-8">
-                              <input type="text" />
+                  {seatList.map(([seat, type], index) => (
+                    <tr key={seat}>
+                      <td>
+                        <div className="field-item">
+                          <div className="col-md-4">
+                            <label>Họ và tên (*)</label>
+                          </div>
+                          <div className="col-md-8">
+                            <input type="text" />
+                          </div>
+                        </div>
+                        <div className="field-item">
+                          <div className="col-md-4">
+                            <label>Số điện thoại</label>
+                          </div>
+                          <div className="col-md-8">
+                            <input type="text" />
+                          </div>
+                        </div>
+                        <div className="field-item">
+                          <div className="col-md-4">
+                            <label>CMND</label>
+                          </div>
+                          <div className="col-md-8">
+                            <input type="text" />
+                          </div>
+                        </div>
+                        <div className="field-item">
+                          <div className="col-md-4">
+                            <label>Quốc gia</label>
+                          </div>
+                          <div className="col-md-8">
+                            <input type="text" />
+                          </div>
+                        </div>
+                        <div className="col-md-12 field-item">
+                          <div className="col-md-6">
+                            <div className="field-item">
+                              <label>Giới tính</label>
+                              <select>
+                                <option value="1">Nam</option>
+                                <option value="2">Nữ</option>
+                              </select>
                             </div>
                           </div>
-                          <div className="field-item">
-                            <div className="col-md-4">
-                              <label>Số điện thoại</label>
-                            </div>
-                            <div className="col-md-8">
-                              <input type="text" />
-                            </div>
-                          </div>
-                          <div className="field-item">
-                            <div className="col-md-4">
-                              <label>CMND</label>
-                            </div>
-                            <div className="col-md-8">
-                              <input type="text" />
+                          <div className="col-md-6">
+                            <div className="field-item">
+                              <label>Năm sinh</label>
+                              <select>
+                                <option value="1">1990</option>
+                                <option value="2">1991</option>
+                              </select>
                             </div>
                           </div>
-                          <div className="field-item">
-                            <div className="col-md-4">
-                              <label>Quốc gia</label>
+                        </div>
+                      </td>
+                      <td className="trip-infor">
+                        <div className="wrap">
+                          <span>
+                            <div>Chặng: {travelData.trip}</div>
+                            <div>Ngày giờ: {travelData.date} {travelData.time}</div>
+                            <div>Ghế: {seat}</div>
+                            <div>
+                              Loại vé: <b>{type === "regular" ? "Thường" : "Đặc biệt"}</b>
                             </div>
-                            <div className="col-md-8">
-                              <input type="text" />
-                            </div>
-                          </div>
-                          <div className="col-md-12 field-item">
-                            <div className="col-md-6">
-                              <div className="field-item">
-                                <label>Giới tính</label>
-                                <select>
-                                  <option value="1">Nam</option>
-                                  <option value="2">Nữ</option>
-                                </select>
-                              </div>
-                            </div>
-                            <div className="col-md-6">
-                              <div className="field-item">
-                                <label>Năm sinh</label>
-                                <select>
-                                  <option value="1">1990</option>
-                                  <option value="2">1991</option>
-                                </select>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="trip-infor">
-                          <div className="wrap">
-                            <span>
-                              <div>Giữ chỗ trong giây</div>
-                              <div>Chặng: TP. Hồ Chí Minh - Vũng Tàu</div>
-                              <div>Ngày giờ: 09/07/2024 10:00</div>
-                              <div>Ghế: H3</div>
-                              <div>
-                                Loại vé: <b>Thường</b>{" "}
-                              </div>
-                            </span>
-                          </div>
-                        </td>
-                        <td>
-                          <div style={{ marginTop: "5rem" }}></div>
-                        </td>
-                        <td>
-                          <div style={{ marginTop: "5rem" }}>320.000 VND</div>
-                        </td>
-                        <td>
-                          <div style={{ marginTop: "5rem" }}>320.000 VND</div>
-                        </td>
-                      </tr>
-                    ))}
-                  {Array(countSpecialTicket)
-                    .fill()
-                    .map((_, index) => (
-                      <tr key={index}>
-                        <td>
-                          <div className="field-item">
-                            <div className="col-md-4">
-                              <label>Họ và tên (*)</label>
-                            </div>
-                            <div className="col-md-8">
-                              <input type="text" />
-                            </div>
-                          </div>
-                          <div className="field-item">
-                            <div className="col-md-4">
-                              <label>Số điện thoại</label>
-                            </div>
-                            <div className="col-md-8">
-                              <input type="text" />
-                            </div>
-                          </div>
-                          <div className="field-item">
-                            <div className="col-md-4">
-                              <label>CMND</label>
-                            </div>
-                            <div className="col-md-8">
-                              <input type="text" />
-                            </div>
-                          </div>
-                          <div className="field-item">
-                            <div className="col-md-4">
-                              <label>Quốc gia</label>
-                            </div>
-                            <div className="col-md-8">
-                              <input type="text" />
-                            </div>
-                          </div>
-                          <div className="col-md-12 field-item">
-                            <div className="col-md-6">
-                              <div className="field-item">
-                                <label>Giới tính</label>
-                                <select>
-                                  <option value="1">Nam</option>
-                                  <option value="2">Nữ</option>
-                                </select>
-                              </div>
-                            </div>
-                            <div className="col-md-6">
-                              <div className="field-item">
-                                <label>Năm sinh</label>
-                                <select>
-                                  <option value="1">1990</option>
-                                  <option value="2">1991</option>
-                                </select>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="trip-infor">
-                          <div className="wrap">
-                            <span>
-                              <div>Giữ chỗ trong giây</div>
-                              <div>Chặng: TP. Hồ Chí Minh - Vũng Tàu</div>
-                              <div>Ngày giờ: 09/07/2024 10:00</div>
-                              <div>Ghế: H3</div>
-                              <div>
-                                Loại vé:<b> Đặc biệt</b>
-                              </div>
-                            </span>
-                          </div>
-                        </td>
-                        <td>
-                          <div style={{ marginTop: "5rem" }}></div>
-                        </td>
-                        <td>
-                          <div style={{ marginTop: "5rem" }}>260.000 VND</div>
-                        </td>
-                        <td>
-                          <div style={{ marginTop: "5rem" }}>260.000 VND</div>
-                        </td>
-                      </tr>
-                    ))}
-
+                          </span>
+                        </div>
+                      </td>
+                      <td>
+                        <div style={{ marginTop: "5rem" }}></div>
+                      </td>
+                      <td>
+                        <div style={{ marginTop: "5rem" }}>
+                          {type === "regular"
+                            ? (priceInfor.regular?.regularTicketPrice || 0).toLocaleString()
+                            : (priceInfor.special?.regularTicketPrice || 0).toLocaleString()}{" "}
+                          VND
+                        </div>
+                      </td>
+                      <td>
+                        <div style={{ marginTop: "5rem" }}>
+                          {type === "regular"
+                            ? (priceInfor.regular?.regularTicketPrice || 0).toLocaleString()
+                            : (priceInfor.special?.regularTicketPrice || 0).toLocaleString()}{" "}
+                          VND
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
                   <tr>
                     <td className="total" colSpan={5}>
                       <h3>
-                        TỔNG TIỀN :{" "}
-                        {(
-                          countRegularTicket * 320000 +
-                          countSpecialTicket * 260000
-                        ).toLocaleString("vi-VN")}{" "}
-                        VND
+                        TỔNG TIỀN: {totalPrice.toLocaleString("vi-VN")} VND
                       </h3>
                     </td>
                   </tr>
@@ -274,13 +265,13 @@ function Passengers() {
           </div>
           <div className="line"></div>
           <div className="contact-infor">
-            <h2>thông tin liên hệ</h2>
+            <h2>Thông tin liên hệ</h2>
             <div className="col-md-12 col-sm-12 col-xs-12 no-padding">
               <div className="col-md-5 col-sm-5 col-xs-12">
                 <div className="field-item">
                   <div className="col-md-4">Họ và tên (*)</div>
                   <div className="col-md-8">
-                    <input type="text" />
+                    <input type="text" defaultValue={userData?.name || ""} />
                   </div>
                 </div>
               </div>
@@ -288,7 +279,7 @@ function Passengers() {
                 <div className="field-item">
                   <div className="col-md-4">Số điện thoại (*)</div>
                   <div className="col-md-8">
-                    <input type="text" />
+                    <input type="text" defaultValue={userData?.phone || ""} />
                   </div>
                 </div>
               </div>
@@ -306,7 +297,7 @@ function Passengers() {
                 <div className="field-item">
                   <div className="col-md-4">Email (*)</div>
                   <div className="col-md-8">
-                    <input type="text" />
+                    <input type="text" defaultValue={userData?.email || ""} />
                   </div>
                 </div>
               </div>

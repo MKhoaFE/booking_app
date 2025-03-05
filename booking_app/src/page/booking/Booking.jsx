@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../booking/booking.css";
 import "../../GlobalStyles/glbStyles.css";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "font-awesome/css/font-awesome.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -15,138 +15,117 @@ import { Typography } from "@mui/material";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const initialPriceInfor = {
-  "8:00": {
-    special: {
-      quantity: 10,
-      remaining: 10,
-      adultPrice: 260000,
-      childPrice: 190000,
-    },
-    regular: {
-      quantity: 78,
-      remaining: 78,
-      adultPrice: 320000,
-      childPrice: 270000,
-    },
-  },
-  "12:00": {
-    special: {
-      quantity: 10,
-      remaining: 10,
-      adultPrice: 260000,
-      childPrice: 190000,
-    },
-    regular: {
-      quantity: 78,
-      remaining: 78,
-      adultPrice: 320000,
-      childPrice: 270000,
-    },
-  },
-};
-
 const Booking = () => {
-  const [key, setKey] = useState("8:00");
-  const [selectedSeats8AM, setSelectedSeats8AM] = useState(() => {
-    const savedSeats = localStorage.getItem("selectedSeats8AM");
-    return savedSeats ? JSON.parse(savedSeats) : {};
-  });
-  const [selectedSeats12AM, setSelectedSeats12AM] = useState(() => {
-    const savedSeats = localStorage.getItem("selectedSeats12AM");
-    return savedSeats ? JSON.parse(savedSeats) : {};
-  });
+  const [key, setKey] = useState("");
+  const [selectedSeats, setSelectedSeats] = useState({});
   const [visibleTabs, setVisibleTabs] = useState({});
-  useEffect(() => {
-    // Lấy dữ liệu từ localStorage
-    const travelData = JSON.parse(localStorage.getItem("travelData"));
-    if (travelData?.time === "8:00") {
-      setVisibleTabs({ show8AM: true, show12AM: false });
-      setKey("8:00");
-    } else if (travelData?.time === "12:00") {
-      setVisibleTabs({ show8AM: false, show12AM: true });
-      setKey("12:00");
-    } else {
-      // Hiển thị cả hai nếu không có dữ liệu
-      setVisibleTabs({ show8AM: true, show12AM: true });
-    }
-  }, []);
-
-  const [timer8AM, setTimer8AM] = useState({});
-  const [timer12AM, setTimer12AM] = useState({});
-  const [intervalIds8AM, setIntervalIds8AM] = useState({});
-  const [intervalIds12AM, setIntervalIds12AM] = useState({});
-  const [priceInfor, setPriceInfor] = useState(initialPriceInfor);
+  const [timer, setTimer] = useState({});
+  const [intervalIds, setIntervalIds] = useState({});
+  const [priceInfor, setPriceInfor] = useState({});
+  const [travelData, setTravelData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Lưu trạng thái component hiện tại vào localStorage khi key thay đổi
-    const storageData = {
-      currentTab: key,
-    };
-    localStorage.setItem("selectedTab", JSON.stringify(storageData));
-  }, [key, selectedSeats8AM, selectedSeats12AM]);
-
-  useEffect(() => {
-    localStorage.setItem("selectedSeats8AM", JSON.stringify(selectedSeats8AM));
-  }, [selectedSeats8AM]);
-  useEffect(() => {
-    localStorage.setItem(
-      "selectedSeats12AM",
-      JSON.stringify(selectedSeats12AM)
-    );
-  }, [selectedSeats12AM]);
-
-  const [travelData, setTravelData] = useState({
-    trip: "",
-    date: "",
-    time: "",
-  });
-  useEffect(() => {
-    //Lấy dữ liệu từ localStorage
     const storedData = JSON.parse(localStorage.getItem("travelData"));
     if (storedData) {
       setTravelData(storedData);
+      fetchJourneyData(storedData.journeyId);
+    } else {
+      setError("Không tìm thấy dữ liệu hành trình. Vui lòng quay lại trang chủ.");
+      setLoading(false);
     }
   }, []);
 
-  const currentPriceInfor = priceInfor[key];
+  const fetchJourneyData = async (journeyId) => {
+    try {
+      const token = Cookies.get("token");
+      if (!token) {
+        setError("Vui lòng đăng nhập để tiếp tục.");
+        setLoading(false);
+        return;
+      }
 
-  const handleSeatSelection = (
-    seat,
-    ticketType,
-    setSelectedSeats,
-    setTimer,
-    setIntervalIds
-  ) => {
+      const response = await axios.get(
+        `http://localhost:5000/api/trainSchedule/getJourneyById/${journeyId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const journey = response.data.journey;
+      if (!journey) {
+        throw new Error("Không tìm thấy hành trình.");
+      }
+
+      // Lấy selectedSeats từ localStorage
+      const storedSeats = JSON.parse(localStorage.getItem(`selectedSeats_${journey.departureTime}`)) || {};
+
+      // Tính số ghế đã chọn từ storedSeats
+      const specialSelected = Object.values(storedSeats).filter(type => type === "special").length;
+      const regularSelected = Object.values(storedSeats).filter(type => type === "regular").length;
+
+      // Cấu trúc priceInfor, trừ đi số ghế đã chọn
+      const newPriceInfor = {
+        [journey.departureTime]: {
+          special: {
+            capacity: journey.specialSeats,
+            remaining: journey.specialSeats - (journey.specialTicketBooked || 0) - specialSelected,
+            regularTicketPrice: journey.specialTicketPrice,
+            specialTicketPrice: journey.specialTicketPrice,
+          },
+          regular: {
+            capacity: journey.regularSeats,
+            remaining: journey.regularSeats - (journey.regularTicketBooked || 0) - regularSelected,
+            regularTicketPrice: journey.regularTicketPrice,
+            specialTicketPrice: journey.regularTicketPrice,
+          },
+        },
+      };
+
+      setPriceInfor(newPriceInfor);
+      setKey(journey.departureTime);
+      setVisibleTabs({ [journey.departureTime]: true });
+      setSelectedSeats(storedSeats);
+    } catch (err) {
+      console.error("Lỗi khi lấy dữ liệu hành trình:", err);
+      setError("Không thể tải dữ liệu hành trình. Vui lòng thử lại.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (key) {
+      localStorage.setItem(`selectedSeats_${key}`, JSON.stringify(selectedSeats));
+    }
+  }, [selectedSeats, key]);
+
+  const handleSeatSelection = (seat, ticketType) => {
     setSelectedSeats((prev) => ({
       ...prev,
       [seat]: ticketType,
     }));
-    startTimer(seat, setTimer, setIntervalIds);
-    updateRemainingSeats(ticketType, -0.5);
+    startTimer(seat);
+    updateRemainingSeats(ticketType, -1);
   };
 
   const updateRemainingSeats = (ticketType, change) => {
-    setPriceInfor((prevPriceInfor) => {
-      const updatedInfor = { ...prevPriceInfor };
-
-      // Kiểm tra tồn tại của key và ticketType trước khi cập nhật
-      if (updatedInfor[key] && updatedInfor[key][ticketType]) {
-        updatedInfor[key][ticketType].remaining += change;
-      } else {
-        console.warn(
-          "Ticket type or key does not exist in priceInfor:",
-          ticketType,
-          key
-        );
-      }
-
-      return updatedInfor;
-    });
+    setPriceInfor((prev) => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        [ticketType]: {
+          ...prev[key][ticketType],
+          remaining: prev[key][ticketType].remaining + change,
+        },
+      },
+    }));
   };
 
-  const startTimer = (seat, setTimer, setIntervalIds) => {
-    clearInterval(intervalIds8AM[seat]);
+  const startTimer = (seat) => {
+    clearInterval(intervalIds[seat]);
     setTimer((prev) => ({
       ...prev,
       [seat]: 1000,
@@ -156,13 +135,7 @@ const Booking = () => {
         const newTime = prev[seat] - 1;
         if (newTime <= 0) {
           clearInterval(id);
-          unselectSeat(
-            seat,
-            setSelectedSeats8AM,
-            setTimer8AM,
-            setIntervalIds8AM,
-            selectedSeats8AM
-          );
+          unselectSeat(seat);
           return { ...prev, [seat]: 0 };
         }
         return { ...prev, [seat]: newTime };
@@ -174,28 +147,16 @@ const Booking = () => {
     }));
   };
 
-  const unselectSeat = (
-    seat,
-    setSelectedSeats,
-    setTimer,
-    setIntervalIds,
-    selectedSeats
-  ) => {
+  const unselectSeat = (seat) => {
     const ticketType = selectedSeats[seat];
-
-    if (!ticketType) {
-      console.warn("Ticket type is undefined for seat:", seat);
-      return;
-    }
+    if (!ticketType) return;
 
     setSelectedSeats((prev) => {
       const updatedSeats = { ...prev };
       delete updatedSeats[seat];
       return updatedSeats;
     });
-    clearInterval(intervalIds8AM[seat]);
-    clearInterval(intervalIds12AM[seat]);
-
+    clearInterval(intervalIds[seat]);
     setTimer((prev) => {
       const { [seat]: _, ...rest } = prev;
       return rest;
@@ -204,88 +165,28 @@ const Booking = () => {
       const { [seat]: _, ...rest } = prev;
       return rest;
     });
-
-    updateRemainingSeats(ticketType, 0.5); // Cập nhật lại số lượng vé khi hủy ghế
+    updateRemainingSeats(ticketType, 1);
   };
 
-  const resetTabState = () => {
-    setPriceInfor(initialPriceInfor);
-  };
-
+  const currentPriceInfor = priceInfor[key] || {};
   const remainingTickets =
-    10 -
-    currentPriceInfor.special.remaining +
-    78 -
-    currentPriceInfor.regular.remaining;
+    (currentPriceInfor.special?.capacity || 0) -
+    (currentPriceInfor.special?.remaining || 0) +
+    (currentPriceInfor.regular?.capacity || 0) -
+    (currentPriceInfor.regular?.remaining || 0);
+  const countSpecialTicket =
+    (currentPriceInfor.special?.capacity || 0) -
+    (currentPriceInfor.special?.remaining || 0);
+  const countRegularTicket =
+    (currentPriceInfor.regular?.capacity || 0) -
+    (currentPriceInfor.regular?.remaining || 0);
 
-  const countSpecialTicket = 10 - currentPriceInfor.special.remaining;
-  const countRegularTicket = 78 - currentPriceInfor.regular.remaining;
-
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = Cookies.get("token");
-
-        // Kiểm tra nếu không có token
-        if (!token) {
-          setError("No token found. Please login.");
-          setLoading(false);
-          return;
-        }
-
-        // Gọi API protected-data
-        const response = await axios.get(
-          "http://localhost:5000/api/protected-data",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`, // Đính kèm token vào header
-            },
-          }
-        );
-      } catch (err) {
-        console.error("Error fetching protected data:", err);
-        setError("Failed to fetch booking data. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-
-  useEffect(() => {
-    // Update `currentPriceInfor` based on selected seats
-    const seats = key === "8:00" ? selectedSeats8AM : selectedSeats12AM;
-    if (seats) {
-      const newSpecialRemaining = currentPriceInfor.special.quantity - Object.keys(seats).filter(s => seats[s] === "special").length;
-      const newRegularRemaining = currentPriceInfor.regular.quantity - Object.keys(seats).filter(s => seats[s] === "regular").length;
-
-      setPriceInfor(prev => ({
-        ...prev,
-        [key]: {
-          ...prev[key],
-          special: {
-            ...prev[key].special,
-            remaining: newSpecialRemaining
-          },
-          regular: {
-            ...prev[key].regular,
-            remaining: newRegularRemaining
-          }
-        }
-      }));
-    }
-  }, [selectedSeats8AM, selectedSeats12AM, key]);
-  
-  useEffect(() => {
-    localStorage.setItem('selectedSeats8AM', JSON.stringify(selectedSeats8AM));
-    localStorage.setItem('selectedSeats12AM', JSON.stringify(selectedSeats12AM));
-  }, [selectedSeats8AM, selectedSeats12AM]);
-
+  if (loading) {
+    return <Typography>Đang tải dữ liệu...</Typography>;
+  }
+  if (error) {
+    return <Typography color="error">{error}</Typography>;
+  }
 
   return (
     <>
@@ -300,10 +201,9 @@ const Booking = () => {
                   <div>
                     Đặt vé từ{" "}
                     <span className="place-name" style={{ color: "green" }}>
-                      {travelData.trip}
+                      {travelData.departureStation}
                     </span>{" "}
-                    / Ngày {""}
-                    {travelData.date}
+                    / Ngày {travelData.date}
                   </div>
                 ) : (
                   <Typography variant="body1">Không có dữ liệu.</Typography>
@@ -311,76 +211,30 @@ const Booking = () => {
 
                 <div className="detail-wrap">
                   <Tabs
-                    defaultActiveKey="profile"
                     id="uncontrolled-tab-example"
                     className="mb-3 special mt-4 nav-tabs"
                     activeKey={key}
-                    onSelect={(k) => {
-                      setKey(k);
-                      resetTabState();
-                    }}
+                    onSelect={(k) => setKey(k)}
                   >
-                    {visibleTabs.show8AM && (
-                      <Tab
-                        className={key === "8:00" ? "active" : ""}
-                        eventKey="8:00"
-                        title="8:00"
-                      >
-                        <Trip8AM
-                          selectedSeats={selectedSeats8AM}
-                          handleSeatSelection={(seat, ticketType) =>
-                            handleSeatSelection(
-                              seat,
-                              ticketType,
-                              setSelectedSeats8AM,
-                              setTimer8AM,
-                              setIntervalIds8AM
-                            )
-                          }
-                          unselectSeat={(seat) =>
-                            unselectSeat(
-                              seat,
-                              setSelectedSeats8AM,
-                              setTimer8AM,
-                              setIntervalIds8AM,
-                              selectedSeats8AM
-                            )
-                          }
-                          updateRemainingSeats={updateRemainingSeats}
-                          timer={timer8AM}
-                        />
+                    {Object.keys(visibleTabs).map((time) => (
+                      <Tab key={time} eventKey={time} title={time}>
+                        {time === "8:00" ? (
+                          <Trip8AM
+                            selectedSeats={selectedSeats}
+                            handleSeatSelection={handleSeatSelection}
+                            unselectSeat={unselectSeat}
+                            timer={timer}
+                          />
+                        ) : (
+                          <Trip12AM
+                            selectedSeats={selectedSeats}
+                            handleSeatSelection={handleSeatSelection}
+                            unselectSeat={unselectSeat}
+                            timer={timer}
+                          />
+                        )}
                       </Tab>
-                    )}
-                    {visibleTabs.show12AM && (
-                      <Tab
-                        className={key === "12:00" ? "active" : ""}
-                        eventKey="12:00"
-                        title="12:00"
-                      >
-                        <Trip12AM
-                          selectedSeats={selectedSeats12AM}
-                          handleSeatSelection={(seat, ticketType) =>
-                            handleSeatSelection(
-                              seat,
-                              ticketType,
-                              setSelectedSeats12AM,
-                              setTimer12AM,
-                              setIntervalIds12AM
-                            )
-                          }
-                          unselectSeat={(seat) =>
-                            unselectSeat(
-                              seat,
-                              setSelectedSeats12AM,
-                              setTimer12AM,
-                              setIntervalIds12AM,
-                              selectedSeats12AM
-                            )
-                          }
-                          timer={timer12AM}
-                        />
-                      </Tab>
-                    )}
+                    ))}
                   </Tabs>
                 </div>
               </div>
@@ -389,98 +243,53 @@ const Booking = () => {
           <div className="col-md-3">
             <div className="book-sidebar">
               <div className="price-info">
-                <div className="direction"></div>
                 <div className="title">CHIỀU ĐI</div>
                 <div className="content">
-                  <ul className="nav-tab">
-                    {Object.keys(selectedSeats8AM).length > 0 && (
-                      <>
-                        <div className="wrap-nav-tab">
-                          <h4>Ghế đang giữ</h4>
-                          {Object.keys(selectedSeats8AM).map((seat) => (
-                            <div className="item" key={seat}>
-                              <div className="seat-item">Ghế {seat}</div>
-                              <div className="time-item">{timer8AM[seat]}</div>
-                              <div>
-                                <i
-                                  className="bi bi-trash"
-                                  onClick={() =>
-                                    unselectSeat(
-                                      seat,
-                                      setSelectedSeats8AM,
-                                      setTimer8AM,
-                                      setIntervalIds8AM,
-                                      selectedSeats8AM
-                                    )
-                                  }
-                                ></i>
-                              </div>
-                            </div>
-                          ))}
+                  {Object.keys(selectedSeats).length > 0 && (
+                    <div className="wrap-nav-tab">
+                      <h4>Ghế đang giữ</h4>
+                      {Object.keys(selectedSeats).map((seat) => (
+                        <div
+                          className="item"
+                          style={{ display: "flex", justifyContent: "space-between" }}
+                          key={seat}
+                        >
+                          <div className="seat-item">Ghế {seat}</div>
+                          <div className="time-item" style={{ color: "green" }}>
+                            {timer[seat]}
+                          </div>
+                          <div>
+                            <i
+                              className="bi bi-trash"
+                              style={{ color: "red" }}
+                              onClick={() => unselectSeat(seat)}
+                            ></i>
+                          </div>
                         </div>
-                      </>
-                    )}
-                    {Object.keys(selectedSeats12AM).length > 0 && (
-                      <>
-                        <div className="wrap-nav-tab">
-                          <h4>Ghế đang giữ</h4>
-                          {Object.keys(selectedSeats12AM).map((seat) => (
-                            <div className="item" key={seat}>
-                              <div className="seat-item">Ghế {seat}</div>
-                              <div className="time-item">{timer12AM[seat]}</div>
-                              <div>
-                                <i
-                                  className="bi bi-trash"
-                                  onClick={() =>
-                                    unselectSeat(
-                                      seat,
-                                      setSelectedSeats12AM,
-                                      setTimer12AM,
-                                      setIntervalIds12AM,
-                                      selectedSeats12AM
-                                    )
-                                  }
-                                ></i>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </>
-                    )}
-                    <li className="nav-item">
-                      <Link to="/">Thường</Link>
-                    </li>
-                  </ul>
-
+                      ))}
+                    </div>
+                  )}
                   <div className="tab-content roboto-regular">
                     <div className="prices">
-                      <h4>
-                        Vé đặc biệt đặt trước 1 ngày (Áp dụng vé người lớn)
-                      </h4>
+                      <h4>Vé đặc biệt</h4>
                       <div className="item">
                         <div className="name">Số lượng:</div>
-                        <div className="price">
-                          {currentPriceInfor.special.quantity}
-                        </div>
+                        <div className="price">{currentPriceInfor.special?.capacity || 0}</div>
                       </div>
                       <div className="item">
                         <div className="name">Còn lại:</div>
-                        <div className="price">
-                          {currentPriceInfor.special.remaining}
-                        </div>
+                        <div className="price">{currentPriceInfor.special?.remaining || 0}</div>
                       </div>
                       <div className="item">
                         <div className="name">Giá vé (người lớn):</div>
                         <div className="price">
-                          {currentPriceInfor.special.adultPrice.toLocaleString()}{" "}
-                          VND
+                          {currentPriceInfor.special?.regularTicketPrice?.toLocaleString() || 0} VND
                         </div>
                       </div>
                       <div className="item">
                         <div className="name">Giá vé (trẻ em):</div>
                         <div className="price">
-                          {currentPriceInfor.special.childPrice.toLocaleString()}{" "}
-                          VND
+                          {currentPriceInfor.special?.specialTicketPrice?.toLocaleString() || 0} VND
                         </div>
                       </div>
                     </div>
@@ -489,28 +298,22 @@ const Booking = () => {
                       <h4>Vé thường</h4>
                       <div className="item">
                         <div className="name">Số lượng:</div>
-                        <div className="price">
-                          {currentPriceInfor.regular.quantity}
-                        </div>
+                        <div className="price">{currentPriceInfor.regular?.capacity || 0}</div>
                       </div>
                       <div className="item">
                         <div className="name">Còn lại:</div>
-                        <div className="price">
-                          {currentPriceInfor.regular.remaining}
-                        </div>
+                        <div className="price">{currentPriceInfor.regular?.remaining || 0}</div>
                       </div>
                       <div className="item">
                         <div className="name">Giá vé (người lớn):</div>
                         <div className="price">
-                          {currentPriceInfor.regular.adultPrice.toLocaleString()}{" "}
-                          VND
+                          {currentPriceInfor.regular?.regularTicketPrice?.toLocaleString() || 0} VND
                         </div>
                       </div>
                       <div className="item">
                         <div className="name">Giá vé (trẻ em):</div>
                         <div className="price">
-                          {currentPriceInfor.regular.childPrice.toLocaleString()}{" "}
-                          VND
+                          {currentPriceInfor.regular?.specialTicketPrice?.toLocaleString() || 0} VND
                         </div>
                       </div>
                     </div>
@@ -522,11 +325,7 @@ const Booking = () => {
           <div className="btn-btm text-center mbot-50 mtop-20">
             <Link
               to="/booking/passengers"
-              state={{
-                remainingTickets,
-                countSpecialTicket,
-                countRegularTicket,
-              }}
+              state={{ remainingTickets, countSpecialTicket, countRegularTicket }}
             >
               <button type="submit">
                 <span>Tiếp tục</span>

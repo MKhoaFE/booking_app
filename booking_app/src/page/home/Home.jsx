@@ -6,7 +6,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import SlideComponent from "../../components/Slide/SlideComponent.jsx";
 import Input from "@mui/material/Input";
 import InputAdornment from "@mui/material/InputAdornment";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import img1 from "../../assets/slide_1.jpg";
 import img2 from "../../assets/slide_2.png";
 import img3 from "../../assets/slide_3.jpg";
@@ -36,13 +36,13 @@ export default function Home() {
   const handleChangeTrip = (event) => {
     setSelectedTrip(event.target.value);
   };
-
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [journeys, setJourneys] = useState([]); // Danh sách hành trình từ database
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [selectedDate, setSelectedDate] = useState(""); // Ngày đi từ hành trình
   const [selectedTime, setSelectedTime] = useState(""); // Giờ đi từ hành trình
-  const [returnDate, setReturnDate] = useState(""); // Ngày về
-  const [returnTime, setReturnTime] = useState(""); // Giờ về
+
 
   // Lấy danh sách hành trình từ backend khi component mount
   useEffect(() => {
@@ -136,17 +136,22 @@ export default function Home() {
         j.departureTime === selectedTime
     );
     const travelData = {
-      journeyId: selectedJourney?._id || "",
+      journeyId: selectedJourney?.journeyId || "",
       date: selectedDate,
       time: selectedTime,
-      returnDate: returnDate,
-      returnTime: returnTime,
+      departureStation: selectedRoute.departureStation,
+      arrivalStation:selectedRoute.arrivalStation,
     };
     if (!selectedDate) {
       showToast("Vui lòng chọn ngày đi!", "error");
       return;
     }
     localStorage.setItem("travelData", JSON.stringify(travelData));
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      navigate("/booking/seats"); // Chuyển trang sau 2s
+    }, 2000);
   };
 
   const collection = [
@@ -287,7 +292,6 @@ export default function Home() {
                   }
                   onChange={handleChangeRoute}
                 >
-                  {/* Lọc danh sách tuyến duy nhất */}
                   {[
                     ...new Set(
                       journeys.map(
@@ -405,10 +409,29 @@ export default function Home() {
               </FormControl>
             </Box>
 
-            {/* Nút đặt vé */}
-            <Link to="/booking/seats">
-              <button onClick={saveDTStoLocalStorage}>ĐẶT VÉ</button>
-            </Link>
+            {/* Nút đặt vé với spinner */}
+            <button
+              onClick={saveDTStoLocalStorage}
+              disabled={isLoading}
+              style={{ position: "relative" }}
+            >
+              {isLoading ? (
+                <span
+                  className="spinner"
+                  style={{
+                    display: "inline-block",
+                    width: "20px",
+                    height: "20px",
+                    border: "3px solid #f3f3f3",
+                    borderTop: "3px solid #3498db",
+                    borderRadius: "50%",
+                    animation: "spin 1s linear infinite",
+                  }}
+                ></span>
+              ) : (
+                "ĐẶT VÉ"
+              )}
+            </button>
           </div>
         </div>
       </div>
