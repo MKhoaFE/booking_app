@@ -10,27 +10,34 @@ import "../../GlobalStyles/glbStyles.css";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { Typography } from "@mui/material";
+import showToast from "../../components/Toastify/Toastify";
 
 function Passengers() {
   const location = useLocation();
-  const { remainingTickets, countSpecialTicket, countRegularTicket } = location.state || {};
+  const { remainingTickets, countSpecialTicket, countRegularTicket } =
+    location.state || {};
   const [travelData, setTravelData] = useState(null);
   const [selectedSeats, setSelectedSeats] = useState({});
   const [priceInfor, setPriceInfor] = useState({});
-  const [userData, setUserData] = useState(null); // Thông tin người dùng từ cookie
+  const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isTermsAccepted, setIsTermsAccepted] = useState(false); // State cho checkbox
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("travelData"));
     if (storedData) {
       setTravelData(storedData);
-      const seats = JSON.parse(localStorage.getItem(`selectedSeats_${storedData.time}`)) || {};
+      const seats =
+        JSON.parse(localStorage.getItem(`selectedSeats_${storedData.time}`)) ||
+        {};
       setSelectedSeats(seats);
       fetchJourneyData(storedData.journeyId);
       loadUserDataFromCookie();
     } else {
-      setError("Không tìm thấy dữ liệu hành trình. Vui lòng quay lại trang chủ.");
+      setError(
+        "Không tìm thấy dữ liệu hành trình. Vui lòng quay lại trang chủ."
+      );
       setLoading(false);
     }
   }, []);
@@ -74,7 +81,6 @@ function Passengers() {
     }
   };
 
-  // Lấy thông tin người dùng từ cookie
   const loadUserDataFromCookie = () => {
     const userCookie = Cookies.get("user");
     if (userCookie) {
@@ -82,10 +88,23 @@ function Passengers() {
       setUserData({
         name: user.name || "",
         email: user.email || "",
-        phone: user.phone|| "", 
+        phone: user.phone || "",
       });
     } else {
       setError("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập.");
+    }
+  };
+
+  // Xử lý khi thay đổi trạng thái checkbox
+  const handleCheckboxChange = (e) => {
+    setIsTermsAccepted(e.target.checked);
+  };
+
+  // Xử lý khi nhấn nút "Tiếp tục"
+  const handleContinueClick = (e) => {
+    if (!isTermsAccepted) {
+      e.preventDefault(); // Ngăn chuyển trang
+      showToast("Vui lòng đồng ý với điều khoản trước khi tiếp tục!", "error");
     }
   };
 
@@ -97,8 +116,8 @@ function Passengers() {
   }
 
   const totalPrice =
-    (countRegularTicket * (priceInfor.regular?.regularTicketPrice || 0)) +
-    (countSpecialTicket * (priceInfor.special?.regularTicketPrice || 0));
+    countRegularTicket * (priceInfor.regular?.regularTicketPrice || 0) +
+    countSpecialTicket * (priceInfor.special?.regularTicketPrice || 0);
 
   const seatList = Object.entries(selectedSeats);
 
@@ -127,19 +146,6 @@ function Passengers() {
                   </strong>
                 ) : (
                   <strong>Không có chuyến nào được chọn.</strong>
-                )}
-              </p>
-              <p>
-                {seatList.length > 0 ? (
-                  <ul>
-                    {seatList.map(([seat, type]) => (
-                      <li key={seat}>
-                        Ghế: {seat} - Loại: {type}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>Không có ghế nào được chọn.</p>
                 )}
               </p>
               <Table striped bordered hover>
@@ -223,10 +229,15 @@ function Passengers() {
                         <div className="wrap">
                           <span>
                             <div>Chặng: {travelData.trip}</div>
-                            <div>Ngày giờ: {travelData.date} {travelData.time}</div>
+                            <div>
+                              Ngày giờ: {travelData.date} {travelData.time}
+                            </div>
                             <div>Ghế: {seat}</div>
                             <div>
-                              Loại vé: <b>{type === "regular" ? "Thường" : "Đặc biệt"}</b>
+                              Loại vé:{" "}
+                              <b>
+                                {type === "regular" ? "Thường" : "Đặc biệt"}
+                              </b>
                             </div>
                           </span>
                         </div>
@@ -237,16 +248,24 @@ function Passengers() {
                       <td>
                         <div style={{ marginTop: "5rem" }}>
                           {type === "regular"
-                            ? (priceInfor.regular?.regularTicketPrice || 0).toLocaleString()
-                            : (priceInfor.special?.regularTicketPrice || 0).toLocaleString()}{" "}
+                            ? (
+                                priceInfor.regular?.regularTicketPrice || 0
+                              ).toLocaleString()
+                            : (
+                                priceInfor.special?.regularTicketPrice || 0
+                              ).toLocaleString()}{" "}
                           VND
                         </div>
                       </td>
                       <td>
                         <div style={{ marginTop: "5rem" }}>
                           {type === "regular"
-                            ? (priceInfor.regular?.regularTicketPrice || 0).toLocaleString()
-                            : (priceInfor.special?.regularTicketPrice || 0).toLocaleString()}{" "}
+                            ? (
+                                priceInfor.regular?.regularTicketPrice || 0
+                              ).toLocaleString()
+                            : (
+                                priceInfor.special?.regularTicketPrice || 0
+                              ).toLocaleString()}{" "}
                           VND
                         </div>
                       </td>
@@ -323,9 +342,14 @@ function Passengers() {
           </div>
           <div className="col-xs-12 checkbox">
             <label>
-              <input type="checkbox" />
+              <input
+                type="checkbox"
+                checked={isTermsAccepted}
+                onChange={handleCheckboxChange}
+              />
               <span>Tôi đã đọc và đồng ý điều khoản bên dưới</span>
             </label>
+
             <div className="box">
               <p>
                 Điều khoản này là sự thoả thuận đồng ý của quý khách khi sử dụng
@@ -547,7 +571,7 @@ function Passengers() {
           </div>
         </div>
         <div className="btn-btm text-center mbot-50 mtop-20">
-          <Link to="/booking/payment">
+          <Link to="/booking/payment" onClick={handleContinueClick}>
             <button type="submit">
               <span>Tiếp tục</span>
             </button>
