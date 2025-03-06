@@ -13,10 +13,40 @@ function Stepbar() {
             <div className="col-md-12">
               <div className="step-bar roboto-medium">
                 <div className="item">Tìm kiếm</div>
-                <div className={`item ${pathname === '/booking/seats'?'active' :''}`}>Chọn chỗ ngồi</div>
-                <div className={`item ${pathname === '/booking/passengers'?'active' :''}`}>Thông tin hành khách</div>
-                <div className={`item ${pathname === '/booking/payment'?'active' :''}`}>Thanh toán</div>
-                <div className={`item ${pathname === '/booking/byATM' || '/booking/byCounter' || '/booking/byVisa ' ? 'active' :''}`}>Kết thúc</div>
+                <div
+                  className={`item ${
+                    pathname === "/booking/seats" ? "active" : ""
+                  }`}
+                >
+                  Chọn chỗ ngồi
+                </div>
+                <div
+                  className={`item ${
+                    pathname === "/booking/passengers" ? "active" : ""
+                  }`}
+                >
+                  Thông tin hành khách
+                </div>
+                <div
+                  className={`item ${
+                    pathname === "/booking/payment" ? "active" : ""
+                  }`}
+                >
+                  Thanh toán
+                </div>
+                <div
+                  className={`item ${
+                    [
+                      "/booking/payment/byATM",
+                      "/booking/payment/byCounter",
+                      "/booking/payment/byVisa",
+                    ].includes(pathname)
+                      ? "active"
+                      : ""
+                  }`}
+                >
+                  Kết thúc
+                </div>
               </div>
             </div>
           </div>

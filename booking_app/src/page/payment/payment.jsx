@@ -89,7 +89,7 @@ function Payment() {
                   sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}
                 >
                   <div className="btn-btm" style={{ marginBottom: "0" }}>
-                    <Link to="/booking/byVisa">
+                    <Link to="/booking/payment/byVisa">
                       <button type="submit">
                         <span>Tiếp tục</span>
                       </button>
@@ -135,7 +135,7 @@ function Payment() {
                   sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}
                 >
                   <div className="btn-btm" style={{ marginBottom: "0" }}>
-                    <Link to="/booking/byATM">
+                    <Link to="/booking/payment/byATM">
                       <button type="submit">
                         <span>Tiếp tục</span>
                       </button>
@@ -179,10 +179,11 @@ function Payment() {
                   sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}
                 >
                   <div className="btn-btm" style={{ marginBottom: "0" }}>
-                    <Link to="/booking/byCounter"></Link>
-                    <button type="submit">
-                      <span>Tiếp tục</span>
-                    </button>
+                    <Link to="/booking/payment/byCounter">
+                      <button type="submit">
+                        <span>Tiếp tục</span>
+                      </button>
+                    </Link>
                   </div>
                 </Box>
               </Box>

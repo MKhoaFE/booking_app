@@ -14,30 +14,31 @@ import showToast from "../../components/Toastify/Toastify";
 
 function Passengers() {
   const location = useLocation();
-  const { remainingTickets, countSpecialTicket, countRegularTicket } =
-    location.state || {};
+  const { remainingTickets, countSpecialTicket, countRegularTicket } = location.state || {};
   const [travelData, setTravelData] = useState(null);
   const [selectedSeats, setSelectedSeats] = useState({});
   const [priceInfor, setPriceInfor] = useState({});
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [isTermsAccepted, setIsTermsAccepted] = useState(false); // State cho checkbox
+  const [isTermsAccepted, setIsTermsAccepted] = useState(false);
+  const [passengerData, setPassengerData] = useState([]);
+  const [contactData, setContactData] = useState({});
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("travelData"));
     if (storedData) {
       setTravelData(storedData);
-      const seats =
-        JSON.parse(localStorage.getItem(`selectedSeats_${storedData.time}`)) ||
-        {};
+      const seats = JSON.parse(localStorage.getItem(`selectedSeats_${storedData.time}`)) || {};
       setSelectedSeats(seats);
       fetchJourneyData(storedData.journeyId);
       loadUserDataFromCookie();
+      const storedPassengerData = JSON.parse(localStorage.getItem("passengerData"));
+      setPassengerData(Array.isArray(storedPassengerData) ? storedPassengerData : []);
+      const storedContactData = JSON.parse(localStorage.getItem("contactData")) || {};
+      setContactData(storedContactData);
     } else {
-      setError(
-        "Không tìm thấy dữ liệu hành trình. Vui lòng quay lại trang chủ."
-      );
+      setError("Không tìm thấy dữ liệu hành trình. Vui lòng quay lại trang chủ.");
       setLoading(false);
     }
   }, []);
@@ -90,21 +91,102 @@ function Passengers() {
         email: user.email || "",
         phone: user.phone || "",
       });
+      const storedContactData = JSON.parse(localStorage.getItem("contactData"));
+      if (!storedContactData || Object.keys(storedContactData).length === 0) {
+        setContactData({
+          name: user.name || "",
+          phone: user.phone || "",
+          address: "",
+          email: user.email || "",
+          company: "",
+          taxCode: "",
+        });
+        localStorage.setItem(
+          "contactData",
+          JSON.stringify({
+            name: user.name || "",
+            phone: user.phone || "",
+            address: "",
+            email: user.email || "",
+            company: "",
+            taxCode: "",
+          })
+        );
+      }
     } else {
       setError("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập.");
     }
   };
 
-  // Xử lý khi thay đổi trạng thái checkbox
+  const handlePassengerChange = (seat, field, value) => {
+    const updatedPassengerData = passengerData.map((passenger) =>
+      passenger.seat === seat ? { ...passenger, [field]: value } : passenger
+    );
+    if (!updatedPassengerData.some((p) => p.seat === seat)) {
+      updatedPassengerData.push({
+        seat,
+        type: selectedSeats[seat] || "regular",
+        [field]: value,
+      });
+    }
+    setPassengerData(updatedPassengerData);
+    localStorage.setItem("passengerData", JSON.stringify(updatedPassengerData));
+  };
+
+  const handleContactChange = (field, value) => {
+    const updatedContactData = {
+      ...contactData,
+      [field]: value,
+    };
+    setContactData(updatedContactData);
+    localStorage.setItem("contactData", JSON.stringify(updatedContactData));
+  };
+
   const handleCheckboxChange = (e) => {
     setIsTermsAccepted(e.target.checked);
   };
 
-  // Xử lý khi nhấn nút "Tiếp tục"
+  // Kiểm tra các trường bắt buộc
+  const validateInputs = () => {
+    let errorMessage = "";
+
+    // Kiểm tra danh sách hành khách
+    const seatListKeys = Object.keys(selectedSeats);
+    for (const seat of seatListKeys) {
+      const passenger = passengerData.find((p) => p.seat === seat);
+      if (!passenger || !passenger.name || passenger.name.trim() === "") {
+        errorMessage += `Vui lòng nhập "Họ và tên" cho hành khách ở ghế ${seat}.\n`;
+      }
+    }
+
+    // Kiểm tra thông tin người liên lạc
+    if (!contactData.name || contactData.name.trim() === "") {
+      errorMessage += 'Vui lòng nhập "Họ và tên" cho người liên lạc.\n';
+    }
+    if (!contactData.phone || contactData.phone.trim() === "") {
+      errorMessage += 'Vui lòng nhập "Số điện thoại" cho người liên lạc.\n';
+    }
+    if (!contactData.address || contactData.address.trim() === "") {
+      errorMessage += 'Vui lòng nhập "Địa chỉ" cho người liên lạc.\n';
+    }
+    if (!contactData.email || contactData.email.trim() === "") {
+      errorMessage += 'Vui lòng nhập "Email" cho người liên lạc.\n';
+    }
+
+    return errorMessage;
+  };
+
   const handleContinueClick = (e) => {
     if (!isTermsAccepted) {
-      e.preventDefault(); // Ngăn chuyển trang
+      e.preventDefault();
       showToast("Vui lòng đồng ý với điều khoản trước khi tiếp tục!", "error");
+      return;
+    }
+
+    const validationErrors = validateInputs();
+    if (validationErrors) {
+      e.preventDefault();
+      showToast(validationErrors, "error");
     }
   };
 
@@ -134,13 +216,7 @@ function Passengers() {
                 {travelData ? (
                   <strong>
                     Chuyến hiện tại:{" "}
-                    <span
-                      style={{
-                        color: "green",
-                        fontSize: "2rem",
-                        fontStyle: "italic",
-                      }}
-                    >
+                    <span style={{ color: "green", fontSize: "2rem", fontStyle: "italic" }}>
                       {travelData.time}
                     </span>
                   </strong>
@@ -151,7 +227,7 @@ function Passengers() {
               <Table striped bordered hover>
                 <thead>
                   <tr>
-                    <th width="35%" style={{ minWidth: "220px" }}>
+                    <th width="40%" style={{ minWidth: "220px" }}>
                       Thông tin hành khách
                     </th>
                     <th width="30%" style={{ minWidth: "220px" }}>
@@ -169,113 +245,135 @@ function Passengers() {
                   </tr>
                 </thead>
                 <tbody>
-                  {seatList.map(([seat, type], index) => (
-                    <tr key={seat}>
-                      <td>
-                        <div className="field-item">
-                          <div className="col-md-4">
-                            <label>Họ và tên (*)</label>
-                          </div>
-                          <div className="col-md-8">
-                            <input type="text" />
-                          </div>
-                        </div>
-                        <div className="field-item">
-                          <div className="col-md-4">
-                            <label>Số điện thoại</label>
-                          </div>
-                          <div className="col-md-8">
-                            <input type="text" />
-                          </div>
-                        </div>
-                        <div className="field-item">
-                          <div className="col-md-4">
-                            <label>CMND</label>
-                          </div>
-                          <div className="col-md-8">
-                            <input type="text" />
-                          </div>
-                        </div>
-                        <div className="field-item">
-                          <div className="col-md-4">
-                            <label>Quốc gia</label>
-                          </div>
-                          <div className="col-md-8">
-                            <input type="text" />
-                          </div>
-                        </div>
-                        <div className="col-md-12 field-item">
-                          <div className="col-md-6">
-                            <div className="field-item">
-                              <label>Giới tính</label>
-                              <select>
-                                <option value="1">Nam</option>
-                                <option value="2">Nữ</option>
-                              </select>
+                  {seatList.map(([seat, type], index) => {
+                    const passenger = Array.isArray(passengerData)
+                      ? passengerData.find((p) => p.seat === seat) || {}
+                      : {};
+                    return (
+                      <tr key={seat}>
+                        <td>
+                          <div className="field-item">
+                            <div className="col-md-4">
+                              <label>Họ và tên (*)</label>
+                            </div>
+                            <div className="col-md-8">
+                              <input
+                                type="text"
+                                value={passenger.name || ""}
+                                onChange={(e) => handlePassengerChange(seat, "name", e.target.value)}
+                              />
                             </div>
                           </div>
-                          <div className="col-md-6">
-                            <div className="field-item">
-                              <label>Năm sinh</label>
-                              <select>
-                                <option value="1">1990</option>
-                                <option value="2">1991</option>
-                              </select>
+                          <div className="field-item">
+                            <div className="col-md-4">
+                              <label>Số điện thoại (*)</label>
+                            </div>
+                            <div className="col-md-8">
+                              <input
+                                type="text"
+                                value={passenger.phone || ""}
+                                onChange={(e) => handlePassengerChange(seat, "phone", e.target.value)}
+                              />
                             </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="trip-infor">
-                        <div className="wrap">
-                          <span>
-                            <div>Chặng: {travelData.trip}</div>
-                            <div>
-                              Ngày giờ: {travelData.date} {travelData.time}
+                          <div className="field-item">
+                            <div className="col-md-4">
+                              <label>CMND (*)</label>
                             </div>
-                            <div>Ghế: {seat}</div>
-                            <div>
-                              Loại vé:{" "}
-                              <b>
-                                {type === "regular" ? "Thường" : "Đặc biệt"}
-                              </b>
+                            <div className="col-md-8">
+                              <input
+                                type="text"
+                                value={passenger.idCard || ""}
+                                onChange={(e) => handlePassengerChange(seat, "idCard", e.target.value)}
+                              />
                             </div>
-                          </span>
-                        </div>
-                      </td>
-                      <td>
-                        <div style={{ marginTop: "5rem" }}></div>
-                      </td>
-                      <td>
-                        <div style={{ marginTop: "5rem" }}>
-                          {type === "regular"
-                            ? (
-                                priceInfor.regular?.regularTicketPrice || 0
-                              ).toLocaleString()
-                            : (
-                                priceInfor.special?.regularTicketPrice || 0
-                              ).toLocaleString()}{" "}
-                          VND
-                        </div>
-                      </td>
-                      <td>
-                        <div style={{ marginTop: "5rem" }}>
-                          {type === "regular"
-                            ? (
-                                priceInfor.regular?.regularTicketPrice || 0
-                              ).toLocaleString()
-                            : (
-                                priceInfor.special?.regularTicketPrice || 0
-                              ).toLocaleString()}{" "}
-                          VND
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                          </div>
+                          <div className="field-item">
+                            <div className="col-md-4">
+                              <label>Quốc gia (*)</label>
+                            </div>
+                            <div className="col-md-8">
+                              <input
+                                type="text"
+                                value={passenger.country || ""}
+                                onChange={(e) => handlePassengerChange(seat, "country", e.target.value)}
+                              />
+                            </div>
+                          </div>
+                          <div className="col-md-12 field-item">
+                            <div className="col-md-6">
+                              <div className="field-item">
+                                <label>Giới tính</label>
+                                <select
+                                  value={passenger.gender || ""}
+                                  onChange={(e) => handlePassengerChange(seat, "gender", e.target.value)}
+                                >
+                                  <option value="">Chọn giới tính</option>
+                                  <option value="Nam">Nam</option>
+                                  <option value="Nữ">Nữ</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div className="col-md-6">
+                              <div className="field-item">
+                                <label>Năm sinh</label>
+                                <select
+                                  value={passenger.birthYear || ""}
+                                  onChange={(e) => handlePassengerChange(seat, "birthYear", e.target.value)}
+                                >
+                                  <option value="">Chọn năm sinh</option>
+                                  {Array.from({ length: 100 }, (_, i) => {
+                                    const year = new Date().getFullYear() - i;
+                                    return (
+                                      <option key={year} value={year}>
+                                        {year}
+                                      </option>
+                                    );
+                                  })}
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="trip-infor">
+                          <div className="wrap">
+                            <span>
+                              <div>Chặng: {travelData.trip}</div>
+                              <div>
+                                Ngày giờ: {travelData.date} {travelData.time}
+                              </div>
+                              <div>Ghế: {seat}</div>
+                              <div>
+                                Loại vé: <b>{type === "regular" ? "Thường" : "Đặc biệt"}</b>
+                              </div>
+                            </span>
+                          </div>
+                        </td>
+                        <td>
+                          <div style={{ marginTop: "5rem" }}></div>
+                        </td>
+                        <td>
+                          <div style={{ marginTop: "5rem" }}>
+                            {type === "regular"
+                              ? (priceInfor.regular?.regularTicketPrice || 0).toLocaleString()
+                              : (priceInfor.special?.regularTicketPrice || 0).toLocaleString()}{" "}
+                            VND
+                          </div>
+                        </td>
+                        <td>
+                          <div style={{ marginTop: "5rem" }}>
+                            {type === "regular"
+                              ? (priceInfor.regular?.regularTicketPrice || 0).toLocaleString()
+                              : (priceInfor.special?.regularTicketPrice || 0).toLocaleString()}{" "}
+                            VND
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                   <tr>
                     <td className="total" colSpan={5}>
-                      <h3>
-                        TỔNG TIỀN: {totalPrice.toLocaleString("vi-VN")} VND
-                      </h3>
+                      <h3>TỔNG TIỀN: {totalPrice.toLocaleString("vi-VN")} VND</h3>
                     </td>
                   </tr>
                 </tbody>
@@ -284,13 +382,17 @@ function Passengers() {
           </div>
           <div className="line"></div>
           <div className="contact-infor">
-            <h2>Thông tin liên hệ</h2>
+            <h2>Thông tin người liên lạc</h2>
             <div className="col-md-12 col-sm-12 col-xs-12 no-padding">
               <div className="col-md-5 col-sm-5 col-xs-12">
                 <div className="field-item">
                   <div className="col-md-4">Họ và tên (*)</div>
                   <div className="col-md-8">
-                    <input type="text" defaultValue={userData?.name || ""} />
+                    <input
+                      type="text"
+                      value={contactData.name || ""}
+                      onChange={(e) => handleContactChange("name", e.target.value)}
+                    />
                   </div>
                 </div>
               </div>
@@ -298,7 +400,11 @@ function Passengers() {
                 <div className="field-item">
                   <div className="col-md-4">Số điện thoại (*)</div>
                   <div className="col-md-8">
-                    <input type="text" defaultValue={userData?.phone || ""} />
+                    <input
+                      type="text"
+                      value={contactData.phone || ""}
+                      onChange={(e) => handleContactChange("phone", e.target.value)}
+                    />
                   </div>
                 </div>
               </div>
@@ -308,7 +414,11 @@ function Passengers() {
                 <div className="field-item">
                   <div className="col-md-4">Địa chỉ (*)</div>
                   <div className="col-md-8">
-                    <input type="text" />
+                    <input
+                      type="text"
+                      value={contactData.address || ""}
+                      onChange={(e) => handleContactChange("address", e.target.value)}
+                    />
                   </div>
                 </div>
               </div>
@@ -316,7 +426,11 @@ function Passengers() {
                 <div className="field-item">
                   <div className="col-md-4">Email (*)</div>
                   <div className="col-md-8">
-                    <input type="text" defaultValue={userData?.email || ""} />
+                    <input
+                      type="text"
+                      value={contactData.email || ""}
+                      onChange={(e) => handleContactChange("email", e.target.value)}
+                    />
                   </div>
                 </div>
               </div>
@@ -326,7 +440,11 @@ function Passengers() {
                 <div className="field-item">
                   <div className="col-md-4">Công ty</div>
                   <div className="col-md-8">
-                    <input type="text" />
+                    <input
+                      type="text"
+                      value={contactData.company || ""}
+                      onChange={(e) => handleContactChange("company", e.target.value)}
+                    />
                   </div>
                 </div>
               </div>
@@ -334,7 +452,11 @@ function Passengers() {
                 <div className="field-item">
                   <div className="col-md-4">Mã số thuế</div>
                   <div className="col-md-8">
-                    <input type="text" />
+                    <input
+                      type="text"
+                      value={contactData.taxCode || ""}
+                      onChange={(e) => handleContactChange("taxCode", e.target.value)}
+                    />
                   </div>
                 </div>
               </div>
@@ -349,7 +471,6 @@ function Passengers() {
               />
               <span>Tôi đã đọc và đồng ý điều khoản bên dưới</span>
             </label>
-
             <div className="box">
               <p>
                 Điều khoản này là sự thoả thuận đồng ý của quý khách khi sử dụng
@@ -363,8 +484,7 @@ function Passengers() {
               <p>
                 <strong>Giải thích từ ngữ</strong>
               </p>
-
-              <p>&nbsp;</p>
+              <p> </p>
               <p>
                 Điều khoản: là những điều quy định giữa Công ty GreenlinesDP và
                 quý khách
@@ -509,7 +629,6 @@ function Passengers() {
                 trong vòng 30 ngày tính từ ngày thanh toán, Công ty GreenlinesDP
                 sẽ không nhận giải quyết bất cứ kiếu nại nào từ việc thanh toán.
               </p>
-
               <p>
                 Quý khách không sử dụng các nội dung của trang web do Công ty
                 GreenlinesDP quản lý cho mục đích thương mại nếu như chưa có sự

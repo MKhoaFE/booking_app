@@ -65,7 +65,7 @@ function App() {
               }
             />
             <Route
-              path="/booking/byATM"
+              path="/booking/payment/byATM"
               element={
                 <ProtectedRoute>
                   <ByATM />
@@ -73,7 +73,7 @@ function App() {
               }
             />
             <Route
-              path="/booking/byCounter"
+              path="/booking/payment/byCounter"
               element={
                 <ProtectedRoute>
                   <ByCounter />
@@ -81,7 +81,7 @@ function App() {
               }
             />
             <Route
-              path="/booking/byVisa"
+              path="/booking/payment/byVisa"
               element={
                 <ProtectedRoute>
                   <ByVisa />

@@ -22,6 +22,8 @@ function ByVisa() {
 
   return (
     <>
+          <BookingHeader />
+          <Stepbar />
         <div className="container">
             by Visa
         </div>
