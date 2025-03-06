@@ -12,13 +12,77 @@ import {
   Button,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Thêm useNavigate
+import axios from "axios"; // Thêm axios
+import Cookies from "js-cookie"; // Thêm Cookies
+import showToast from "../../components/Toastify/Toastify";
 
 function Payment() {
   const [selected, setSelected] = useState(null);
+  const navigate = useNavigate(); // Dùng để chuyển hướng sau khi thành công
 
   const toggle = (option) => {
     setSelected(selected === option ? null : option);
+  };
+
+  // Xử lý khi nhấn "Tiếp tục" cho thanh toán tại quầy
+  const handleCounterPayment = async (e) => {
+    e.preventDefault();
+
+    // Lấy dữ liệu từ localStorage
+    const travelData = JSON.parse(localStorage.getItem("travelData"));
+    const passengerData = JSON.parse(localStorage.getItem("passengerData")) || [];
+    const contactData = JSON.parse(localStorage.getItem("contactData")) || {};
+
+    if (!travelData || !travelData.journeyId) {
+      showToast("Không tìm thấy thông tin hành trình!", "error");
+      return;
+    }
+
+    if (passengerData.length === 0 || Object.keys(contactData).length === 0) {
+      showToast("Dữ liệu hành khách hoặc người liên lạc không đầy đủ!", "error");
+      return;
+    }
+
+    const token = Cookies.get("token");
+    if (!token) {
+      showToast("Vui lòng đăng nhập để tiếp tục!", "error");
+      return;
+    }
+
+    // Chuẩn bị dữ liệu để gửi lên server
+    const bookingData = {
+      contactData,
+      passengerData,
+    };
+
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/trainSchedule/bookSeats/${travelData.journeyId}`,
+        {
+          seatBooked: bookingData,
+          regularTicketBooked: passengerData.filter((p) => p.type === "regular").length,
+          specialTicketBooked: passengerData.filter((p) => p.type === "special").length,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.status === 200) {
+        showToast("Đặt vé thành công! Vui lòng đến quầy để thanh toán.", "success");
+        // Xóa dữ liệu trong localStorage sau khi đặt vé thành công
+        localStorage.removeItem("passengerData");
+        localStorage.removeItem("contactData");
+        localStorage.removeItem("travelData");
+        localStorage.removeItem(`selectedSeats_${travelData.time}`);
+        // Chuyển hướng sau khi thành công
+        navigate("byCounter"); // Giả sử có trang xác nhận
+      }
+    } catch (error) {
+      console.error("Lỗi khi đặt vé:", error);
+      showToast("Đặt vé thất bại. Vui lòng thử lại!", "error");
+    }
   };
 
   return (
@@ -145,6 +209,8 @@ function Payment() {
               </Box>
             </AccordionDetails>
           </Accordion>
+
+          {/* Phương thức 3: Thanh toán tại quầy */}
           <Accordion
             expanded={selected === "counter"}
             onChange={() => toggle("counter")}
@@ -179,11 +245,9 @@ function Payment() {
                   sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}
                 >
                   <div className="btn-btm" style={{ marginBottom: "0" }}>
-                    <Link to="/booking/payment/byCounter">
-                      <button type="submit">
-                        <span>Tiếp tục</span>
-                      </button>
-                    </Link>
+                    <button onClick={handleCounterPayment}>
+                      <span>Tiếp tục</span>
+                    </button>
                   </div>
                 </Box>
               </Box>

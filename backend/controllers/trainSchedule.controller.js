@@ -148,3 +148,38 @@ exports.updateTrainSchedule = async (req, res) => {
     return res.status(500).json({ message: "Lỗi server: ", error });
   }
 };
+
+//update seat booked by user
+exports.bookSeats = async (req, res) => {
+  const { journeyId } = req.params;
+  const { seatBooked, regularTicketBooked, specialTicketBooked } = req.body;
+
+  try {
+    const journey = await trainSchedule.findOne({ journeyId });
+    if (!journey) {
+      return res.status(404).json({ message: "Không tìm thấy hành trình!" });
+    }
+
+    // Kiểm tra số lượng vé còn lại
+    const availableRegular = journey.regularSeats - journey.regularTicketBooked;
+    const availableSpecial = journey.specialSeats - journey.specialTicketBooked;
+
+    if (regularTicketBooked > availableRegular || specialTicketBooked > availableSpecial) {
+      return res.status(400).json({ message: "Không đủ ghế trống để đặt!" });
+    }
+
+    // Thêm slot mới vào mảng seatBooked
+    journey.seatBooked.push({
+      contactData: seatBooked.contactData,
+      passengerData: seatBooked.passengerData,
+    });
+    journey.regularTicketBooked += regularTicketBooked;
+    journey.specialTicketBooked += specialTicketBooked;
+
+    await journey.save();
+    res.status(200).json({ message: "Đặt vé thành công!" });
+  } catch (error) {
+    console.error("Lỗi khi đặt vé:", error);
+    res.status(500).json({ message: "Lỗi server!" });
+  }
+};
