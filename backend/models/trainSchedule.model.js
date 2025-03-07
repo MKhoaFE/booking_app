@@ -3,28 +3,28 @@ const journeyStatus = require("../middlewares/journeyStatus");
 
 const trainSchedule = new mongoose.Schema(
   {
-    journeyId: { type: String, unique: true }, // ID của hành trình
-    trainId: { type: String, required: true, ref: "Train" }, // Liên kết với chuyến xe (Train)
-    departureStation: { type: String }, // Nơi khởi hành
-    arrivalStation: { type: String }, // Nơi đến
-    departureTime: { type: String }, // Giờ khởi hành
-    arrivalTime: { type: String }, // Giờ đến
-    departureDate: { type: Date }, // Ngày khởi hành
-    arrivalDate: { type: Date }, // Ngày đến
-    regularSeats: { type: Number }, // Số lượng ghế thường
-    specialSeats: { type: Number }, // Số lượng ghế đặc biệt
-    regularTicketPrice: { type: Number }, // Giá vé thường
-    specialTicketPrice: { type: Number }, // Giá vé đặc biệt
+    journeyId: { type: String, unique: true },
+    trainId: { type: String, required: true, ref: "Train" },
+    departureStation: { type: String },
+    arrivalStation: { type: String },
+    departureTime: { type: String },
+    arrivalTime: { type: String },
+    departureDate: { type: Date },
+    arrivalDate: { type: Date },
+    regularSeats: { type: Number },
+    specialSeats: { type: Number },
+    regularTicketPrice: { type: Number },
+    specialTicketPrice: { type: Number },
     status: {
       type: String,
       enum: ["active", "inactive", "in progress"],
       default: "active",
-    }, // Trạng thái hành trình
+    },
     regularTicketBooked: { type: Number, default: 0 },
     specialTicketBooked: { type: Number, default: 0 },
     regularTicketPaid: { type: Number, default: 0 },
     specialTicketPaid: { type: Number, default: 0 },
-    createdAt: { type: Date, default: Date.now }, // Ngày tạo hành trình
+    createdAt: { type: Date, default: Date.now },
     seatBooked: [
       {
         contactData: {
@@ -49,11 +49,21 @@ const trainSchedule = new mongoose.Schema(
           },
         ],
       },
-    ], 
+    ],
+    reservedSeats: [{ type: String }], // Thêm trường mới: mảng các ghế đã đặt
   },
   { collection: "trainSchedule" }
 );
 
+// Middleware để cập nhật reservedSeats trước khi save
+trainSchedule.pre("save", function (next) {
+  const reservedSeats = this.seatBooked
+    .flatMap((booking) => booking.passengerData.map((passenger) => passenger.seat));
+  this.reservedSeats = [...new Set(reservedSeats)]; // Loại bỏ trùng lặp
+  next();
+});
+
+// Middleware để cập nhật trạng thái hành trình
 trainSchedule.pre("find", async function (next) {
   await journeyStatus(this.model);
   next();

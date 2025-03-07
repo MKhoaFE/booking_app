@@ -1,4 +1,4 @@
-.trip8AM{
+.tripSelector{
   .line {
     width: 100%;
     border-top: 1px dotted rgb(153, 152, 152);
@@ -62,6 +62,7 @@
         cursor: pointer;
         position: relative;
         display: inline-block;
+        
         .popuptext {
           visibility: hidden;
           padding: 225px;

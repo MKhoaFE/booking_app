@@ -9,11 +9,12 @@ import Stepbar from "../../components/StepBar/stepbar";
 import BookingHeader from "../../components/Booking-header/bookingHeader";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
-import Trip8AM from "../../components/trip8am/trip8AM";
+
 import Trip12AM from "../../components/trip12am/trip12AM";
 import { Typography } from "@mui/material";
 import axios from "axios";
 import Cookies from "js-cookie";
+import TripSelector from "../../components/trip8am/TripSelector";
 
 const Booking = () => {
   const [key, setKey] = useState("");
@@ -26,6 +27,7 @@ const Booking = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [reservedSeats, setReservedSeats] = useState([]);
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("travelData"));
@@ -41,32 +43,16 @@ const Booking = () => {
   const fetchJourneyData = async (journeyId) => {
     try {
       const token = Cookies.get("token");
-      if (!token) {
-        setError("Vui lòng đăng nhập để tiếp tục.");
-        setLoading(false);
-        return;
-      }
-
       const response = await axios.get(
         `http://localhost:5000/api/trainSchedule/getJourneyById/${journeyId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-
       const journey = response.data.journey;
-      if (!journey) {
-        throw new Error("Không tìm thấy hành trình.");
-      }
-
-      // Lấy selectedSeats từ localStorage
+  
       const storedSeats = JSON.parse(localStorage.getItem(`selectedSeats_${journey.departureTime}`)) || {};
-
-      // Tính số ghế đã chọn từ storedSeats
       const specialSelected = Object.values(storedSeats).filter(type => type === "special").length;
       const regularSelected = Object.values(storedSeats).filter(type => type === "regular").length;
-
-      // Cấu trúc priceInfor, trừ đi số ghế đã chọn
+  
       const newPriceInfor = {
         [journey.departureTime]: {
           special: {
@@ -83,14 +69,14 @@ const Booking = () => {
           },
         },
       };
-
+  
       setPriceInfor(newPriceInfor);
       setKey(journey.departureTime);
       setVisibleTabs({ [journey.departureTime]: true });
       setSelectedSeats(storedSeats);
+      setReservedSeats(journey.reservedSeats || []); // Thêm reservedSeats từ server
     } catch (err) {
-      console.error("Lỗi khi lấy dữ liệu hành trình:", err);
-      setError("Không thể tải dữ liệu hành trình. Vui lòng thử lại.");
+      setError("Không thể tải dữ liệu hành trình.");
     } finally {
       setLoading(false);
     }
@@ -188,6 +174,7 @@ const Booking = () => {
     return <Typography color="error">{error}</Typography>;
   }
 
+
   return (
     <>
       <BookingHeader />
@@ -210,32 +197,36 @@ const Booking = () => {
                 )}
 
                 <div className="detail-wrap">
-                  <Tabs
-                    id="uncontrolled-tab-example"
-                    className="mb-3 special mt-4 nav-tabs"
-                    activeKey={key}
-                    onSelect={(k) => setKey(k)}
-                  >
-                    {Object.keys(visibleTabs).map((time) => (
-                      <Tab key={time} eventKey={time} title={time}>
-                        {time === "8:00" ? (
-                          <Trip8AM
-                            selectedSeats={selectedSeats}
-                            handleSeatSelection={handleSeatSelection}
-                            unselectSeat={unselectSeat}
-                            timer={timer}
-                          />
-                        ) : (
-                          <Trip12AM
-                            selectedSeats={selectedSeats}
-                            handleSeatSelection={handleSeatSelection}
-                            unselectSeat={unselectSeat}
-                            timer={timer}
-                          />
-                        )}
-                      </Tab>
-                    ))}
-                  </Tabs>
+                <Tabs
+  id="uncontrolled-tab-example"
+  className="mb-3 special mt-4 nav-tabs"
+  activeKey={key}
+  onSelect={(k) => setKey(k)}
+>
+  {Object.keys(visibleTabs).map((time) => (
+    <Tab key={time} eventKey={time} title={time}>
+      <TripSelector
+        departureTime={time}
+        seats={[
+          ["A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8", "J8", "K8", "L8"],
+          ["A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7", "J7", "K7", "L7"],
+          ["A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6", "J6", "K6", "L6"],
+          ["A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5", "J5", "K5", "L5"],
+          [],
+          ["A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4", "J4", "K4", "L4"],
+          ["A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3", "J3", "K3", "L3"],
+          ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2", "J2", "K2", "L2"],
+          ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "J1", "K1", "L1"],
+        ]} // Tạm thời hardcode, sau này lấy từ server
+        selectedSeats={selectedSeats}
+        handleSeatSelection={handleSeatSelection}
+        unselectSeat={unselectSeat}
+        timer={timer}
+        reservedSeats={reservedSeats} // Truyền danh sách ghế đã đặt
+      />
+    </Tab>
+  ))}
+</Tabs>
                 </div>
               </div>
             </div>

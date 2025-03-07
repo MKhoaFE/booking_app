@@ -10,7 +10,8 @@ const {
 const isAuth = require("../middlewares/authentication.mdw");
 const router = express.Router();
 
-router.post("/addJourney", newTrainSchedule); // tạo hành trình mới
+router.post("/addJourney", newTrainSchedule); // tạo hành trình mới 
+router.post("/bookSeat/:journeyId", bookSeats); // tạo hành trình mới 
 router.get("/", getAllTrainSchedules); // lấy tất cả hành trình
 router.delete("/deleteJourney/:journeyId", deleteTrainSchedule); //Xóa hành trình
 router.put("/updateJourney/:journeyId", updateTrainSchedule); //update hành trình

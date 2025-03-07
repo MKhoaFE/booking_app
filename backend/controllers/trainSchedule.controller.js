@@ -225,3 +225,39 @@ exports.bookSeats = async (req, res) => {
     res.status(500).json({ message: "Lỗi server!" });
   }
 };
+
+
+exports.bookSeats = async(req,res)=>{
+  const { journeyId } = req.params;
+  const { contactData, passengerData } = req.body;
+
+  try {
+    const journey = await trainSchedule.findOne({ journeyId });
+    if (!journey) {
+      return res.status(404).json({ error: "Journey not found" });
+    }
+
+    // Kiểm tra passengerData
+    if (!Array.isArray(passengerData) || passengerData.length === 0) {
+      return res.status(400).json({ error: "passengerData must be a non-empty array" });
+    }
+
+    // Thêm booking mới
+    journey.seatBooked.push({ contactData, passengerData });
+    
+    // Cập nhật số vé đã đặt
+    passengerData.forEach((passenger) => {
+      if (passenger.type === "regular") {
+        journey.regularTicketBooked += 1;
+      } else if (passenger.type === "special") {
+        journey.specialTicketBooked += 1;
+      }
+    });
+
+    await journey.save(); // Middleware pre("save") sẽ tự động cập nhật reservedSeats
+    res.json({ journey });
+  } catch (error) {
+    console.error("Error booking seat:", error);
+    res.status(500).json({ error: "Failed to book seat" });
+  }
+}

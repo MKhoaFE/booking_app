@@ -1,46 +1,41 @@
-import React, { useState, useEffect } from "react";
-import "../trip8am/trip8AM.css";
+import React, { useState } from "react";
+import "./trip8AM.css"; // Đổi tên file CSS cho chung
 import selecting_seat from "../../assets/selecting-seat.png";
 import saleoff_seat from "../../assets/saleoff-seat.png";
 import reserved_seat from "../../assets/reserved-seat.png";
 import empty_seat from "../../assets/empty-seat.png";
 
-function Trip8AM({ handleSeatSelection, timer, updatedSeats, selectedSeats,  unselectSeat  }) {
+function TripSelector({
+  departureTime, // Thời gian khởi hành (ví dụ: "8:00")
+  seats, // Danh sách ghế từ server (hoặc hardcode tạm thời)
+  selectedSeats,
+  handleSeatSelection,
+  unselectSeat,
+  timer,
+  reservedSeats = [], // Ghế đã đặt từ server (mặc định rỗng nếu chưa có)
+}) {
   const [activeSeat, setActiveSeat] = useState(null);
 
-
   const togglePopup = (seat) => {
+    if (reservedSeats.includes(seat)) return; // Không cho chọn ghế đã đặt
     if (activeSeat === seat) {
-      setActiveSeat(null); // Deselect if clicking on the same seat
+      setActiveSeat(null);
     } else {
-      setActiveSeat(seat); // Select a new seat
+      setActiveSeat(seat);
     }
   };
 
   const handlePopupClick = (event) => {
-    event.stopPropagation(); // Prevent event propagation when clicking inside the popup
+    event.stopPropagation();
   };
 
-  const handleRadioChange8AM = (seat, ticketType) => {
+  const handleRadioChange = (seat, ticketType) => {
     handleSeatSelection(seat, ticketType);
     setActiveSeat(null);
   };
 
-
-  const seats = [
-    ["A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8", "J8", "K8", "L8"],
-    ["A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7", "J7", "K7", "L7"],
-    ["A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6", "J6", "K6", "L6"],
-    ["A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5", "J5", "K5", "L5"],
-    [],
-    ["A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4", "J4", "K4", "L4"],
-    ["A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3", "J3", "K3", "L3"],
-    ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2", "J2", "K2", "L2"],
-    ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "J1", "K1", "L1"],
-  ];
-
   return (
-    <div className="trip8AM">
+    <div className="trip-selector">
       <div className="line"></div>
       <div className="select-seat-container">
         <div className="top row">
@@ -77,7 +72,9 @@ function Trip8AM({ handleSeatSelection, timer, updatedSeats, selectedSeats,  uns
                       <td key={seatIndex} width="37px" height="33px">
                         <div
                           className={`seat ${
-                            selectedSeats[seat]
+                            reservedSeats.includes(seat)
+                              ? "reserved"
+                              : selectedSeats[seat]
                               ? selectedSeats[seat] === "special"
                                 ? "saleoff"
                                 : "selecting"
@@ -88,9 +85,14 @@ function Trip8AM({ handleSeatSelection, timer, updatedSeats, selectedSeats,  uns
                               ? unselectSeat(seat)
                               : togglePopup(seat)
                           }
+                          style={{
+                            cursor: reservedSeats.includes(seat)
+                              ? "not-allowed"
+                              : "pointer",
+                          }}
                         >
                           <span>{seat}</span>
-                          {activeSeat === seat && (
+                          {activeSeat === seat && !reservedSeats.includes(seat) && (
                             <div
                               className="popuptext show"
                               onClick={handlePopupClick}
@@ -103,23 +105,15 @@ function Trip8AM({ handleSeatSelection, timer, updatedSeats, selectedSeats,  uns
                                       type="radio"
                                       name={`ticket-${seat}`}
                                       value="special"
-                                      checked={
-                                        selectedSeats[seat] === "special"
-                                      }
-                                      onChange={() =>
-                                        handleRadioChange8AM(seat, "special")
-                                      }
-                                    ></input>
+                                      checked={selectedSeats[seat] === "special"}
+                                      onChange={() => handleRadioChange(seat, "special")}
+                                    />
                                   </div>
                                   <div className="text">
-                                    <span>
-                                      Vé đặc biệt đặt trước 1 ngày (Áp dụng vé
-                                      người lớn)
-                                    </span>
+                                    <span>Vé đặc biệt đặt trước 1 ngày</span>
                                     <p>Giá vé (người lớn): 260.000 VND</p>
                                     <p className="note">
-                                      Không được hoàn, đổi vé, không áp dụng
-                                      thanh toán tại quầy.
+                                      Không được hoàn, đổi vé, không áp dụng thanh toán tại quầy.
                                     </p>
                                   </div>
                                 </label>
@@ -129,13 +123,9 @@ function Trip8AM({ handleSeatSelection, timer, updatedSeats, selectedSeats,  uns
                                       type="radio"
                                       name={`ticket-${seat}`}
                                       value="regular"
-                                      checked={
-                                        selectedSeats[seat] === "regular"
-                                      }
-                                      onChange={() =>
-                                        handleRadioChange8AM(seat, "regular")
-                                      }
-                                    ></input>
+                                      checked={selectedSeats[seat] === "regular"}
+                                      onChange={() => handleRadioChange(seat, "regular")}
+                                    />
                                   </div>
                                   <div className="text">
                                     <span>Vé thường</span>
@@ -159,4 +149,4 @@ function Trip8AM({ handleSeatSelection, timer, updatedSeats, selectedSeats,  uns
   );
 }
 
-export default Trip8AM;
+export default TripSelector;
