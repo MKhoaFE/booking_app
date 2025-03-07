@@ -227,7 +227,7 @@ exports.bookSeats = async (req, res) => {
 };
 
 
-exports.bookSeats = async(req,res)=>{
+exports.bookSeat = async(req,res)=>{
   const { journeyId } = req.params;
   const { contactData, passengerData } = req.body;
 
