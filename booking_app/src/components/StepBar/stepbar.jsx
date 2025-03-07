@@ -39,7 +39,6 @@ function Stepbar() {
                     [
                       "/booking/payment/byATM",
                       "/booking/payment/byCounter",
-                      "/booking/payment/byVisa",
                     ].includes(pathname)
                       ? "active"
                       : ""

@@ -1,6 +1,6 @@
 const Train = require("../models/train.model");
 const trainSchedule = require("../models/trainSchedule.model");
-
+const User = require("../models/user.model");
 // tạo hành trình mới
 exports.newTrainSchedule = async (req, res) => {
   try {
@@ -85,7 +85,7 @@ exports.getOneTrainSchedule = async (req, res) => {
       return res.status(404).json({ message: "Không tìm thấy hành trình." });
     }
 
-    res.status(200).json({message:"get thành công", journey});
+    res.status(200).json({ message: "get thành công", journey });
   } catch (error) {
     console.error("Lỗi khi lấy hành trình:", error);
     res.status(500).json({ message: "Lỗi server." });
@@ -153,6 +153,7 @@ exports.updateTrainSchedule = async (req, res) => {
 exports.bookSeats = async (req, res) => {
   const { journeyId } = req.params;
   const { seatBooked, regularTicketBooked, specialTicketBooked } = req.body;
+  const userId = req.user._id;
 
   try {
     const journey = await trainSchedule.findOne({ journeyId });
@@ -160,7 +161,11 @@ exports.bookSeats = async (req, res) => {
       return res.status(404).json({ message: "Không tìm thấy hành trình!" });
     }
 
-    // Kiểm tra số lượng vé còn lại
+    // Kiểm tra giá vé có tồn tại không
+    if (!journey.regularTicketPrice || !journey.specialTicketPrice) {
+      return res.status(500).json({ message: "Giá vé chưa được thiết lập trong hành trình!" });
+    }
+
     const availableRegular = journey.regularSeats - journey.regularTicketBooked;
     const availableSpecial = journey.specialSeats - journey.specialTicketBooked;
 
@@ -168,16 +173,53 @@ exports.bookSeats = async (req, res) => {
       return res.status(400).json({ message: "Không đủ ghế trống để đặt!" });
     }
 
-    // Thêm slot mới vào mảng seatBooked
+    // Thêm giá tiền vào passengerData
+    const updatedPassengerData = seatBooked.passengerData.map((passenger) => ({
+      ...passenger,
+      price: passenger.type === "regular" ? journey.regularTicketPrice : journey.specialTicketPrice,
+    }));
+
     journey.seatBooked.push({
       contactData: seatBooked.contactData,
-      passengerData: seatBooked.passengerData,
+      passengerData: updatedPassengerData,
     });
     journey.regularTicketBooked += regularTicketBooked;
     journey.specialTicketBooked += specialTicketBooked;
 
     await journey.save();
-    res.status(200).json({ message: "Đặt vé thành công!" });
+
+    const bookingData = {
+      journeyId,
+      contactData: seatBooked.contactData,
+      passengerData: updatedPassengerData,
+      bookingDate: new Date(),
+      departureDate: journey.departureDate,
+      departureStation: journey.departureStation,
+      arrivalStation: journey.arrivalStation,
+    };
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $push: { bookings: bookingData } },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(500).json({ message: "Lỗi khi cập nhật thông tin người dùng!" });
+    }
+
+    // Trả về dữ liệu đầy đủ để frontend sử dụng
+    res.status(200).json({
+      message: "Đặt vé thành công!",
+      bookingData: {
+        journeyId,
+        contactData: seatBooked.contactData,
+        passengerData: updatedPassengerData,
+        departureDate: journey.departureDate,
+        departureStation: journey.departureStation,
+        arrivalStation: journey.arrivalStation,
+      },
+    });
   } catch (error) {
     console.error("Lỗi khi đặt vé:", error);
     res.status(500).json({ message: "Lỗi server!" });

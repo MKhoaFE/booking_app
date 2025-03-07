@@ -18,7 +18,7 @@ import { ToastContainer } from "react-toastify"; // Import từ react-toastify
 import "react-toastify/dist/ReactToastify.css"; // Import CSS
 import ByATM from "./page/payment/byATM.jsx";
 import ByCounter from "./page/payment/byCounter.jsx";
-import ByVisa from "./page/payment/byVisa.jsx";
+
 
 function App() {
   return (
@@ -80,14 +80,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/booking/payment/byVisa"
-              element={
-                <ProtectedRoute>
-                  <ByVisa />
-                </ProtectedRoute>
-              }
-            />
+
             <Route path="*" element={<Err />} />
           </Routes>
         </Content>

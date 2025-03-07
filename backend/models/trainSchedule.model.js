@@ -45,6 +45,7 @@ const trainSchedule = new mongoose.Schema(
             country: { type: String },
             gender: { type: String },
             birthYear: { type: String },
+            price: { type: Number },
           },
         ],
       },
