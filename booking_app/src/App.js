@@ -18,14 +18,14 @@ import { ToastContainer } from "react-toastify"; // Import từ react-toastify
 import "react-toastify/dist/ReactToastify.css"; // Import CSS
 import ByATM from "./page/payment/byATM.jsx";
 import ByCounter from "./page/payment/byCounter.jsx";
-
+import ForgotPassword from "./page/login/forgotPassword.jsx";
+import ResetPassword from "./page/login/resetPassword.jsx";
 
 function App() {
   return (
     <BrowserRouter>
-
       <Layout style={{ backgroundColor: "#FFF" }}>
-      <ToastContainer
+        <ToastContainer
           position="top-center" // Vị trí khớp với cấu hình trong showToast
           autoClose={1500} // Thời gian tự đóng khớp với showToast
           hideProgressBar={false}
@@ -80,6 +80,8 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="/login/forgotPassword" element={<ForgotPassword />} />
+            <Route path="/login/resetPassword/:token" element={<ResetPassword />} />
 
             <Route path="*" element={<Err />} />
           </Routes>

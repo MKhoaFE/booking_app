@@ -1,34 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, useTheme } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Typography,
-} from "@mui/material";
 import { tokens } from "../theme";
+import Header from "../components/Header";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import showToast from "./dashboard/gloabal/Toastify";
+import UserModalPopup from "./dashboard/gloabal/userListModalPopup"; // Đảm bảo đường dẫn đúng
 
 function User() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [data, setData] = useState([]); // Danh sách user
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [bookings, setBookings] = useState([]); // Lịch sử giao dịch của user được chọn
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/users");
-        setData(response.data.users);
+        setData(response.data.users); // Giả sử API trả về { users: [...] }
       } catch (error) {
         console.error("Error fetching data:", error);
         showToast("Lỗi khi tải danh sách người dùng", "error");
@@ -68,7 +61,7 @@ function User() {
                 );
                 showToast("User deleted successfully!", "success");
                 setData((prevUsers) =>
-                  prevUsers.filter((user) => user.userId !== userId)
+                  prevUsers.filter((user) => user._id !== userId) // Sửa từ userId thành _id
                 );
               } catch (error) {
                 showToast("Failed to delete user!", "error");
@@ -105,17 +98,15 @@ function User() {
     );
   };
 
-  const handleViewBookings = async (userId) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:5000/api/users/${userId}`
-      );
-      setBookings(response.data.user.bookings || []);
-    } catch (error) {
-      console.error("Error fetching bookings:", error);
-      showToast("Lỗi khi tải lịch sử giao dịch", "error");
-      setBookings([]);
-    }
+  const handleOpenModal = (user) => {
+    console.log("User selected:", user); // Kiểm tra user có bookings không
+    setSelectedUser(user);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedUser(null);
   };
 
   const columns = [
@@ -134,7 +125,7 @@ function User() {
             variant="contained"
             color="primary"
             size="small"
-            onClick={() => handleViewBookings(params.row._id)}
+            onClick={() => handleOpenModal(params.row)}
           >
             View
           </Button>
@@ -142,7 +133,7 @@ function User() {
             variant="contained"
             color="secondary"
             size="small"
-            onClick={() => handleDelete(params.row.userId)}
+            onClick={() => handleDelete(params.row._id)} // Sửa từ userId thành _id
           >
             Delete
           </Button>
@@ -182,12 +173,10 @@ function User() {
           </Button>
         </Link>
       </Box>
-
-      {/* Danh sách user */}
       <Box
         margin="0.5rem 1rem"
         m="2rem 0 0 0"
-        height="50vh" // Giảm chiều cao để có chỗ cho bảng bookings
+        height="75vh"
         sx={{
           "& .MuiDataGrid-root": { border: "none" },
           "& .MuiDataGrid-cell": { borderBottom: "none" },
@@ -219,63 +208,11 @@ function User() {
           getRowId={(row) => row._id}
         />
       </Box>
-
-      {/* Lịch sử giao dịch */}
-      <Box margin="0.5rem 1rem" m="2rem 0 0 0">
-        <Typography variant="h6" fontWeight="600" mb={2}>
-          Lịch sử giao dịch
-        </Typography>
-        {bookings.length > 0 ? (
-          <TableContainer component={Paper}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Mã giao dịch</TableCell>
-                  <TableCell>Mã hành trình</TableCell>
-                  <TableCell>Tổng tiền (VND)</TableCell>
-                  <TableCell>Ngày đặt</TableCell>
-                  <TableCell>Khởi hành</TableCell>
-                  <TableCell>Từ</TableCell>
-                  <TableCell>Đến</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {bookings.map((booking, index) => (
-                  <TableRow key={`${booking._id}-${index}`}>
-                    <TableCell>{booking._id || `${index}`}</TableCell>
-                    <TableCell>{booking.journeyId || "N/A"}</TableCell>
-                    <TableCell>
-                      {booking.passengerData
-                        ? booking.passengerData
-                            .reduce((total, p) => total + (p.price || 0), 0)
-                            .toLocaleString("vi-VN")
-                        : "0"}
-                    </TableCell>
-                    <TableCell>
-                      {booking.bookingDate
-                        ? new Date(booking.bookingDate).toLocaleDateString(
-                            "vi-VN"
-                          )
-                        : "N/A"}
-                    </TableCell>
-                    <TableCell>
-                      {booking.departureDate
-                        ? new Date(booking.departureDate).toLocaleDateString(
-                            "vi-VN"
-                          )
-                        : "N/A"}
-                    </TableCell>
-                    <TableCell>{booking.departureStation || "N/A"}</TableCell>
-                    <TableCell>{booking.arrivalStation || "N/A"}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        ) : (
-          <Typography>Chưa có giao dịch nào được chọn.</Typography>
-        )}
-      </Box>
+      <UserModalPopup
+        open={openModal}
+        handleClose={handleCloseModal}
+        user={selectedUser}
+      />
     </Box>
   );
 }

@@ -10,6 +10,8 @@ const {
   deleteUser,
   forgotPassword,
   resetPassword,
+  getAllTransactions,
+  getUserById,
 } = require("../controllers/user.controller");
 const isAuth = require("../middlewares/authentication.mdw");
 
@@ -21,5 +23,7 @@ router.post("/logout", isAuth, logoutUser);
 router.delete("/deleteUser/:userId", deleteUser);
 router.post("/forgotPassword", forgotPassword);
 router.post("/resetPassword/:token", resetPassword);
+router.get("/getAllTransactions", getAllTransactions);
+router.get("/:userId", getUserById);
 
 module.exports = router;

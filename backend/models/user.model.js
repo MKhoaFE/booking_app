@@ -69,15 +69,12 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       lowercase: true,
-      validate: [validator.isEmail, "Email không hợp lệ"],
+
     },
     phone: {
       type: String,
       required: true,
-      validate: {
-        validator: (v) => /^\d{10,11}$/.test(v), // Ví dụ: validate số điện thoại 10-11 số
-        message: "Số điện thoại không hợp lệ",
-      },
+
     },
     passwordHash: { type: String, required: true },
     registeredAt: { type: Date, default: Date.now },
@@ -114,10 +111,6 @@ const userSchema = new mongoose.Schema(
             gender: { type: String, enum: ["male", "female", "other"] }, // Giới hạn giá trị
             birthYear: {
               type: String,
-              validate: {
-                validator: (v) => /^\d{4}$/.test(v), // Năm sinh phải là 4 chữ số
-                message: "Năm sinh không hợp lệ",
-              },
             },
             price: { type: Number },
           },

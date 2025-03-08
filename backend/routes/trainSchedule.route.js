@@ -18,6 +18,7 @@ router.delete("/deleteJourney/:journeyId", deleteTrainSchedule); //Xóa hành tr
 router.put("/updateJourney/:journeyId", updateTrainSchedule); //update hành trình
 router.get("/getJourneyById/:journeyId", getOneTrainSchedule);
 router.put("/bookSeats/:journeyId", isAuth, bookSeats);
+router.post("/bookSeats/:journeyId", isAuth, bookSeats);
 // update hành trình
 // xóa hành trình
 

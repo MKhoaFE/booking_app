@@ -34,15 +34,6 @@ export default function Topbar() {
             <DarkModeOutlined />
           )}
         </IconButton>
-        <IconButton>
-          <NotificationsOutlinedIcon />
-        </IconButton>
-        <IconButton>
-          <SettingsOutlinedIcon />
-        </IconButton>
-        <IconButton>
-          <PersonOutlinedIcon />
-        </IconButton>
       </Box>
     </Box>
   );

@@ -165,7 +165,7 @@ exports.deleteUser = async (req, res) => {
     await User.deleteOne({ userId });
     return res.status(200).json({ message: " Xóa user thành công" });
   } catch (error) {
-    console.error("Lỗi khi xóa hành trình: ", error);
+    console.error("Lỗi khi xóa user: ", error);
     return res.status(500).json({ message: "LỖi server", error });
   }
 };
@@ -192,7 +192,7 @@ exports.forgotPassword = async (req, res) => {
       },
     });
 
-    const resetLink = `http://localhost:3000/reset-password/${token}`;
+    const resetLink = `http://localhost:3000/login/resetPassword/${token}`;
 
     const mailOptions = {
       from: "khoahocgioi9@gmail.com",
@@ -242,5 +242,39 @@ exports.resetPassword = async (req, res) => {
   } catch (error) {
     console.error("Lỗi khi reset mật khẩu:", error);
     res.status(500).json({ message: "Lỗi server!" });
+  }
+};
+
+exports.getAllTransactions = async (req, res) => {
+  try {
+    const users = await User.find().select("bookings");
+    const transactions = users.flatMap(user =>
+      user.bookings.map((booking, index) => ({
+        id: `${user._id}-${index}`,
+        userId: user._id,
+        name: booking.contactData.name,
+        email: booking.contactData.email,
+        cost: booking.passengerData.reduce((total, p) => total + p.price, 0),
+        phone: booking.contactData.phone,
+        date: booking.bookingDate,
+        journeyId: booking.journeyId,
+      }))
+    );
+    res.status(200).json({ transactions });
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi server", error });
+  }
+};
+
+exports.getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ user });
+  } catch (error) {
+    console.error("Error fetching user by ID:", error);
+    res.status(500).json({ message: "Error fetching user", error: error.message });
   }
 };

@@ -30,11 +30,10 @@ export default function ScheduleList() {
   const colors = tokens(theme.palette.mode);
   const [currentEvents, setCurrentEvents] = useState([]);
   const [open, setOpen] = useState(false);
-
   const [selectedJourneyId, setSelectedJourneyId] = useState(null);
 
   const handleOpenModal = (journeyId) => {
-    console.log("Journey ID:", journeyId); // Kiểm tra giá trị
+    console.log("Journey ID:", journeyId);
     if (!journeyId) {
       console.error("Error: Journey ID is undefined");
       return;
@@ -44,25 +43,22 @@ export default function ScheduleList() {
   };
 
   useEffect(() => {
-    // Gọi API để lấy danh sách hành trình từ backend
     const fetchTrainSchedules = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:5000/api/trainSchedule"
-        ); // Đổi URL theo backend của bạn
+        const response = await axios.get("http://localhost:5000/api/trainSchedule");
         const trainSchedules = response.data.trainSchedules;
 
-        // Chuyển đổi dữ liệu từ backend về format phù hợp với FullCalendar
         const formattedEvents = trainSchedules.map((train) => ({
           id: train.journeyId,
           title: `Train ${train.trainId}: ${train.departureStation} → ${train.arrivalStation}`,
           start: train.departureDate,
           end: train.arrivalDate,
-          allDay: true, // Coi như sự kiện cả ngày
+          status: train.status,
+          allDay: true,
         }));
 
         setCurrentEvents(formattedEvents);
-        localStorage.setItem("events", JSON.stringify(formattedEvents)); // Lưu vào local storage
+        localStorage.setItem("events", JSON.stringify(formattedEvents));
       } catch (error) {
         console.error("Error fetching train schedules:", error);
       }
@@ -160,10 +156,8 @@ export default function ScheduleList() {
   };
 
   const handleEventDrop = (info) => {
-    // Find the event in the current events state
     const updatedEvents = currentEvents.map((event) => {
       if (event.id === info.event.id) {
-        // Update the event's start and end dates
         return {
           ...event,
           start: info.event.startStr,
@@ -173,9 +167,21 @@ export default function ScheduleList() {
       return event;
     });
 
-    // Update the state and local storage with the updated events
     setCurrentEvents(updatedEvents);
     saveEventsToLocalStorage(updatedEvents);
+  };
+
+  // Hàm xác định màu nền với giá trị mặc định
+  const getBackgroundColor = (status) => {
+    switch (status) {
+      case "inactive":
+        return colors.redAccent?.[500] || "#db4f4a"; // Mặc định đỏ nếu undefined
+      case "in progress":
+        return colors.orangeAccent?.[500] || "#e87d07"; // Mặc định cam nếu undefined
+      case "active":
+      default:
+        return colors.greenAccent?.[500] || "#33b983"; // Mặc định xanh nếu undefined
+    }
   };
 
   return (
@@ -220,7 +226,7 @@ export default function ScheduleList() {
         justifyContent="space-between"
         flexDirection={{ xs: "column", sm: "row" }}
       >
-        {/* calendar sidebar */}
+        {/* Calendar sidebar */}
         <Box
           flex="1 1 20%"
           backgroundColor={colors.primary[400]}
@@ -239,7 +245,7 @@ export default function ScheduleList() {
                 <ListItem
                   key={event.id}
                   sx={{
-                    backgroundColor: colors.greenAccent[500],
+                    backgroundColor: getBackgroundColor(event.status),
                     margin: "10px 0",
                     borderRadius: "2px",
                   }}
@@ -299,7 +305,7 @@ export default function ScheduleList() {
             )}
           </List>
         </Box>
-        {/* calendar */}
+        {/* Calendar */}
         <Box flex="1 1 80%" borderRadius="0.5rem" p="1rem">
           <FullCalendar
             plugins={[
@@ -319,8 +325,8 @@ export default function ScheduleList() {
             selectMirror={true}
             dayMaxEvents={true}
             eventClick={handleEventClick}
-            events={currentEvents} // events that are shown on calendar
-            eventDrop={handleEventDrop} //when event is dragged from one date to another
+            events={currentEvents}
+            eventDrop={handleEventDrop}
           />
         </Box>
       </Box>

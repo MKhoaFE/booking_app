@@ -1,6 +1,7 @@
 const Train = require("../models/train.model");
 const trainSchedule = require("../models/trainSchedule.model");
 const User = require("../models/user.model");
+const nodemailer = require("nodemailer");
 // tạo hành trình mới
 exports.newTrainSchedule = async (req, res) => {
   try {
@@ -61,7 +62,6 @@ exports.getAllTrainSchedules = async (req, res) => {
     const trainSchedules = await trainSchedule.find();
     res.status(200).json({ trainSchedules });
   } catch (error) {
-    console.error("lỗi khi get trainSchedule: ", error);
     res
       .status(500)
       .json({ message: "lỗi get trainSchedules", error: error.message });
@@ -82,7 +82,7 @@ exports.getOneTrainSchedule = async (req, res) => {
     const journey = await trainSchedule.findOne({ journeyId: journeyId });
 
     if (!journey) {
-      return res.status(404).json({ message: "Không tìm thấy hành trình." });
+      return res.status(404).json({ message: "Không tìm thấy hành trình.", error });
     }
 
     res.status(200).json({ message: "get thành công", journey });
@@ -161,7 +161,6 @@ exports.bookSeats = async (req, res) => {
       return res.status(404).json({ message: "Không tìm thấy hành trình!" });
     }
 
-    // Kiểm tra giá vé có tồn tại không
     if (!journey.regularTicketPrice || !journey.specialTicketPrice) {
       return res.status(500).json({ message: "Giá vé chưa được thiết lập trong hành trình!" });
     }
@@ -173,7 +172,6 @@ exports.bookSeats = async (req, res) => {
       return res.status(400).json({ message: "Không đủ ghế trống để đặt!" });
     }
 
-    // Thêm giá tiền vào passengerData
     const updatedPassengerData = seatBooked.passengerData.map((passenger) => ({
       ...passenger,
       price: passenger.type === "regular" ? journey.regularTicketPrice : journey.specialTicketPrice,
@@ -208,7 +206,39 @@ exports.bookSeats = async (req, res) => {
       return res.status(500).json({ message: "Lỗi khi cập nhật thông tin người dùng!" });
     }
 
-    // Trả về dữ liệu đầy đủ để frontend sử dụng
+    // Gửi email thông báo thanh toán thành công
+    const transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: "khoahocgioi9@gmail.com",
+        pass: "utbg einq rtbu rlyx",
+      },
+    });
+
+    const emailContent = `
+      <h2>Thông Tin Chuyến Đi</h2>
+      <p>Cảm ơn bạn đã đặt vé thành công! Dưới đây là thông tin chuyến đi của bạn:</p>
+      <ul>
+        <li><strong>Nơi khởi hành:</strong> ${journey.departureStation}</li>
+        <li><strong>Nơi đến:</strong> ${journey.arrivalStation}</li>
+        <li><strong>Ngày khởi hành:</strong> ${new Date(journey.departureDate).toLocaleDateString()}</li>
+        <li><strong>Giờ khởi hành:</strong> ${journey.departureTime}</li>
+        <li><strong>Số ghế:</strong> ${updatedPassengerData.map(p => `${p.seat} (${p.type})`).join(", ")}</li>
+        <li><strong>Tổng tiền:</strong> ${updatedPassengerData.reduce((total, p) => total + p.price, 0)} VND</li>
+      </ul>
+      <p>Vui lòng kiểm tra kỹ thông tin và liên hệ nếu có thắc mắc!</p>
+    `;
+
+    const mailOptions = {
+      from: "khoahocgioi9@gmail.com",
+      to: seatBooked.contactData.email, // Lấy email từ contactData
+      subject: "Xác Nhận Thanh Toán Chuyến Đi",
+      html: emailContent,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log("Email xác nhận đã gửi tới:", seatBooked.contactData.email);
+
     res.status(200).json({
       message: "Đặt vé thành công!",
       bookingData: {

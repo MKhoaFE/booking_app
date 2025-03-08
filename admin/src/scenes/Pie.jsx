@@ -6,8 +6,8 @@ const Pie = () => {
   return (
     <Box m="0.5rem 1rem">
       <Header
-        title="Pie Chart"
-        subtitle="Pie Chart to visualize the business"
+        title="Thu Nhập Từ Vé"
+        subtitle="Biểu đồ thể hiện thu nhập từ vé Regular và Special"
       />
       <Box height="75vh">
         <PieChart />
