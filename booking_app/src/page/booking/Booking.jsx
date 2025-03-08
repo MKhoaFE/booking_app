@@ -9,8 +9,6 @@ import Stepbar from "../../components/StepBar/stepbar";
 import BookingHeader from "../../components/Booking-header/bookingHeader";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
-
-import Trip12AM from "../../components/trip12am/trip12AM";
 import { Typography } from "@mui/material";
 import axios from "axios";
 import Cookies from "js-cookie";

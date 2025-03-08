@@ -3,6 +3,7 @@ const User = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const nodemailer = require("nodemailer");
 
 dotenv.config();
 
@@ -166,5 +167,80 @@ exports.deleteUser = async (req, res) => {
   } catch (error) {
     console.error("Lỗi khi xóa hành trình: ", error);
     return res.status(500).json({ message: "LỖi server", error });
+  }
+};
+
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "Email không tồn tại." });
+    }
+
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || "SECRET_ACCESS_TOKEN", { expiresIn: "1h" });
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 3600000;
+    await user.save();
+
+    const transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: "khoahocgioi9@gmail.com",
+        pass: "utbg einq rtbu rlyx",
+      },
+    });
+
+    const resetLink = `http://localhost:3000/reset-password/${token}`;
+
+    const mailOptions = {
+      from: "khoahocgioi9@gmail.com",
+      to: email,
+      subject: "Reset Mật Khẩu",
+      html: `
+        <p>Bạn đã yêu cầu reset mật khẩu.</p>
+        <p>Vui lòng click vào link sau để đặt lại mật khẩu:</p>
+        <a href="${resetLink}">${resetLink}</a>
+        <p>Link này sẽ hết hạn sau 1 giờ.</p>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: "Email reset mật khẩu đã được gửi!" });
+  } catch (error) {
+    console.error("Lỗi khi gửi email reset mật khẩu:", error);
+    res.status(500).json({ message: "Lỗi server!" });
+  }
+};
+
+// 2. API Reset Password
+exports.resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  try {
+    if (!password || password.length < 8) {
+      return res.status(400).json({ message: "Mật khẩu phải dài ít nhất 8 ký tự." });
+    }
+
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Token không hợp lệ hoặc đã hết hạn." });
+    }
+
+    user.passwordHash = password; // Sửa từ password thành passwordHash
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res.status(200).json({ message: "Đặt lại mật khẩu thành công!" });
+  } catch (error) {
+    console.error("Lỗi khi reset mật khẩu:", error);
+    res.status(500).json({ message: "Lỗi server!" });
   }
 };
