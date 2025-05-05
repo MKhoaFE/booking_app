@@ -125,13 +125,6 @@ const userSchema = new mongoose.Schema(
   { collection: "User" }
 );
 
-// Hash password trước khi save
-userSchema.pre("save", async function (next) {
-  if (this.isModified("passwordHash")) {
-    this.passwordHash = await bcrypt.hash(this.passwordHash, 10);
-  }
-  next();
-});
 
 // Plugin để tự động tăng userId
 userSchema.plugin(mongooseSequence, { inc_field: "userId" });
