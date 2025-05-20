@@ -17,15 +17,20 @@ app.use((err, req, res, next) => {
 });
 
 const userRoutes = require("./routes/user.route");
-const sessionRoutes = require("./routes/session.route")
-const trainRoutes = require("./routes/train.route")
-const ticketRoute = require("./routes/ticket.route")
+const sessionRoutes = require("./routes/session.route");
+const trainRoutes = require("./routes/train.route");
+const ticketRoute = require("./routes/ticket.route");
 const protectedRoutes = require("./routes/protectedData.route");
 const trainScheduleRoutes = require("./routes/trainSchedule.route");
+const paymentRoute = require("./routes/payment.route");
+
 //Client page
 app.use("/api/users", userRoutes);
 app.use("/api", protectedRoutes);
 app.use("/booking", sessionRoutes);
+
+//payment method
+app.use("/api/paymentmethod", paymentRoute);
 
 //Admin page
 app.use("/api/trains", trainRoutes);
