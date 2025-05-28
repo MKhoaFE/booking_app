@@ -12,7 +12,8 @@ exports.payment = async (req, res) => {
   const partnerCode = "MOMO";
   const redirectUrl =
     "https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b";
-  const ipnUrl = "https://b38f-1-54-45-191.ngrok-free.app/api/paymentmethod/callback";
+  const ipnUrl =
+    "https://b38f-1-54-45-191.ngrok-free.app/api/paymentmethod/callback";
   const requestType = "payWithMethod";
   const amount = "50000";
   const orderId = partnerCode + new Date().getTime();
@@ -89,4 +90,35 @@ exports.callback = async (req, res) => {
   console.log(req.body);
 
   return res.status(200).json(req.body);
+};
+
+exports.tranStatus = async (req, res) => {
+  const { orderId } = req.body;
+
+  const rawSignature = `accessKey=${accessKey}&orderId=${orderId}&partnerCode=MOMO&requestId=${orderId}`;
+
+  const signature = crypto
+    .createHmac("sha256", secretKey)
+    .update(rawSignature)
+    .digest("hex");
+
+  const requestBody = JSON.stringify({
+    partnerCode: "MOMO",
+    requestId: orderId,
+    orderId: orderId,
+    signature: signature,
+    lang:'vi'
+  })
+
+  const options ={
+    method: "POST",
+    url:"https://test-payment.momo.vn/v2/gateway/api/query",
+    headers:{
+      "Content-type" : "application/json"
+    },
+    data: requestBody
+  }
+  let result = await axios(options)
+
+  return res.status(200).json(result.data);
 };
