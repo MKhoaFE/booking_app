@@ -36,6 +36,8 @@ app.use("/api/paymentmethod", paymentRoute);
 app.use("/api/trains", trainRoutes);
 app.use("/api/trainSchedule", trainScheduleRoutes);
 
+
+
 // Kết nối đến MongoDB
 mongoose
   .connect(process.env.MONGO_URI, {

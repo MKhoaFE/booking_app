@@ -1,7 +1,12 @@
-const express = require('express');
-const { payment } = require('../controllers/payment.controller');
+const express = require("express");
+const {
+  payment,
+  callback,
+  tranStatus,
+} = require("../controllers/payment.controller");
 const router = express.Router();
 
 router.post("/MomoMethod", payment);
-
+router.post("/callback", callback);
+router.post("/transaction-status", tranStatus);
 module.exports = router;
