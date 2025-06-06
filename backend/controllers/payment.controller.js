@@ -1,6 +1,7 @@
 const axios = require("axios");
 const crypto = require("crypto");
 const dotenv = require("dotenv");
+const Ticket = require("../models/ticket.model");
 
 dotenv.config();
 
@@ -15,7 +16,8 @@ exports.payment = async (req, res) => {
   const ipnUrl =
     "https://b38f-1-54-45-191.ngrok-free.app/api/paymentmethod/callback";
   const requestType = "payWithMethod";
-  const amount = "50000";
+  const amount = req.body.amount;
+  if (!amount) return res.status(400).json({ error: "Missing amount" });
   const orderId = partnerCode + new Date().getTime();
   const requestId = orderId;
   const extraData = "";
@@ -107,18 +109,18 @@ exports.tranStatus = async (req, res) => {
     requestId: orderId,
     orderId: orderId,
     signature: signature,
-    lang:'vi'
-  })
+    lang: "vi",
+  });
 
-  const options ={
+  const options = {
     method: "POST",
-    url:"https://test-payment.momo.vn/v2/gateway/api/query",
-    headers:{
-      "Content-type" : "application/json"
+    url: "https://test-payment.momo.vn/v2/gateway/api/query",
+    headers: {
+      "Content-type": "application/json",
     },
-    data: requestBody
-  }
-  let result = await axios(options)
+    data: requestBody,
+  };
+  let result = await axios(options);
 
   return res.status(200).json(result.data);
 };

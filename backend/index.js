@@ -32,10 +32,16 @@ app.use("/booking", sessionRoutes);
 //payment method
 app.use("/api/paymentmethod", paymentRoute);
 
+//ticket
+app.use("/api", ticketRoute);
+
 //Admin page
 app.use("/api/trains", trainRoutes);
 app.use("/api/trainSchedule", trainScheduleRoutes);
 
+app.get('/performance', (req, res) => {
+  res.status(204).send(); // Không nội dung, coi như hợp lệ
+});
 
 
 // Kết nối đến MongoDB

@@ -47,7 +47,7 @@ function Login() {
         formData
       );
       const { token, user } = response.data;
-      Cookies.set('token', token, { expires: 3600 });
+      Cookies.set('token', token, { expires: 1/24 });
       Cookies.set('user', JSON.stringify(user), { expires: 3600 });
       window.dispatchEvent(new Event('cookieChange'));
       showToast("Đăng nhập thành công", "success");
@@ -125,7 +125,7 @@ function Login() {
                 <div className="form-group mid">
                   <div></div>
                   <Link to="forgotPassword">
-                    <button>Quên mật khẩu?</button>
+                    <span>Quên mật khẩu?</span>
                   </Link>
                 </div>
                 <div className="form-actions">

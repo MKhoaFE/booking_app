@@ -60,7 +60,7 @@ exports.loginUser = async (req, res) => {
     const token = jwt.sign(
       { _id: user._id, email: user.email },
       process.env.SECRET_ACCESS_TOKEN,
-      { expiresIn: "24h" }
+      { expiresIn: "1h" }
     );
 
     await User.updateOne(

@@ -55,13 +55,6 @@ const trainSchedule = new mongoose.Schema(
   { collection: "trainSchedule" }
 );
 
-// Middleware để cập nhật reservedSeats trước khi save
-trainSchedule.pre("save", function (next) {
-  const reservedSeats = this.seatBooked
-    .flatMap((booking) => booking.passengerData.map((passenger) => passenger.seat));
-  this.reservedSeats = [...new Set(reservedSeats)]; // Loại bỏ trùng lặp
-  next();
-});
 
 // Middleware để cập nhật trạng thái hành trình
 trainSchedule.pre("find", async function (next) {
