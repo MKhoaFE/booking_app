@@ -2,32 +2,78 @@ const Ticket = require("../models/ticket.model");
 const trainSchedule = require("../models/trainSchedule.model");
 const axios = require("axios");
 const cron = require("node-cron");
+const dotenv = require("dotenv");
+const crypto = require("crypto");
 
-cron.schedule("*/5 * * * *", async () => {
+dotenv.config();
+const accessKey = process.env.ACCESS_KEY_MOMO;
+const secretKey = process.env.SECRECT_KEY_MOMO;
+
+//chạy mỗi 2p để update status
+cron.schedule("*/2 * * * *", async () => {
   console.log(`[Cron] Kiểm tra vé hết hạn tại ${new Date().toLocaleString()}`);
   console.log("Now:", new Date());
 
-
   const now = new Date();
 
-  // tìm các vé chưa thanh toán và hết hạn
   const expiredTickets = await Ticket.find({
     status: "pending",
+    "paymentInfo.method": "momo",
     "paymentInfo.paymentStatus": "not yet",
-    "paymentInfo.expiresAt": { $lt: new Date() },
+    "paymentInfo.expiresAt": { $lt: now },
   });
-  console.log("[Cron] Số vé hết hạn:", expiredTickets.length); 
-  console.log(
-    "ExpiresAt of 1 ticket:",
-    expiredTickets[0]?.paymentInfo.expiresAt
-  );
+
+  console.log("[Cron] Số vé hết hạn:", expiredTickets.length);
+  if (expiredTickets.length > 0) {
+    console.log("ExpiresAt of 1 ticket:", expiredTickets[0]?.paymentInfo.expiresAt);
+  }
+
   for (const ticket of expiredTickets) {
-    // cập nhật vé
+    const orderId = ticket.paymentInfo.transactionId;
+
+    // Kiểm tra lại với MoMo trước khi đánh dấu thất bại
+    try {
+      const rawSignature = `accessKey=${accessKey}&orderId=${orderId}&partnerCode=MOMO&requestId=${orderId}`;
+      const signature = crypto
+        .createHmac("sha256", secretKey)
+        .update(rawSignature)
+        .digest("hex");
+
+      const momoRes = await axios.post(
+        "https://test-payment.momo.vn/v2/gateway/api/query",
+        {
+          partnerCode: "MOMO",
+          requestId: orderId,
+          orderId: orderId,
+          signature,
+          lang: "vi",
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const resultCode = momoRes.data.resultCode;
+
+      if (resultCode === 0) {
+        // Đã thanh toán, xác nhận vé
+        ticket.status = "confirmed";
+        ticket.paymentInfo.paymentStatus = "success";
+        await ticket.save();
+        console.log(`[Cron] Vé ${ticket.ticketId} được xác nhận từ MoMo.`);
+        continue; // bỏ qua huỷ giữ chỗ
+      }
+
+    } catch (err) {
+      console.error(`[Cron] Lỗi kiểm tra trạng thái MoMo cho ${orderId}:`, err.message);
+    }
+
+    // Nếu thực sự chưa thanh toán, tiến hành huỷ giữ chỗ
     ticket.status = "expired";
     ticket.paymentInfo.paymentStatus = "failed";
     await ticket.save();
+    console.log(`[Cron] Vé ${ticket.ticketId} bị huỷ do hết hạn.`);
 
-    // xóa giữ chỗ trong trainSchedule
     const journey = await trainSchedule.findOne({
       journeyId: ticket.journeyId,
     });
@@ -41,15 +87,19 @@ cron.schedule("*/5 * * * *", async () => {
       // Xoá dữ liệu trong seatBooked
       journey.seatBooked = journey.seatBooked.filter(
         (booking) =>
-          !booking.passengerData.some((p) => ticket.seatNumber.includes(p.seat))
+          !booking.passengerData.some((p) =>
+            ticket.seatNumber.includes(p.seat)
+          )
       );
 
       await journey.save();
+      console.log(`[Cron] Đã xoá giữ chỗ vé ${ticket.ticketId} khỏi hành trình.`);
     }
   }
 
-  console.log(`[Cron] Đã xử lý ${expiredTickets.length} vé hết hạn.`);
+  console.log(`[Cron] Hoàn tất xử lý ${expiredTickets.length} vé hết hạn.`);
 });
+
 
 exports.postTicket = async (req, res) => {
   try {
@@ -87,8 +137,8 @@ exports.postTicket = async (req, res) => {
     const transactionId = "TXN_" + Date.now();
     const expiresAt =
       paymentMethod === "momo"
-        ? new Date(Date.now() + 1 * 60 * 1000)
-        : new Date(new Date(journey.departureDate).getTime() - 60 * 1 * 1000);
+        ? new Date(Date.now() + 10 * 60 * 1000)
+        : new Date(new Date(journey.departureDate).getTime() - 60 * 10 * 1000);
 
     //Cập nhập trainSchedule.reservedSeats và seatBooked
     journey.reservedSeats.push(...seats);

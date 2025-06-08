@@ -14,7 +14,7 @@ exports.payment = async (req, res) => {
   const redirectUrl =
     "https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b";
   const ipnUrl =
-    "https://3a95-1-53-79-185.ngrok-free.app/api/paymentmethod/callback";
+    "https://d790-2001-ee0-4f4b-2ed0-1c99-7c05-60f3-6eaf.ngrok-free.app/api/paymentmethod/callback";
   const requestType = "payWithMethod";
   const amount = req.body.amount;
   if (!amount) return res.status(400).json({ error: "Missing amount" });
@@ -89,28 +89,33 @@ exports.payment = async (req, res) => {
 
 exports.callback = async (req, res) => {
   console.log("callback: ", req.body);
+
   const { orderId, resultCode } = req.body;
-  if (!orderId) return res.status(400).json({ error: "Missiong orderId." });
+  if (!orderId) return res.status(400).json({ error: "Missing orderId." });
+
   try {
-    //tìm vé bằng transactionId
     const ticket = await Ticket.findOne({
       "paymentInfo.transactionId": orderId,
     });
+
     if (!ticket) {
+      console.error("Không tìm thấy vé với orderId: ", orderId);
       return res.status(404).json({ error: "Ticket not found" });
     }
-    //Nếu thanh toán thành công
+
     if (resultCode === 0) {
       ticket.status = "confirmed";
       ticket.paymentInfo.paymentStatus = "success";
-      await ticket.save();
-      return res.status(200).json({ message: "payment confirmed" });
     } else {
+      ticket.status = "cancelled";
       ticket.paymentInfo.paymentStatus = "failed";
-      await ticket.save();
-      return res.status(200).json({ message: "payment failed" });
     }
+
+    await ticket.save();
+    return res.status(200).json({ message: "Payment status updated" });
+
   } catch (error) {
+    console.error("Callback error: ", error);
     return res.status(500).json({ error: "Internal server error." });
   }
 };
