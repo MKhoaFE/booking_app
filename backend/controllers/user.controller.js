@@ -179,7 +179,11 @@ exports.forgotPassword = async (req, res) => {
       return res.status(404).json({ message: "Email không tồn tại." });
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || "SECRET_ACCESS_TOKEN", { expiresIn: "1h" });
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET || "SECRET_ACCESS_TOKEN",
+      { expiresIn: "1h" }
+    );
     user.resetPasswordToken = token;
     user.resetPasswordExpires = Date.now() + 3600000;
     await user.save();
@@ -221,7 +225,9 @@ exports.resetPassword = async (req, res) => {
 
   try {
     if (!password || password.length < 8) {
-      return res.status(400).json({ message: "Mật khẩu phải dài ít nhất 8 ký tự." });
+      return res
+        .status(400)
+        .json({ message: "Mật khẩu phải dài ít nhất 8 ký tự." });
     }
 
     const user = await User.findOne({
@@ -230,7 +236,9 @@ exports.resetPassword = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(400).json({ message: "Token không hợp lệ hoặc đã hết hạn." });
+      return res
+        .status(400)
+        .json({ message: "Token không hợp lệ hoặc đã hết hạn." });
     }
 
     user.passwordHash = password; // Sửa từ password thành passwordHash
@@ -248,7 +256,7 @@ exports.resetPassword = async (req, res) => {
 exports.getAllTransactions = async (req, res) => {
   try {
     const users = await User.find().select("bookings");
-    const transactions = users.flatMap(user =>
+    const transactions = users.flatMap((user) =>
       user.bookings.map((booking, index) => ({
         id: `${user._id}-${index}`,
         userId: user._id,
@@ -275,6 +283,25 @@ exports.getUserById = async (req, res) => {
     res.status(200).json({ user });
   } catch (error) {
     console.error("Error fetching user by ID:", error);
-    res.status(500).json({ message: "Error fetching user", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching user", error: error.message });
+  }
+};
+
+exports.getUserBookings = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const userWithTickets = await User.findOne({ userId }).populate({
+      path: "bookings.ticketId",
+    });
+
+    if (!userWithTickets) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    return res.status(200).json({ bookings: userWithTickets.bookings });
+  } catch (error) {
+    console.error("Lỗi khi lấy vé người dùng:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };

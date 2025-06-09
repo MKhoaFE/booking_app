@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 const mongooseSequence = require("mongoose-sequence")(mongoose);
 const bcrypt = require("bcrypt");
@@ -13,12 +12,10 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       lowercase: true,
-
     },
     phone: {
       type: String,
       required: true,
-
     },
     passwordHash: { type: String, required: true },
     registeredAt: { type: Date, default: Date.now },
@@ -27,6 +24,11 @@ const userSchema = new mongoose.Schema(
     resetPasswordExpires: { type: Date },
     bookings: [
       {
+        ticketId: {
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+          ref: "Ticket",
+        },
         journeyId: {
           type: String,
           required: true,
@@ -63,12 +65,21 @@ const userSchema = new mongoose.Schema(
         departureDate: { type: Date, required: true },
         departureStation: { type: String, required: true },
         arrivalStation: { type: String, required: true },
+        paymentStatus: {
+          type: String,
+          default: "not yet",
+          enum: ["not yet", "success", "failed"],
+        },
+        paymentInfo: {
+          method: { type: String },
+          transactionId: { type: String },
+          expiresAt: { type: Date },
+        },
       },
     ],
   },
   { collection: "User" }
 );
-
 
 // Plugin để tự động tăng userId
 userSchema.plugin(mongooseSequence, { inc_field: "userId" });

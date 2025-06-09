@@ -4,13 +4,13 @@ const axios = require("axios");
 const cron = require("node-cron");
 const dotenv = require("dotenv");
 const crypto = require("crypto");
-
+const User = require("../models/user.model");
 dotenv.config();
 const accessKey = process.env.ACCESS_KEY_MOMO;
 const secretKey = process.env.SECRECT_KEY_MOMO;
 
 //chạy mỗi 2p để update status
-cron.schedule("*/2 * * * *", async () => {
+cron.schedule("*/1 * * * *", async () => {
   console.log(`[Cron] Kiểm tra vé hết hạn tại ${new Date().toLocaleString()}`);
   console.log("Now:", new Date());
 
@@ -25,7 +25,10 @@ cron.schedule("*/2 * * * *", async () => {
 
   console.log("[Cron] Số vé hết hạn:", expiredTickets.length);
   if (expiredTickets.length > 0) {
-    console.log("ExpiresAt of 1 ticket:", expiredTickets[0]?.paymentInfo.expiresAt);
+    console.log(
+      "ExpiresAt of 1 ticket:",
+      expiredTickets[0]?.paymentInfo.expiresAt
+    );
   }
 
   for (const ticket of expiredTickets) {
@@ -60,18 +63,33 @@ cron.schedule("*/2 * * * *", async () => {
         ticket.status = "confirmed";
         ticket.paymentInfo.paymentStatus = "success";
         await ticket.save();
+
+        //cập nhập bookings user
+        await User.updateOne(
+          { userId: ticket.userId, "bookings.ticketId": ticket._id },
+          { $set: { "bookings.$.paymentStatus": "success" } }
+        );
         console.log(`[Cron] Vé ${ticket.ticketId} được xác nhận từ MoMo.`);
         continue; // bỏ qua huỷ giữ chỗ
       }
-
     } catch (err) {
-      console.error(`[Cron] Lỗi kiểm tra trạng thái MoMo cho ${orderId}:`, err.message);
+      console.error(
+        `[Cron] Lỗi kiểm tra trạng thái MoMo cho ${orderId}:`,
+        err.message
+      );
     }
 
     // Nếu thực sự chưa thanh toán, tiến hành huỷ giữ chỗ
     ticket.status = "expired";
     ticket.paymentInfo.paymentStatus = "failed";
     await ticket.save();
+    await User.updateOne(
+      {
+        userId: ticket.userId,
+        "bookings.ticketId": ticket._id,
+      },
+      { $set: { "bookings.$.paymentStatus": "failed" } }
+    );
     console.log(`[Cron] Vé ${ticket.ticketId} bị huỷ do hết hạn.`);
 
     const journey = await trainSchedule.findOne({
@@ -87,19 +105,18 @@ cron.schedule("*/2 * * * *", async () => {
       // Xoá dữ liệu trong seatBooked
       journey.seatBooked = journey.seatBooked.filter(
         (booking) =>
-          !booking.passengerData.some((p) =>
-            ticket.seatNumber.includes(p.seat)
-          )
+          !booking.passengerData.some((p) => ticket.seatNumber.includes(p.seat))
       );
 
       await journey.save();
-      console.log(`[Cron] Đã xoá giữ chỗ vé ${ticket.ticketId} khỏi hành trình.`);
+      console.log(
+        `[Cron] Đã xoá giữ chỗ vé ${ticket.ticketId} khỏi hành trình.`
+      );
     }
   }
 
   console.log(`[Cron] Hoàn tất xử lý ${expiredTickets.length} vé hết hạn.`);
 });
-
 
 exports.postTicket = async (req, res) => {
   try {
@@ -146,7 +163,7 @@ exports.postTicket = async (req, res) => {
     await journey.save();
 
     //Tạo db Ticket mongodb
-    await Ticket.create({
+    const ticket = await Ticket.create({
       ticketId,
       userId,
       trainId: journey.trainId,
@@ -161,7 +178,28 @@ exports.postTicket = async (req, res) => {
         expiresAt,
       },
     });
-
+    await User.findOneAndUpdate(
+      { userId },
+      {
+        $push: {
+          bookings: {
+            paymentInfo: {
+              method: paymentMethod,
+              transactionId,
+              expiresAt,
+            },
+            paymentStatus: "not yet",
+            ticketId: ticket._id,
+            journeyId,
+            contactData,
+            passengerData,
+            departureDate: journey.departureDate,
+            departureStation: journey.departureStation,
+            arrivalStation: journey.arrivalStation,
+          },
+        },
+      }
+    );
     //Thanh toán momo: => QR
     if (paymentMethod === "momo") {
       const response = await axios.post(

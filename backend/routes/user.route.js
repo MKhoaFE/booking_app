@@ -12,6 +12,7 @@ const {
   resetPassword,
   getAllTransactions,
   getUserById,
+  getUserBookings,
 } = require("../controllers/user.controller");
 const isAuth = require("../middlewares/authentication.mdw");
 
@@ -25,5 +26,6 @@ router.post("/forgotPassword", forgotPassword);
 router.post("/resetPassword/:token", resetPassword);
 router.get("/getAllTransactions", getAllTransactions);
 router.get("/:userId", getUserById);
+router.get("/:userId/bookings", getUserBookings);
 
 module.exports = router;
