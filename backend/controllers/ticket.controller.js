@@ -5,6 +5,8 @@ const cron = require("node-cron");
 const dotenv = require("dotenv");
 const crypto = require("crypto");
 const User = require("../models/user.model");
+const redisClient = require("../utils/redisClient");
+
 dotenv.config();
 const accessKey = process.env.ACCESS_KEY_MOMO;
 const secretKey = process.env.SECRECT_KEY_MOMO;
@@ -219,5 +221,77 @@ exports.postTicket = async (req, res) => {
   } catch (error) {
     console.error("Create ticket error: ", error);
     return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+// redis lock seats khi bị chọn trùng seats
+exports.lockseat = async (req, res) => {
+  try {
+    const { journeyId, userId, seat } = req.body;
+    const redisKey = `lock:seat:${journeyId}:${seat}`;
+
+    const isLocked = await redisClient.get(redisKey);
+    if (isLocked) {
+      return res.status(409).json({ message: "Ghế đã được giữ bởi người khác." });
+    }
+
+    await redisClient.set(redisKey, userId, {
+      NX: true, // chỉ set nếu key chưa tồn tại
+      EX: 30,   // hết hạn sau 30s
+    });
+
+    return res.status(200).json({ message: "Đã giữ ghế thành công trong 30 giây." });
+  } catch (error) {
+    console.error("Lỗi lock ghế:", error);
+    return res.status(500).json({ error: "Lỗi hệ thống Redis." });
+  }
+};
+
+
+//api giải phóng lock nếu thanh toán thành công
+exports.releaseLock = async (req, res) => {
+  try {
+    const { journeyId, userId, seat, paymentMethod } = req.body;
+    const lockKey = `lock:seat:${journeyId}:${seat}`;
+
+    const lockHolder = await redisClient.get(lockKey);
+    if (lockHolder !== userId) {
+      return res.status(409).json({ message: "Bạn không giữ ghế hoặc đã hết hạn giữ ghế." });
+    }
+
+    const journey = await trainSchedule.findOne({ journeyId });
+    if (!journey) return res.status(404).json({ error: "Không tìm thấy hành trình." });
+
+    const ticketId = "TICKET_" + Date.now();
+    const transactionId = "TXN_" + Date.now();
+    const totalPrice = journey.regularTicketPrice; // hoặc tính động
+
+    const expiresAt =
+      paymentMethod === "momo"
+        ? new Date(Date.now() + 10 * 60 * 1000)
+        : new Date(new Date(journey.departureDate).getTime() - 60 * 10 * 1000);
+
+    await Ticket.create({
+      ticketId,
+      userId,
+      trainId: journey.trainId,
+      journeyId,
+      seatNumber: seat,
+      bookingDate: new Date(),
+      status: "pending",
+      price: totalPrice,
+      paymentInfo: {
+        method: paymentMethod,
+        transactionId,
+        expiresAt,
+      },
+    });
+
+    await redisClient.del(lockKey);
+
+    return res.status(200).json({ message: "Thanh toán thành công và giữ ghế vĩnh viễn." });
+  } catch (error) {
+    console.error("Lỗi khi xác nhận thanh toán:", error);
+    return res.status(500).json({ error: "Lỗi hệ thống khi lưu vé." });
   }
 };
