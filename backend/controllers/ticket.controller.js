@@ -131,18 +131,31 @@ exports.postTicket = async (req, res) => {
       contactData,
     } = req.body;
 
-    //Lấy thông tin hành trình
+    // Kiểm tra đầu vào
+    if (!userId || !journeyId || !Array.isArray(seats) || seats.length === 0 || !passengerData || !contactData) {
+      return res.status(400).json({ error: "Missing required fields." });
+    }
+
+    // Lấy thông tin hành trình
     const journey = await trainSchedule.findOne({ journeyId });
     if (!journey) return res.status(404).json({ error: "Journey not found" });
 
-    //kiểm tra xem ghế có đang bị giữ không
+    // Kiểm tra ghế đã bị giữ chưa (reservedSeats)
     const reserved = journey.reservedSeats || [];
     const isOccupied = seats.some((seat) => reserved.includes(seat));
     if (isOccupied) {
       return res.status(400).json({ error: "Some seats already reserved." });
     }
 
-    //Tính tổng giá vé
+    // Gắn seat vào từng passenger
+    if (passengerData.length !== seats.length) {
+      return res.status(400).json({ error: "Passenger and seat count mismatch." });
+    }
+    passengerData.forEach((p, i) => {
+      p.seat = seats[i];
+    });
+
+    // Tính tổng giá vé
     let totalPrice = 0;
     for (const p of passengerData) {
       totalPrice +=
@@ -151,7 +164,7 @@ exports.postTicket = async (req, res) => {
           : journey.specialTicketPrice;
     }
 
-    //Tạo ticketId TransactionId expiresAt
+    // Tạo ticketId, transactionId, expiresAt
     const ticketId = "TICKET_" + Date.now();
     const transactionId = "TXN_" + Date.now();
     const expiresAt =
@@ -159,12 +172,15 @@ exports.postTicket = async (req, res) => {
         ? new Date(Date.now() + 10 * 60 * 1000)
         : new Date(new Date(journey.departureDate).getTime() - 60 * 10 * 1000);
 
-    //Cập nhập trainSchedule.reservedSeats và seatBooked
+    // Cập nhật trainSchedule
     journey.reservedSeats.push(...seats);
-    journey.seatBooked.push({ contactData, passengerData });
+    journey.seatBooked.push({
+      contactData,
+      passengerData
+    });
     await journey.save();
 
-    //Tạo db Ticket mongodb
+    // Tạo ticket
     const ticket = await Ticket.create({
       ticketId,
       userId,
@@ -180,6 +196,8 @@ exports.postTicket = async (req, res) => {
         expiresAt,
       },
     });
+
+    // Cập nhật User booking
     await User.findOneAndUpdate(
       { userId },
       {
@@ -202,7 +220,8 @@ exports.postTicket = async (req, res) => {
         },
       }
     );
-    //Thanh toán momo: => QR
+
+    // Thanh toán MoMo
     if (paymentMethod === "momo") {
       const response = await axios.post(
         "http://localhost:5000/api/paymentmethod/MomoMethod",
@@ -214,39 +233,63 @@ exports.postTicket = async (req, res) => {
       return res.status(200).json({ ticketId, momoQr: response.data.payUrl });
     }
 
-    //thanh toan byCash
+    // Thanh toán tiền mặt
     if (paymentMethod === "byCash") {
       return res.status(200).json({ ticketId, status: "waiting for payment" });
     }
+
+    // Trường hợp phương thức thanh toán không hợp lệ
+    return res.status(400).json({ error: "Invalid payment method" });
+
   } catch (error) {
     console.error("Create ticket error: ", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
 
+
 // redis lock seats khi bị chọn trùng seats
 exports.lockseat = async (req, res) => {
   try {
     const { journeyId, userId, seat } = req.body;
+    console.log("Body: ", req.body);
     const redisKey = `lock:seat:${journeyId}:${seat}`;
 
     const isLocked = await redisClient.get(redisKey);
     if (isLocked) {
-      return res.status(409).json({ message: "Ghế đã được giữ bởi người khác." });
+      return res
+        .status(409)
+        .json({ message: "Ghế đã được giữ bởi người khác." });
     }
 
     await redisClient.set(redisKey, userId, {
       NX: true, // chỉ set nếu key chưa tồn tại
-      EX: 30,   // hết hạn sau 30s
+      EX: 60, // hết hạn sau 30s
     });
 
-    return res.status(200).json({ message: "Đã giữ ghế thành công trong 30 giây." });
+    return res
+      .status(200)
+      .json({ message: "Đã giữ ghế thành công trong 60 giây." });
   } catch (error) {
     console.error("Lỗi lock ghế:", error);
     return res.status(500).json({ error: "Lỗi hệ thống Redis." });
   }
 };
 
+exports.getLockedSeats = async (req, res) => {
+  try {
+    const { journeyId } = req.params;
+    const pattern = `lock:seat:${journeyId}:*`;
+    const keys = await redisClient.keys(pattern);
+
+    const lockedSeats = keys.map((key) => key.split(":").pop());
+    console.log("Radis key: ", keys);
+    return res.status(200).json({ lockedSeats });
+  } catch (error) {
+    console.error("Lỗi không lấy được danh sách lock seat.", error);
+    return res.status(500).json({ error: "Internal server error." });
+  }
+};
 
 //api giải phóng lock nếu thanh toán thành công
 exports.releaseLock = async (req, res) => {
@@ -256,11 +299,14 @@ exports.releaseLock = async (req, res) => {
 
     const lockHolder = await redisClient.get(lockKey);
     if (lockHolder !== userId) {
-      return res.status(409).json({ message: "Bạn không giữ ghế hoặc đã hết hạn giữ ghế." });
+      return res
+        .status(409)
+        .json({ message: "Bạn không giữ ghế hoặc đã hết hạn giữ ghế." });
     }
 
     const journey = await trainSchedule.findOne({ journeyId });
-    if (!journey) return res.status(404).json({ error: "Không tìm thấy hành trình." });
+    if (!journey)
+      return res.status(404).json({ error: "Không tìm thấy hành trình." });
 
     const ticketId = "TICKET_" + Date.now();
     const transactionId = "TXN_" + Date.now();
@@ -289,7 +335,9 @@ exports.releaseLock = async (req, res) => {
 
     await redisClient.del(lockKey);
 
-    return res.status(200).json({ message: "Thanh toán thành công và giữ ghế vĩnh viễn." });
+    return res
+      .status(200)
+      .json({ message: "Thanh toán thành công và giữ ghế vĩnh viễn." });
   } catch (error) {
     console.error("Lỗi khi xác nhận thanh toán:", error);
     return res.status(500).json({ error: "Lỗi hệ thống khi lưu vé." });
