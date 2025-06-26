@@ -132,7 +132,14 @@ exports.postTicket = async (req, res) => {
     } = req.body;
 
     // Kiểm tra đầu vào
-    if (!userId || !journeyId || !Array.isArray(seats) || seats.length === 0 || !passengerData || !contactData) {
+    if (
+      !userId ||
+      !journeyId ||
+      !Array.isArray(seats) ||
+      seats.length === 0 ||
+      !passengerData ||
+      !contactData
+    ) {
       return res.status(400).json({ error: "Missing required fields." });
     }
 
@@ -149,7 +156,9 @@ exports.postTicket = async (req, res) => {
 
     // Gắn seat vào từng passenger
     if (passengerData.length !== seats.length) {
-      return res.status(400).json({ error: "Passenger and seat count mismatch." });
+      return res
+        .status(400)
+        .json({ error: "Passenger and seat count mismatch." });
     }
     passengerData.forEach((p, i) => {
       p.seat = seats[i];
@@ -176,7 +185,7 @@ exports.postTicket = async (req, res) => {
     journey.reservedSeats.push(...seats);
     journey.seatBooked.push({
       contactData,
-      passengerData
+      passengerData,
     });
     await journey.save();
 
@@ -240,19 +249,18 @@ exports.postTicket = async (req, res) => {
 
     // Trường hợp phương thức thanh toán không hợp lệ
     return res.status(400).json({ error: "Invalid payment method" });
-
   } catch (error) {
     console.error("Create ticket error: ", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
 
-
 // redis lock seats khi bị chọn trùng seats
 exports.lockseat = async (req, res) => {
   try {
     const { journeyId, userId, seat } = req.body;
     console.log("Body: ", req.body);
+
     const redisKey = `lock:seat:${journeyId}:${seat}`;
 
     const isLocked = await redisClient.get(redisKey);
@@ -263,13 +271,13 @@ exports.lockseat = async (req, res) => {
     }
 
     await redisClient.set(redisKey, userId, {
-      NX: true, // chỉ set nếu key chưa tồn tại
-      EX: 60, // hết hạn sau 30s
+      EX: 600, // thời gian giữ 10 phút
+      NX: true, // chỉ đặt nếu key chưa tồn tại
     });
 
     return res
       .status(200)
-      .json({ message: "Đã giữ ghế thành công trong 60 giây." });
+      .json({ message: "Đã giữ ghế thành công trong 600 giây." });
   } catch (error) {
     console.error("Lỗi lock ghế:", error);
     return res.status(500).json({ error: "Lỗi hệ thống Redis." });
@@ -315,7 +323,7 @@ exports.releaseLock = async (req, res) => {
     const expiresAt =
       paymentMethod === "momo"
         ? new Date(Date.now() + 10 * 60 * 1000)
-        : new Date(new Date(journey.departureDate).getTime() - 60 * 10 * 1000);
+        : new Date(new Date(journey.departureDate).getTime() - 60 * 10 * 1000); //hết hạn trong 10p
 
     await Ticket.create({
       ticketId,
