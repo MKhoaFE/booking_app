@@ -49,7 +49,7 @@ function TripSelector({
             <img src={selecting_seat} alt="" /> Ghế đang chọn
           </div>
           <div className="seat-info-item col-md-3 col-sm-3 col-xs-6 no-padding">
-            <img src={saleoff_seat} alt="" /> Vé khuyến mãi
+            <img src={saleoff_seat} alt="" /> Vé đặc biệt
           </div>
         </div>
 

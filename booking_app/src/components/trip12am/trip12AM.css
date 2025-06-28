@@ -15,7 +15,7 @@
 }
 .trip12AM .select-seat-container .top {
   margin: 0 auto;
-  width: 70%;
+  width: 100%;
 }
 @media (max-width: 768px) {
   .trip12AM .select-seat-container .top {

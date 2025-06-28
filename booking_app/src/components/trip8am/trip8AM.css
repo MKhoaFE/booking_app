@@ -15,7 +15,7 @@
 }
 .tripSelector .select-seat-container .top {
   margin: 0 auto;
-  width: 70%;
+  width: 100%;
 }
 @media (max-width: 768px) {
   .tripSelector .select-seat-container .top {
@@ -148,6 +148,10 @@
 .tripSelector .select-seat-container .bottom .ship-container .seat .show {
   visibility: visible;
   opacity: 1;
+}
+.tripSelector .select-seat-container .bottom .ship-container .locked-seat {
+  background-image: url("../../assets/reserved-seat.png");
+  color: "orange";
 }
 .tripSelector .select-seat-container .bottom .ship-container .reserved {
   background-image: url("../../assets/reserved-seat.png");

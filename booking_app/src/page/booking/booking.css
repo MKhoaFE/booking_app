@@ -67,7 +67,7 @@
 }
 .segment-container .select-seat-container .top {
   margin: 0 auto;
-  width: 70%;
+  width: 100%;
 }
 @media (max-width: 768px) {
   .segment-container .select-seat-container .top {

@@ -13,6 +13,7 @@ import { Typography } from "@mui/material";
 import axios from "axios";
 import Cookies from "js-cookie";
 import TripSelector from "../../components/trip8am/TripSelector";
+import showToast from "../../components/Toastify/Toastify";
 
 const Booking = () => {
   const [key, setKey] = useState("");
@@ -165,9 +166,10 @@ const Booking = () => {
         }));
         startTimer(seat);
         updateRemainingSeats(ticketType, -1);
+        showToast("Giữ chỗ thành công.", "success");
       }
     } catch (err) {
-      alert(err.response?.data?.message || "Không thể giữ ghế.");
+      showToast("Ghế đã được người khác giữ, vui lòng chọn ghế khác", "error");
     }
   };
 
@@ -188,7 +190,7 @@ const Booking = () => {
     clearInterval(intervalIds[seat]);
     setTimer((prev) => ({
       ...prev,
-      [seat]: 1000,
+      [seat]: 600,
     }));
     const id = setInterval(() => {
       setTimer((prev) => {
@@ -263,6 +265,15 @@ const Booking = () => {
     return <Typography color="error">{error}</Typography>;
   }
 
+  const handleOnSubmit = async (e) => {
+    const selected = localStorage.getItem(`selectedSeats_${key}`);
+    const parsed = selected ? JSON.parse(selected) : {};
+    if (!parsed || Object.keys(parsed).length === 0) {
+      e.preventDefault();
+      showToast("Vui lòng chọn ghế để tiếp tục", "error");
+    }
+  };
+
   return (
     <>
       <BookingHeader />
@@ -275,8 +286,18 @@ const Booking = () => {
                 {travelData ? (
                   <div>
                     Đặt vé từ{" "}
-                    <span className="place-name" style={{ color: "green" }}>
+                    <span
+                      className="place-name"
+                      style={{ color: "green", textDecoration: "underline" }}
+                    >
                       {travelData.departureStation}
+                    </span>{" "}
+                    đến{" "}
+                    <span
+                      className="place-name"
+                      style={{ color: "green", textDecoration: "underline" }}
+                    >
+                      {travelData.arrivalStation}
                     </span>{" "}
                     / Ngày {travelData.date}
                   </div>
@@ -525,7 +546,7 @@ const Booking = () => {
                 countRegularTicket,
               }}
             >
-              <button type="submit">
+              <button onClick={handleOnSubmit} type="submit">
                 <span>Tiếp tục</span>
               </button>
             </Link>

@@ -12,7 +12,7 @@
   font-size: 14px;
   .top {
     margin: 0 auto;
-    width: 70%;
+    width: 100%;
     @media (max-width: 768px) {
       margin-top: 2rem;
       display: flex;
@@ -141,6 +141,11 @@
           visibility: visible;
           opacity: 1;
         }
+      }
+      .locked-seat{
+        background-image: url("../../assets/reserved-seat.png"); 
+        color:"orange";
+        
       }
       .reserved {
         background-image: url("../../assets/reserved-seat.png");
