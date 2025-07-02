@@ -20,6 +20,7 @@ import ByATM from "./page/payment/byATM.jsx";
 import ByCounter from "./page/payment/byCounter.jsx";
 import ForgotPassword from "./page/login/forgotPassword.jsx";
 import ResetPassword from "./page/login/resetPassword.jsx";
+import ChatWidget from "./components/chatWidget/ChatWidget.jsx";
 
 function App() {
   return (
@@ -87,6 +88,7 @@ function App() {
           </Routes>
         </Content>
         <FooterComponent />
+        <ChatWidget/>
       </Layout>
     </BrowserRouter>
   );

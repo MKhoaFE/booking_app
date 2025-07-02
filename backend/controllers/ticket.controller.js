@@ -199,6 +199,7 @@ exports.postTicket = async (req, res) => {
       bookingDate: new Date(),
       status: "pending",
       price: totalPrice,
+      passengerData,
       paymentInfo: {
         method: paymentMethod,
         transactionId,
