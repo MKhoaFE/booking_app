@@ -13,9 +13,9 @@ Online train ticket booking system - Easy Travel
 ---------------
 How to setup?
 booking_app/
-├── booking_app   
-├── backend        
-├── admin               
+ ├── booking_app   
+ ├── backend        
+ ├── admin               
 
 At booking_app/booking_app folder, you should run this command:
 - npm install
