@@ -12,10 +12,49 @@ Online train ticket booking system - Easy Travel
 
 ---------------
 How to setup?
-booking_app/
- ├── booking_app   
- ├── backend        
- ├── admin               
+<pre lang="md"> <code>```bash src/
+BOOKING_APP
+├── admin
+│   ├── node_modules
+│   ├── public
+│   └── src
+│       ├── assets
+│       ├── components
+│       ├── data
+│       ├── hooks
+│       ├── scenes
+│       ├── App.css
+│       ├── App.js
+│       ├── index.css
+│       ├── index.js
+│       └── theme.js
+├── backend
+│   ├── controllers
+│   ├── middlewares
+│   ├── models
+│   ├── node_modules
+│   ├── routes
+│   ├── utils
+│   ├── .env
+│   ├── index.js
+│   ├── package-lock.json
+│   └── package.json
+├── booking_app
+│   ├── node_modules
+│   ├── public
+│   └── src
+│       ├── assets
+│       ├── components
+│       ├── context
+│       ├── data
+│       ├── GlobalStyles
+│       └── page
+│   └── App.js
+├── .gitignore
+├── package-lock.json
+├── package.json
+└── README.md
+ ```</code> </pre>            
 
 At booking_app/booking_app folder, you should run this command:
 - npm install
